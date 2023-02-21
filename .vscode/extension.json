@@ -1,0 +1,16 @@
+{
+	"recommendations": [
+		"dbaeumer.vscode-eslint",
+		"esbenp.prettier-vscode",
+		"visualstudioexptteam.vscodeintellicode",
+		"msjsdiag.vscode-react-native",
+		"naumovs.color-highlight",
+		"hookyqr.beautify",
+		"streetsidesoftware.code-spell-checker",
+		"vscode-icons-team.vscode-icons"
+
+	],
+	"unwantedRecommendations": [
+
+	]
+}
