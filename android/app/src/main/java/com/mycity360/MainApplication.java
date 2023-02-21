@@ -1,4 +1,4 @@
-package com.awesomeproject;
+package com.mycity360;
 
 import android.app.Application;
 import com.facebook.react.PackageList;

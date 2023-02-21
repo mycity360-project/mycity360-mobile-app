@@ -1,7 +1,8 @@
 {
-  "name": "my-city-360-native-app",
+  "name": "mycity360",
   "version": "0.0.1",
   "private": true,
+  "main": "App.tsx",
   "scripts": {
     "android": "react-native run-android",
     "ios": "react-native run-ios",

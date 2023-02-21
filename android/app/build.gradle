@@ -93,9 +93,9 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
-    namespace "com.awesomeproject"
+    namespace "com.mycity360"
     defaultConfig {
-        applicationId "com.awesomeproject"
+        applicationId "com.mycity360"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
