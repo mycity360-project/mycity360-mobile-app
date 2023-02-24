@@ -2,13 +2,16 @@
   "name": "mycity360",
   "version": "0.0.2",
   "private": true,
-  "main": "App.tsx",
+  "main": "App.js",
   "scripts": {
     "android": "react-native run-android",
     "ios": "react-native run-ios",
-    "lint": "eslint .",
+    "lint": "eslint . --fix",
     "start": "react-native start",
-    "test": "jest"
+    "test": "jest",
+    "release:major": "npm version major",
+    "release:minor": "npm version minor",
+    "release:patch": "npm version patch"
   },
   "dependencies": {
     "react": "18.2.0",
