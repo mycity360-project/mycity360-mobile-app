@@ -1,13 +1,15 @@
-import {StyleSheet, Text, View, Image, TextInput} from 'react-native';
+import {StyleSheet, View, Image, TextInput} from 'react-native';
 import React from 'react';
-import Button from '../components/Button';
+import {Button} from '../shared/components';
+
 export default function login() {
   return (
     <View style={styles.container}>
       <View style={styles.logoContainer}>
         <Image
           style={styles.logo}
-          source={require('../assets/images/logo.png')}></Image>
+          source={require('../assets/images/logo.png')}
+        />
       </View>
 
       <View style={styles.formContainer}>
