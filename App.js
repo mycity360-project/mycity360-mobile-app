@@ -13,6 +13,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import HomeScreen from './src/screens/HomeScreen';
 import SignUp from './src/screens/SignUp';
 import Login from './src/screens/Login';
+import VerifyOtp from './src/screens/VerifyOtp';
 const Stack = createNativeStackNavigator();
 function App() {
   return (
@@ -31,6 +32,11 @@ function App() {
         <Stack.Screen
           name="Login"
           component={Login}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="VerifyOtp"
+          component={VerifyOtp}
           options={{headerShown: false}}
         />
       </Stack.Navigator>

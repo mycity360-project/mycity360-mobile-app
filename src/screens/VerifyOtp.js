@@ -2,7 +2,7 @@ import {StyleSheet, View, Image, TextInput} from 'react-native';
 import React from 'react';
 import {Button} from '../shared/components';
 
-export default function Login() {
+export default function VerifyOtp() {
   return (
     <View style={styles.container}>
       <View style={styles.logoContainer}>
@@ -13,11 +13,11 @@ export default function Login() {
       </View>
 
       <View style={styles.formContainer}>
-        <TextInput style={styles.input} placeholder="enter you email" />
-        <TextInput style={styles.input} placeholder="enter you password" />
+        <TextInput style={styles.input} placeholder="enter you email OTP" />
+        <TextInput style={styles.input} placeholder="enter you Mobile OTP" />
         <Button
-          btnTitle={'Login'}
-          screenName={'Login'}
+          btnTitle={'Verify'}
+          screenName={'Home'}
           btnStyle={styles.btn}
           btnTextStyle={styles.btnTitle}
         />
