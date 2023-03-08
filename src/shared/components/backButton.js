@@ -42,12 +42,7 @@ const style = StyleSheet.create({
     backgroundColor: button.buttonColor,
     borderRadius: 15,
     padding: 10,
-    width: '50%',
+    width: '20%',
     marginHorizontal: '25%',
-  },
-  btnTitle: {
-    fontSize: 18,
-    color: '#FFF',
-    textAlign: 'center',
   },
 });

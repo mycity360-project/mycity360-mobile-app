@@ -1,9 +1,16 @@
 /* eslint-disable react-native/no-inline-styles */
-import {StyleSheet, Image, View, TextInput} from 'react-native';
+import {
+  StyleSheet,
+  Image,
+  View,
+  Text,
+  TextInput,
+  SafeAreaView,
+} from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import React, {useState} from 'react';
 import {Button} from '../shared/components';
-
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 export default function Signup() {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(null);
@@ -12,40 +19,69 @@ export default function Signup() {
     {label: 'Location 2', value: 'banana'},
   ]);
   return (
-    <View style={styles.container}>
-      <View style={{flex: 0.5}} />
-      <View style={{flex: 1.5, flexDirection: 'row'}}>
-        <View style={{flex: 1}} />
-        <View style={{flex: 1}}>
-          <Image source={require('../assets/images/logo.png')} />
-        </View>
-        <View style={{flex: 1}} />
-      </View>
-      <View style={{flex: 4, flexDirection: 'column'}}>
-        <View style={{flex: 5, alignItems: 'center'}}>
+    <KeyboardAwareScrollView>
+      <SafeAreaView
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+        }}>
+        <View style={{marginHorizontal: '5%'}}>
+          <View style={{alignItems: 'center'}}>
+            <Image
+              source={require('../assets/images/logo.png')}
+              style={{width: 75, height: 75}}
+            />
+          </View>
+          <Text
+            style={{
+              fontFamily: 'Roboto-Medium',
+              fontSize: 24,
+              fontWeight: '500',
+              color: '#333',
+              marginBottom: 30,
+            }}>
+            Register
+          </Text>
           <TextInput style={styles.input} placeholder="First Name" />
           <TextInput style={styles.input} placeholder="Last Name" />
           <TextInput style={styles.input} placeholder="Enter you email" />
           <TextInput style={styles.input} placeholder="Enter you password" />
           <TextInput style={styles.input} placeholder="Confirm password" />
-          <DropDownPicker
-            placeholder="Select a Location"
-            style={{
-              alignSelf: 'center',
-              borderColor: '#FA8C00',
-            }}
-            containerStyle={{
-              width: '70%',
-              backgroundColor: '#fff',
-            }}
-            open={open}
-            value={value}
-            items={items}
-            setOpen={setOpen}
-            setValue={setValue}
-            setItems={setItems}
+        </View>
+        <View
+          style={{
+            flexDirection: 'row',
+            borderColor: '#000',
+            borderWidth: 1,
+            borderRadius: 5,
+            width: '100%',
+            alignItems: 'center',
+          }}>
+          <MaterialIcon name="alternate-email" size={20} />
+          <TextInput
+            placeholder="Enter Email ID"
+            style={{padding: 0, justifyContent: 'center'}}
           />
         </View>
+
+        {/* <DropDownPicker
+              placeholder="Select a Location"
+              style={{
+                alignSelf: 'center',
+                borderColor: '#FA8C00',
+              }}
+              containerStyle={{
+                width: '70%',
+                backgroundColor: '#fff',
+              }}
+              open={open}
+              value={value}
+              items={items}
+              setOpen={setOpen}
+              setValue={setValue}
+              setItems={setItems}
+            /> */}
+
         <View style={{flex: 1}}>
           <Button
             btnTitle={'Sign up'}
@@ -54,9 +90,8 @@ export default function Signup() {
             btnTextStyle={styles.btnTitle}
           />
         </View>
-      </View>
-      <View style={{flex: 0.5}} />
-    </View>
+      </SafeAreaView>
+    </KeyboardAwareScrollView>
   );
 }
 
