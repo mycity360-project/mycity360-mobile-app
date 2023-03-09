@@ -60,19 +60,19 @@ export default function Signup() {
               <TextInput
                 placeholder="Enter you email"
                 style={styles.input}
-                autoCapitalize={false}
+                autoCapitalize={'none'}
               />
               <TextInput
                 style={styles.input}
                 placeholder="Enter your password"
                 secureTextEntry={true}
-                autoCapitalize={false}
+                autoCapitalize={'none'}
               />
               <TextInput
                 style={styles.input}
                 placeholder="Confirm password"
                 secureTextEntry={true}
-                autoCapitalize={false}
+                autoCapitalize={'none'}
               />
 
               <Button
