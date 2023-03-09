@@ -2,6 +2,7 @@ import {StyleSheet, Text, View, Pressable} from 'react-native';
 import React from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {button} from '../constants/style';
+import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 
 /**
  *
@@ -10,7 +11,7 @@ import {button} from '../constants/style';
  * @returns {ButtonComponent}
  */
 
-export default function Button(props) {
+export default function BackButton() {
   /**
    * TODO: Different type of button PrimaryButton and Non-primary button
    * TODO: Click event or navigation event
@@ -19,30 +20,27 @@ export default function Button(props) {
    *
    */
 
-  const {btnTitle, screenName} = props;
-
   const navigation = useNavigation();
   return (
-    <View style={style.container}>
+    <View style={styles.container}>
       <Pressable
-        style={style.btn}
-        onPress={() => navigation.navigate(`${screenName}`)}
+        style={styles.btn}
+        onPress={() => navigation.goBack()}
         hitSlop={{bottom: 5, left: 5, right: 5, top: 5}}>
-        <Text style={style.btnTitle}>{btnTitle}</Text>
+        <MaterialIcon name="arrow-back" size={23} color={'#FFF'} />
       </Pressable>
     </View>
   );
 }
 
-const style = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     padding: 10,
   },
   btn: {
     backgroundColor: button.buttonColor,
-    borderRadius: 15,
+    borderRadius: 12,
     padding: 10,
-    width: '20%',
-    marginHorizontal: '25%',
+    width: '14%',
   },
 });

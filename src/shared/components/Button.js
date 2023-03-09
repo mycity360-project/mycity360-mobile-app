@@ -1,7 +1,7 @@
 import {StyleSheet, Text, View, Pressable} from 'react-native';
 import React from 'react';
 import {useNavigation} from '@react-navigation/native';
-import {button} from '../constants/style';
+import style, {button} from '../constants/style';
 
 /**
  *
@@ -19,22 +19,22 @@ export default function Button(props) {
    *
    */
 
-  const {btnTitle, screenName} = props;
+  const {btnTitle, screenName, style} = props;
 
   const navigation = useNavigation();
   return (
-    <View style={style.container}>
+    <View style={styles.container}>
       <Pressable
-        style={style.btn}
+        style={[styles.btn, style]}
         onPress={() => navigation.navigate(`${screenName}`)}
         hitSlop={{bottom: 5, left: 5, right: 5, top: 5}}>
-        <Text style={style.btnTitle}>{btnTitle}</Text>
+        <Text style={styles.btnTitle}>{btnTitle}</Text>
       </Pressable>
     </View>
   );
 }
 
-const style = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     padding: 10,
   },
