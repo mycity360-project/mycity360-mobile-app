@@ -10,11 +10,11 @@ import {
   Keyboard,
 } from 'react-native';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
-import DropDownPicker from 'react-native-dropdown-picker';
+
 import React, {useState} from 'react';
 import Button from '../shared/components/Button';
 import BackButton from '../shared/components/BackButton';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+
 import DropDown from '../shared/components/DropDown';
 export default function Signup() {
   const [open, setOpen] = useState(false);
@@ -25,76 +25,71 @@ export default function Signup() {
   ]);
   return (
     <SafeAreaView style={styles.container}>
-      <KeyboardAwareScrollView
-        enableOnAndroid={true}
-        scrollEnabled={true}
-        contentContainerStyle={{flexGrow: 1}}>
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <View style={styles.innerContainer}>
-            <View style={styles.header}>
-              <BackButton />
-            </View>
-
-            <View style={styles.registerFormContainer}>
-              <Text style={styles.registerFormHeading}>Register</Text>
-              <View style={styles.nameInputContainer}>
-                <TextInput
-                  style={[
-                    styles.nameInput,
-                    styles.inputCommon,
-                    {marginLeft: '10%'},
-                  ]}
-                  placeholder="First Name"
-                />
-                <TextInput
-                  placeholder="Last Name"
-                  style={[
-                    styles.nameInput,
-                    styles.inputCommon,
-                    {marginRight: '10%'},
-                  ]}
-                />
-              </View>
-
-              <TextInput
-                placeholder="Enter Mobile Number"
-                style={[styles.input, styles.inputCommon]}
-              />
-              <TextInput
-                placeholder="Enter you email"
-                style={[styles.input, styles.inputCommon]}
-                autoCapitalize={'none'}
-              />
-              <TextInput
-                style={[styles.input, styles.inputCommon]}
-                placeholder="Enter your password"
-                secureTextEntry={true}
-                autoCapitalize={'none'}
-              />
-              <TextInput
-                style={[styles.input, styles.inputCommon]}
-                placeholder="Confirm password"
-                secureTextEntry={true}
-                autoCapitalize={'none'}
-              />
-              <DropDown
-                dropdownType="Select Location"
-                dataArr={['India', 'America', 'Russia', 'Japan', 'China']}
-              />
-              <DropDown
-                dropdownType="Select Area"
-                dataArr={['India', 'America', 'Russia', 'Japan', 'China']}
-              />
-              <Button
-                btnTitle={'Sign Up'}
-                screenName={'VerifyOtp'}
-                style={styles.registerBtn}
-                icon="arrow-forward"
-              />
-            </View>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View style={styles.innerContainer}>
+          <View style={styles.header}>
+            <BackButton />
           </View>
-        </TouchableWithoutFeedback>
-      </KeyboardAwareScrollView>
+
+          <View style={styles.registerFormContainer}>
+            <Text style={styles.registerFormHeading}>Register</Text>
+            <View style={styles.nameInputContainer}>
+              <TextInput
+                style={[
+                  styles.nameInput,
+                  styles.inputCommon,
+                  {marginLeft: '10%'},
+                ]}
+                placeholder="First Name"
+              />
+              <TextInput
+                placeholder="Last Name"
+                style={[
+                  styles.nameInput,
+                  styles.inputCommon,
+                  {marginRight: '10%'},
+                ]}
+              />
+            </View>
+
+            <TextInput
+              placeholder="Enter Mobile Number"
+              style={[styles.input, styles.inputCommon]}
+            />
+            <TextInput
+              placeholder="Enter you email"
+              style={[styles.input, styles.inputCommon]}
+              autoCapitalize={'none'}
+            />
+            <TextInput
+              style={[styles.input, styles.inputCommon]}
+              placeholder="Enter your password"
+              secureTextEntry={true}
+              autoCapitalize={'none'}
+            />
+            <TextInput
+              style={[styles.input, styles.inputCommon]}
+              placeholder="Confirm password"
+              secureTextEntry={true}
+              autoCapitalize={'none'}
+            />
+            <DropDown
+              dropdownType="Select Location"
+              dataArr={['India', 'America', 'Russia', 'Japan', 'China']}
+            />
+            <DropDown
+              dropdownType="Select Area"
+              dataArr={['India', 'America', 'Russia', 'Japan', 'China']}
+            />
+            <Button
+              btnTitle={'Sign Up'}
+              screenName={'VerifyOtp'}
+              style={styles.registerBtn}
+              icon="arrow-forward"
+            />
+          </View>
+        </View>
+      </TouchableWithoutFeedback>
     </SafeAreaView>
   );
 }
@@ -111,7 +106,8 @@ const styles = StyleSheet.create({
 
   registerFormContainer: {
     flex: 4,
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
+    marginTop: '4%',
   },
   registerFormHeading: {
     fontSize: 24,
