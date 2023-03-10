@@ -60,6 +60,7 @@ export default function Login() {
                 btnTitle="Login"
                 screenName="VerifyOtp"
                 style={styles.loginBtn}
+                icon="arrow-forward"
               />
             </View>
           </View>
@@ -72,7 +73,7 @@ export default function Login() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#E5E5E5',
+    backgroundColor: '#FFF',
   },
   innerContainer: {
     flex: 1,
@@ -90,13 +91,13 @@ const styles = StyleSheet.create({
 
   input: {
     width: '76%',
-    marginTop: 20,
+    marginTop: '3%',
     marginHorizontal: '12%',
-    borderWidth: 0.5,
-    borderColor: '#FA8C00',
-    backgroundColor: '#FFF',
+    backgroundColor: '#EFEFEF',
     borderRadius: 20,
     padding: 10,
+    elevation: 5, //Android Only
+    shadowRadius: 5, // IOS Only
   },
   logoName: {
     color: '#FA8C00',
@@ -104,6 +105,6 @@ const styles = StyleSheet.create({
     padding: 5,
   },
   loginBtn: {
-    marginTop: '5%',
+    marginTop: '2%',
   },
 });

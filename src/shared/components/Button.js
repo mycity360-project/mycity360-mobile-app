@@ -2,6 +2,7 @@ import {StyleSheet, Text, View, Pressable} from 'react-native';
 import React from 'react';
 import {useNavigation} from '@react-navigation/native';
 import style, {button} from '../constants/style';
+import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 
 /**
  *
@@ -19,7 +20,7 @@ export default function Button(props) {
    *
    */
 
-  const {btnTitle, screenName, style} = props;
+  const {btnTitle, screenName, style, icon} = props;
 
   const navigation = useNavigation();
   return (
@@ -28,7 +29,10 @@ export default function Button(props) {
         style={[styles.btn, style]}
         onPress={() => navigation.navigate(`${screenName}`)}
         hitSlop={{bottom: 5, left: 5, right: 5, top: 5}}>
-        <Text style={styles.btnTitle}>{btnTitle}</Text>
+        <View style={styles.btnTitleContainer}>
+          <Text style={styles.btnTitle}>{btnTitle}</Text>
+          <MaterialIcon name={icon} size={20} color={'#FFF'} />
+        </View>
       </Pressable>
     </View>
   );
@@ -45,9 +49,14 @@ const styles = StyleSheet.create({
     width: '50%',
     marginHorizontal: '25%',
   },
+  btnTitleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 5,
+  },
   btnTitle: {
-    fontSize: 18,
+    fontSize: 20,
     color: '#FFF',
-    textAlign: 'center',
   },
 });
