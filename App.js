@@ -6,41 +6,14 @@
  */
 
 import React from 'react';
-import {View} from 'react-native';
-import {NavigationContainer} from '@react-navigation/native';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {AuthProvider} from './src/context/AuthContext';
+import AppNav from './src/navigation/AppNav';
 
-import HomeScreen from './src/screens/HomeScreen';
-import SignUp from './src/screens/SignUp';
-import Login from './src/screens/Login';
-import VerifyOtp from './src/screens/VerifyOtp';
-const Stack = createNativeStackNavigator();
 function App() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen
-          name="Home"
-          component={HomeScreen}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen
-          name="SignUp"
-          component={SignUp}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen
-          name="Login"
-          component={Login}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen
-          name="VerifyOtp"
-          component={VerifyOtp}
-          options={{headerShown: false}}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <AuthProvider>
+      <AppNav />
+    </AuthProvider>
   );
 }
 

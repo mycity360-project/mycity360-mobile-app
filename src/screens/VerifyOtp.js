@@ -1,17 +1,20 @@
 import {StyleSheet, View, Image, TextInput} from 'react-native';
 import React from 'react';
-import Button from '../shared/components/Button';
-import BackButton from '../shared/components/BackButton';
-
+import CustomButton from '../shared/components/CustomButton';
+import {useNavigation} from '@react-navigation/native';
 export default function VerifyOtp() {
+  const navigation = useNavigation();
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <BackButton />
+        <CustomButton btnType="back" onpress={() => navigation.goBack()} />
       </View>
       <View style={styles.formContainer}>
         <TextInput style={styles.input} placeholder="Enter Mobile OTP" />
-        <Button btnTitle={'Verify'} screenName={'Home'} />
+        <CustomButton
+          btnTitle={'Verify'}
+          onpress={() => navigation.navigate('OnBoarding')}
+        />
       </View>
     </View>
   );

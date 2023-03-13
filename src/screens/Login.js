@@ -3,69 +3,76 @@ import {
   View,
   Image,
   TextInput,
-  Pressable,
   SafeAreaView,
   Text,
   TouchableWithoutFeedback,
   Keyboard,
+  TouchableOpacity,
 } from 'react-native';
-import React from 'react';
-import Button from '../shared/components/Button';
-import BackButton from '../shared/components/BackButton';
-import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import {React, useContext, useState} from 'react';
+import CustomButton from '../shared/components/CustomButton';
+
+import {AuthContext} from '../context/AuthContext';
 import {useNavigation} from '@react-navigation/native';
 
 export default function Login() {
-  // const navigation = useNavigation();
+  const {login} = useContext(AuthContext);
+  const [email, setEmail] = useState(null);
+  const [password, setPassword] = useState(null);
+  const [showVerifyOtpScreen, setShowVerifyOtpScreen] = useState(false);
+  const navigation = useNavigation();
   return (
     <SafeAreaView style={styles.container}>
-      <KeyboardAwareScrollView
-        enableOnAndroid={true}
-        scrollEnabled={true}
-        extraHeight={150}
-        contentContainerStyle={{flexGrow: 1}}>
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <View style={styles.innerContainer}>
-            <View style={styles.header}>
-              <BackButton />
-            </View>
-            <View style={styles.imgContainer}>
-              <Image
-                source={require('../assets/images/logo.png')}
-                style={{width: 75, height: 75}}
-              />
-              <Text style={styles.logoName}>MyCity360</Text>
-            </View>
-            <View style={styles.loginFormContainer}>
-              <Text
-                style={{
-                  fontSize: 24,
-                  fontWeight: '400',
-                  color: '#FF8C00',
-                  textAlign: 'center',
-                }}>
-                Login
-              </Text>
-              <TextInput
-                placeholder="Enter Mobile Number / Email"
-                style={styles.input}
-              />
-              <TextInput
-                placeholder="Enter Password"
-                style={styles.input}
-                secureTextEntry={true}
-              />
-              <Button
-                btnTitle="Login"
-                screenName="VerifyOtp"
-                style={styles.loginBtn}
-                icon="arrow-forward"
-              />
-            </View>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View style={styles.innerContainer}>
+          <View style={styles.header}>
+            <CustomButton btnType="back" onpress={() => navigation.goBack()} />
           </View>
-        </TouchableWithoutFeedback>
-      </KeyboardAwareScrollView>
+          <View style={styles.imgContainer}>
+            <Image
+              source={require('../assets/images/logo.png')}
+              style={{width: 75, height: 75}}
+            />
+            <Text style={styles.logoName}>MyCity360</Text>
+          </View>
+          <View style={styles.loginFormContainer}>
+            <Text
+              style={{
+                fontSize: 24,
+                fontWeight: '400',
+                color: '#FF8C00',
+                textAlign: 'center',
+              }}>
+              Login
+            </Text>
+            <TextInput
+              placeholder="Enter Mobile Number / Email"
+              style={styles.input}
+              onChangeText={text => {
+                setEmail(text);
+              }}
+            />
+            <TextInput
+              placeholder="Enter Password"
+              style={styles.input}
+              secureTextEntry={true}
+              onChangeText={text => {
+                setPassword(text);
+              }}
+            />
+            <CustomButton
+              btnTitle="Login"
+              onpress={async () => {
+                (await login(email, password))
+                  ? navigation.navigate('VerifyOtp')
+                  : '';
+              }}
+              style={styles.loginBtn}
+              icon="arrow-forward"
+            />
+          </View>
+        </View>
+      </TouchableWithoutFeedback>
     </SafeAreaView>
   );
 }

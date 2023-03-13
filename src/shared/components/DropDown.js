@@ -47,7 +47,8 @@ export default function DropDown(props) {
             onChangeText={txt => {
               onSearch(txt);
             }}
-            style={styles.searchInput}></TextInput>
+            style={styles.searchInput}
+          />
           <FlatList
             data={data}
             renderItem={({item, index}) => {
@@ -62,7 +63,8 @@ export default function DropDown(props) {
                   <Text>{item}</Text>
                 </TouchableOpacity>
               );
-            }}></FlatList>
+            }}
+          />
         </View>
       ) : null}
     </View>

@@ -1,7 +1,7 @@
 import {StyleSheet, Text, View, Image, SafeAreaView} from 'react-native';
 import React from 'react';
-import {Button} from '../shared/components';
-export default function HomeScreen({navigation}) {
+import CustomButton from '../shared/components/CustomButton';
+export default function OnBoarding({navigation}) {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}></View>
@@ -14,12 +14,16 @@ export default function HomeScreen({navigation}) {
       </View>
 
       <View style={styles.btnContainer}>
-        <Button
+        <CustomButton
           btnTitle={'Sign Up'}
-          screenName={'SignUp'}
+          onpress={() => navigation.navigate('SignUp')}
           icon="arrow-forward"
         />
-        <Button btnTitle={'Login'} screenName={'Login'} icon="arrow-forward" />
+        <CustomButton
+          btnTitle={'Login'}
+          onpress={() => navigation.navigate('Login')}
+          icon="arrow-forward"
+        />
       </View>
     </SafeAreaView>
   );

@@ -1,7 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import {
   StyleSheet,
-  Image,
   View,
   Text,
   TextInput,
@@ -9,26 +8,18 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from 'react-native';
-import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
-
-import React, {useState} from 'react';
-import Button from '../shared/components/Button';
-import BackButton from '../shared/components/BackButton';
-
+import React from 'react';
+import CustomButton from '../shared/components/CustomButton';
 import DropDown from '../shared/components/DropDown';
+import {useNavigation} from '@react-navigation/native';
 export default function Signup() {
-  const [open, setOpen] = useState(false);
-  const [value, setValue] = useState(null);
-  const [items, setItems] = useState([
-    {label: 'Location 1', value: 'apple'},
-    {label: 'Location 2', value: 'banana'},
-  ]);
+  const navigation = useNavigation();
   return (
     <SafeAreaView style={styles.container}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.innerContainer}>
           <View style={styles.header}>
-            <BackButton />
+            <CustomButton btnType="back" onpress={() => navigation.goBack()} />
           </View>
 
           <View style={styles.registerFormContainer}>
@@ -81,9 +72,9 @@ export default function Signup() {
               dropdownType="Select Area"
               dataArr={['India', 'America', 'Russia', 'Japan', 'China']}
             />
-            <Button
+            <CustomButton
               btnTitle={'Sign Up'}
-              screenName={'VerifyOtp'}
+              onpress={() => navigation.navigate('VerifyOtp')}
               style={styles.registerBtn}
               icon="arrow-forward"
             />
