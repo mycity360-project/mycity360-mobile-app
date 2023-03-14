@@ -19,12 +19,12 @@ export default function CustomButton(props) {
    *
    */
 
-  const {btnTitle, onpress, style, icon, btnType} = props;
+  const {btnTitle, onpress, style, textStyle, icon, btnType} = props;
   const navigation = useNavigation();
   let btnStyle = [styles.btn, style];
   let btnView = (
     <View style={styles.btnTitleContainer}>
-      <Text style={styles.btnTitle}>{btnTitle}</Text>
+      <Text style={[styles.btnTitle, textStyle]}>{btnTitle}</Text>
       <MaterialIcon name={icon} size={20} color={'#FFF'} />
     </View>
   );
@@ -53,8 +53,7 @@ const styles = StyleSheet.create({
     backgroundColor: button.buttonColor,
     borderRadius: 15,
     padding: 10,
-    width: '50%',
-    marginHorizontal: '25%',
+    width: '40%',
   },
   backBtn: {
     backgroundColor: button.buttonColor,

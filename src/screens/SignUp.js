@@ -46,11 +46,13 @@ export default function Signup() {
             <TextInput
               placeholder="Enter Mobile Number"
               style={[styles.input, styles.inputCommon]}
+              keyboardType="numeric"
             />
             <TextInput
               placeholder="Enter you email"
               style={[styles.input, styles.inputCommon]}
               autoCapitalize={'none'}
+              keyboardType="email-address"
             />
             <TextInput
               style={[styles.input, styles.inputCommon]}
