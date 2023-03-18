@@ -1,7 +1,6 @@
 import {React, createContext, useState, useEffect} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import axios from 'axios';
-import clientid from '../shared/clientid';
+import {http} from '../shared/lib';
 
 export const AuthContext = createContext();
 
@@ -14,17 +13,12 @@ export const AuthProvider = ({children}) => {
     const data = {
       email: username,
       password: password,
-      client_id: 'IwVuiUsLcQmZ9eTpzf6RYgPCUDxWjdmDPTWMCMRH',
     };
-    // console.log(data);
 
     try {
-      let respData = await axios.post(
-        'http://192.168.29.5:8000/api/v1/user/login/',
-        data,
-      );
-      // console.log(typeof respData.data.is_email_verified);
-      const token = respData.data.access_token;
+      let respData = await http.post('user/login/', data);
+      console.log(respData);
+      const token = respData.access_token;
       if (token) {
         setUserToken(token);
         AsyncStorage.setItem('userToken', token);

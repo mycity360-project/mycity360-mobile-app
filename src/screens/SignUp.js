@@ -1,4 +1,3 @@
-/* eslint-disable react-native/no-inline-styles */
 import {
   StyleSheet,
   View,
@@ -8,12 +7,38 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from 'react-native';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import CustomButton from '../shared/components/CustomButton';
 import DropDown from '../shared/components/DropDown';
 import {useNavigation} from '@react-navigation/native';
-export default function Signup() {
+import {http} from '../shared/lib';
+
+export default function SignUp() {
   const navigation = useNavigation();
+  const [locations, setLocations] = useState([]);
+
+  const getLocation = async () => {
+    try {
+      let respData = await http({
+        method: 'GET',
+        url: '/location/public/?isactive=true',
+      });
+
+      const locationsData = respData.map(location => ({
+        key: location.id.toString(),
+        value: location.name,
+      }));
+      console.log(locationsData);
+      setLocations(locationsData);
+    } catch (error) {
+      console.log('Something went wrong while fetching locations');
+    }
+  };
+
+  useEffect(() => {
+    getLocation();
+  }, []);
+
   return (
     <SafeAreaView style={styles.container}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -66,10 +91,7 @@ export default function Signup() {
               secureTextEntry={true}
               autoCapitalize={'none'}
             />
-            <DropDown
-              dropdownType="Select Location"
-              dataArr={['India', 'America', 'Russia', 'Japan', 'China']}
-            />
+            <DropDown placeholder="Select Location" data={locations} />
             <DropDown
               dropdownType="Select Area"
               dataArr={['India', 'America', 'Russia', 'Japan', 'China']}
@@ -123,6 +145,8 @@ const styles = StyleSheet.create({
   },
   registerBtn: {
     marginTop: '2%',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   nameInputContainer: {
     flexDirection: 'row',
