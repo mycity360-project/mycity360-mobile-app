@@ -6,6 +6,7 @@ import {
   SafeAreaView,
   TouchableWithoutFeedback,
   Keyboard,
+  ActivityIndicator,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import CustomButton from '../shared/components/CustomButton';
@@ -13,33 +14,44 @@ import DropDown from '../shared/components/DropDown';
 import {useNavigation} from '@react-navigation/native';
 import {http} from '../shared/lib';
 
+const delay = delayInms => {
+  return new Promise(resolve => setTimeout(resolve, delayInms));
+};
+
 export default function SignUp() {
   const navigation = useNavigation();
   const [locations, setLocations] = useState([]);
-
-  const getLocation = async () => {
-    try {
-      let respData = await http({
-        method: 'GET',
-        url: '/location/public/?isactive=true',
-      });
-
-      const locationsData = respData.map(location => ({
-        key: location.id.toString(),
-        value: location.name,
-      }));
-      console.log(locationsData);
-      setLocations(locationsData);
-    } catch (error) {
-      console.log('Something went wrong while fetching locations');
-    }
-  };
+  const [isLoading, setIsLoading] = useState(false);
+  const [selectedLocation, setSelectedLocation] = useState('');
 
   useEffect(() => {
-    getLocation();
+    const getLocations = async () => {
+      setIsLoading(true);
+      try {
+        let respData = await http({
+          method: 'GET',
+          url: '/location/public/?isactive=true',
+        });
+
+        const locationsData = respData.map(location => ({
+          key: location.id.toString(),
+          value: location.name,
+        }));
+        console.log(locationsData);
+        setLocations(locationsData);
+      } catch (error) {
+        console.log('Something went wrong while fetching locations');
+      }
+      setIsLoading(false);
+    };
+    getLocations();
   }, []);
 
-  return (
+  return isLoading ? (
+    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+      <ActivityIndicator size={'large'} />
+    </View>
+  ) : (
     <SafeAreaView style={styles.container}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.innerContainer}>
@@ -91,9 +103,14 @@ export default function SignUp() {
               secureTextEntry={true}
               autoCapitalize={'none'}
             />
-            <DropDown placeholder="Select Location" data={locations} />
             <DropDown
-              dropdownType="Select Area"
+              placeholder="Select Location"
+              data={locations}
+              onSelect={setSelectedLocation}
+              selectedValue={selectedLocation}
+            />
+            <DropDown
+              placeholder="Select Area"
               dataArr={['India', 'America', 'Russia', 'Japan', 'China']}
             />
             <CustomButton

@@ -11,7 +11,7 @@ import {React, useState} from 'react';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 
 export default function DropDown(props) {
-  const {placeholder, data: dataArr} = props;
+  const {placeholder, data: dataArr, onSelect, selectedValue} = props;
   const [selected, setSelected] = useState(`${placeholder}`);
   const [isClicked, setIsClicked] = useState(false);
   const [data, setData] = useState(dataArr);
@@ -55,7 +55,7 @@ export default function DropDown(props) {
                 <TouchableOpacity
                   style={styles.itemList}
                   onPress={() => {
-                    setSelected(item.key);
+                    setSelected(item);
                     onSearch('');
                     setIsClicked(false);
                   }}>
