@@ -8,46 +8,64 @@ import {
   TextInput,
   Image,
   TouchableOpacity,
-  FlatList,
-  SectionList,
   ScrollView,
+  FlatList,
+  Dimensions,
 } from 'react-native';
-import {React, useCallback, useContext} from 'react';
+import {React, useCallback, useContext, useState} from 'react';
 import {AuthContext} from '../context/AuthContext';
 import CustomButton from '../shared/components/CustomButton';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 
 export default function Home() {
   const {logout} = useContext(AuthContext);
+
   const data = [
-    {key: 1, title: 'Bike', imgUri: require('../assets/icons/bike.png')},
     {
-      key: 2,
+      key: '1',
       title: 'Electronics',
-      imgUri: require('../assets/icons/electronics.png'),
+      icon: 'live-tv',
+      onpress: () => alert('Tv'),
     },
-    {key: 3, title: 'Mobile', imgUri: require('../assets/icons/mobile.png')},
     {
-      key: 4,
-      title: 'Properties',
-      imgUri: require('../assets/icons/properties.png'),
+      key: '2',
+      title: 'Bike',
+      icon: 'two-wheeler',
+      onpress: () => alert('bike'),
     },
-    {key: 5, title: 'Jobs', imgUri: require('../assets/icons/jobs.png')},
-    {key: 6, title: 'Jobs', imgUri: require('../assets/icons/jobs.png')},
-    {key: 7, title: 'Jobs', imgUri: require('../assets/icons/jobs.png')},
+    {key: '3', title: 'Mobile', icon: 'phone-android'},
+    {
+      key: '4',
+      title: 'Properties',
+      icon: 'house',
+    },
+    {key: '5', title: 'Jobs', icon: 'work-outline'},
+    {key: '6', title: 'Jobs', icon: 'work-outline'},
+    {key: '7', title: 'Jobs', icon: 'work-outline'},
     {
       key: 8,
       title: 'Electronics',
-      imgUri: require('../assets/icons/electronics.png'),
+      icon: 'live-tv',
     },
-    {key: 9, title: 'Mobile', imgUri: require('../assets/icons/mobile.png')},
-    {
-      key: 10,
-      title: 'Properties',
-      imgUri: require('../assets/icons/properties.png'),
-    },
+    {key: 9, title: 'Mobile', icon: 'phone-android'},
+    {key: 10, title: 'Mobile', icon: 'phone-android'},
   ];
-
+  const renderItem = useCallback(
+    ({item}) => (
+      <TouchableOpacity style={styles.category} onPress={item.onpress}>
+        <MaterialIcon name={item.icon} size={43} color={'#000'} />
+        <Text style={{fontSize: 16, color: '#111'}}>{item.title}</Text>
+      </TouchableOpacity>
+    ),
+    [],
+  );
+  const ITEM_WIDTH = 90;
+  const getItemLayout = (_, index) => ({
+    length: ITEM_WIDTH,
+    offset: ITEM_WIDTH * index,
+    index,
+  });
+  const width = Dimensions.get('window').width;
   return (
     <SafeAreaView style={styles.container}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -91,24 +109,33 @@ export default function Home() {
             </View>
           </View>
           <View style={styles.categoryContainer}>
-            <TouchableOpacity style={styles.sellContainer}>
-              <Image
-                source={require('../assets/icons/Sell.png')}
-                style={{width: 30, height: 30}}
+            <TouchableOpacity style={styles.sellBtn}>
+              <MaterialIcon
+                name="add-circle-outline"
+                color={'#FF8C00'}
+                size={40}
               />
-              <Text style={{fontSize: 16, fontWeight: 500, color: '#111'}}>
-                Sell
-              </Text>
+              <Text style={{fontSize: 18, color: '#000'}}>Sell</Text>
             </TouchableOpacity>
 
-            <ScrollView
+            <FlatList
+              horizontal={true}
+              data={data}
+              renderItem={renderItem}
+              showsHorizontalScrollIndicator={false}
+              getItemLayout={getItemLayout}
+              initialNumToRender={5}
+              maxToRenderPerBatch={5}
+            />
+
+            {/* <ScrollView
               horizontal
-              decelerationRate={'normal'}
+              decelerationRate={'fast'}
               showsHorizontalScrollIndicator={false}>
               {data.map(item => {
                 return (
                   <View key={item.key} style={styles.categoryList}>
-                    <Image source={item.imgUri} style={styles.categoryImg} />
+                    <MaterialIcon name={item.icon} size={23} color={'#000'} />
                     <Text
                       style={{fontSize: 16, fontWeight: 500, color: '#111'}}>
                       {item.title}
@@ -116,7 +143,7 @@ export default function Home() {
                   </View>
                 );
               })}
-            </ScrollView>
+            </ScrollView> */}
           </View>
 
           <View style={styles.featuredAds}></View>
@@ -131,25 +158,21 @@ const styles = StyleSheet.create({
   container: {flex: 1},
   innerContainer: {
     flex: 1,
-    // backgroundColor: '#456235',
   },
   header: {
     flex: 0.7,
-    // backgroundColor: '#982019',
   },
   btnConatiner: {
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    // backgroundColor: '#000',
   },
   searchBarContainer: {
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    // backgroundColor: '#444',
   },
   searchInput: {
     width: '85%',
@@ -164,26 +187,21 @@ const styles = StyleSheet.create({
     marginRight: '40%',
   },
   categoryContainer: {
-    flex: 0.4,
+    flex: 0.5,
     flexDirection: 'row',
-    // backgroundColor: '#456490',
-    padding: 5,
-    gap: 5,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
-  sellContainer: {
+  sellBtn: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '15%',
     marginLeft: '1%',
-    alignItems: 'center',
-    // backgroundColor: '#555',
-    width: '12%',
   },
-  categoryList: {
+  category: {
+    width: 80,
     alignItems: 'center',
     justifyContent: 'center',
-    marginLeft: 14,
   },
-  categoryImg: {width: 30, height: 30},
+  categoryImg: {width: 35, height: 35},
   featuredAds: {flex: 3},
   btmTab: {flex: 1},
 });
