@@ -1,4 +1,3 @@
-/* eslint-disable react-native/no-inline-styles */
 import {
   StyleSheet,
   View,
@@ -7,14 +6,52 @@ import {
   SafeAreaView,
   TouchableWithoutFeedback,
   Keyboard,
+  ActivityIndicator,
 } from 'react-native';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import CustomButton from '../shared/components/CustomButton';
 import DropDown from '../shared/components/DropDown';
 import {useNavigation} from '@react-navigation/native';
-export default function Signup() {
+import {http} from '../shared/lib';
+
+const delay = delayInms => {
+  return new Promise(resolve => setTimeout(resolve, delayInms));
+};
+
+export default function SignUp() {
   const navigation = useNavigation();
-  return (
+  const [locations, setLocations] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [selectedLocation, setSelectedLocation] = useState('');
+
+  useEffect(() => {
+    const getLocations = async () => {
+      setIsLoading(true);
+      try {
+        let respData = await http({
+          method: 'GET',
+          url: '/location/public/?isactive=true',
+        });
+
+        const locationsData = respData.map(location => ({
+          key: location.id.toString(),
+          value: location.name,
+        }));
+        console.log(locationsData);
+        setLocations(locationsData);
+      } catch (error) {
+        console.log('Something went wrong while fetching locations');
+      }
+      setIsLoading(false);
+    };
+    getLocations();
+  }, []);
+
+  return isLoading ? (
+    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+      <ActivityIndicator size={'large'} />
+    </View>
+  ) : (
     <SafeAreaView style={styles.container}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.innerContainer}>
@@ -67,11 +104,13 @@ export default function Signup() {
               autoCapitalize={'none'}
             />
             <DropDown
-              dropdownType="Select Location"
-              dataArr={['India', 'America', 'Russia', 'Japan', 'China']}
+              placeholder="Select Location"
+              data={locations}
+              onSelect={setSelectedLocation}
+              selectedValue={selectedLocation}
             />
             <DropDown
-              dropdownType="Select Area"
+              placeholder="Select Area"
               dataArr={['India', 'America', 'Russia', 'Japan', 'China']}
             />
             <CustomButton
@@ -123,6 +162,8 @@ const styles = StyleSheet.create({
   },
   registerBtn: {
     marginTop: '2%',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   nameInputContainer: {
     flexDirection: 'row',

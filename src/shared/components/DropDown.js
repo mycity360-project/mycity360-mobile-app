@@ -11,9 +11,8 @@ import {React, useState} from 'react';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 
 export default function DropDown(props) {
-  const dropdownType = props.dropdownType;
-  const dataArr = props.dataArr;
-  const [selected, setSelected] = useState(`${dropdownType}`);
+  const {placeholder, data: dataArr, onSelect, selectedValue} = props;
+  const [selected, setSelected] = useState(`${placeholder}`);
   const [isClicked, setIsClicked] = useState(false);
   const [data, setData] = useState(dataArr);
   const onSearch = txt => {
@@ -60,10 +59,14 @@ export default function DropDown(props) {
                     onSearch('');
                     setIsClicked(false);
                   }}>
-                  <Text>{item}</Text>
+                  <Text>{item.value}</Text>
                 </TouchableOpacity>
               );
             }}
+            // renderItem={({item}) => {
+            //   <Text>{item.value}</Text>;
+            // }}
+            // keyExtractor={item => item.key}
           />
         </View>
       ) : null}

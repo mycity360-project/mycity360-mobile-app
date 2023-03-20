@@ -1,16 +1,19 @@
 import {StyleSheet, Text, View, Image, SafeAreaView} from 'react-native';
 import React from 'react';
 import CustomButton from '../shared/components/CustomButton';
+import {APP_TITLE} from '@env';
+
 export default function OnBoarding({navigation}) {
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}></View>
+      <View style={styles.header} />
+
       <View style={styles.imgContainer}>
         <Image
           source={require('../assets/images/logo.png')}
           style={styles.logoImg}
         />
-        <Text style={styles.logoName}>MyCity360</Text>
+        <Text style={styles.logoName}>{APP_TITLE}</Text>
       </View>
 
       <View style={styles.btnContainer}>
@@ -46,5 +49,6 @@ const styles = StyleSheet.create({
   btnContainer: {
     flex: 3,
     justifyContent: 'center',
+    alignItems: 'center',
   },
 });
