@@ -24,26 +24,26 @@ export default function SignUp() {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState('');
 
-  useEffect(() => {
-    const getLocations = async () => {
-      setIsLoading(true);
-      try {
-        let respData = await http({
-          method: 'GET',
-          url: '/location/public/?isactive=true',
-        });
+  const getLocations = async () => {
+    setIsLoading(true);
+    try {
+      let respData = await http({
+        method: 'GET',
+        url: 'location/public/?isactive=true',
+      });
 
-        const locationsData = respData.map(location => ({
-          key: location.id.toString(),
-          value: location.name,
-        }));
-        console.log(locationsData);
-        setLocations(locationsData);
-      } catch (error) {
-        console.log('Something went wrong while fetching locations');
-      }
-      setIsLoading(false);
-    };
+      const locationsData = respData.map(location => ({
+        key: location.id.toString(),
+        value: location.name,
+      }));
+      console.log(locationsData);
+      setLocations(locationsData);
+    } catch (error) {
+      console.log('Something went wrong while fetching locations' + error);
+    }
+    setIsLoading(false);
+  };
+  useEffect(() => {
     getLocations();
   }, []);
 
@@ -103,12 +103,7 @@ export default function SignUp() {
               secureTextEntry={true}
               autoCapitalize={'none'}
             />
-            <DropDown
-              placeholder="Select Location"
-              data={locations}
-              onSelect={setSelectedLocation}
-              selectedValue={selectedLocation}
-            />
+            <DropDown placeholder="Select Location" locationArray={locations} />
             <DropDown
               placeholder="Select Area"
               dataArr={['India', 'America', 'Russia', 'Japan', 'China']}

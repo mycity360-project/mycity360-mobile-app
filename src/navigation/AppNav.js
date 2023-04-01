@@ -4,8 +4,10 @@ import AuthStack from './AuthStack';
 import AppStack from './AppStack';
 import {AuthContext} from '../context/AuthContext';
 import {ActivityIndicator, View} from 'react-native';
+
 export default function AppNav() {
-  const {isLoading, userToken} = useContext(AuthContext);
+  const {isLoading, userToken, showVerifyOtpScreen} = useContext(AuthContext);
+
   if (isLoading) {
     return (
       <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
@@ -15,7 +17,11 @@ export default function AppNav() {
   }
   return (
     <NavigationContainer>
-      {userToken !== null ? <AppStack /> : <AuthStack />}
+      {userToken !== null && !showVerifyOtpScreen ? (
+        <AppStack />
+      ) : (
+        <AuthStack />
+      )}
       {/* <AppStack /> */}
     </NavigationContainer>
   );

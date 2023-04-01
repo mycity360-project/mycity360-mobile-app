@@ -11,9 +11,14 @@ const Stack = createNativeStackNavigator();
 export default function AuthStack() {
   return (
     <Stack.Navigator>
-      <Stack.Screen
+      {/* <Stack.Screen
         name="OnBoarding"
         component={OnBoarding}
+        options={{headerShown: false}}
+      /> */}
+      <Stack.Screen
+        name="Login"
+        component={Login}
         options={{headerShown: false}}
       />
       <Stack.Screen
@@ -21,11 +26,7 @@ export default function AuthStack() {
         component={SignUp}
         options={{headerShown: false}}
       />
-      <Stack.Screen
-        name="Login"
-        component={Login}
-        options={{headerShown: false}}
-      />
+
       <Stack.Screen
         name="VerifyOtp"
         component={VerifyOtp}

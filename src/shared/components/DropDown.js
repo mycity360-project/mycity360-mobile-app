@@ -11,10 +11,10 @@ import {React, useState} from 'react';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 
 export default function DropDown(props) {
-  const {placeholder, data: dataArr, onSelect, selectedValue} = props;
+  const {placeholder, locationArray} = props;
   const [selected, setSelected] = useState(`${placeholder}`);
   const [isClicked, setIsClicked] = useState(false);
-  const [data, setData] = useState(dataArr);
+  const [data, setData] = useState(locationArray);
   const onSearch = txt => {
     if (txt !== '') {
       let tempData = data.filter(item => {
@@ -22,7 +22,7 @@ export default function DropDown(props) {
       });
       setData(tempData);
     } else {
-      setData(dataArr);
+      setData(locationArray);
     }
   };
   return (
@@ -50,12 +50,12 @@ export default function DropDown(props) {
           />
           <FlatList
             data={data}
-            renderItem={({item, index}) => {
+            renderItem={({item}) => {
               return (
                 <TouchableOpacity
                   style={styles.itemList}
                   onPress={() => {
-                    setSelected(item);
+                    setSelected(item.value);
                     onSearch('');
                     setIsClicked(false);
                   }}>
@@ -63,10 +63,7 @@ export default function DropDown(props) {
                 </TouchableOpacity>
               );
             }}
-            // renderItem={({item}) => {
-            //   <Text>{item.value}</Text>;
-            // }}
-            // keyExtractor={item => item.key}
+            extraData={data}
           />
         </View>
       ) : null}

@@ -11,15 +11,13 @@ import {
 } from 'react-native';
 import {React, useContext, useState} from 'react';
 import CustomButton from '../shared/components/CustomButton';
-
 import {AuthContext} from '../context/AuthContext';
 import {useNavigation} from '@react-navigation/native';
 
 export default function Login() {
-  const {login} = useContext(AuthContext);
+  const {login, showVerifyOtpScreen} = useContext(AuthContext);
   const [email, setEmail] = useState(null);
   const [password, setPassword] = useState(null);
-  const [showVerifyOtpScreen, setShowVerifyOtpScreen] = useState(false);
   const navigation = useNavigation();
   return (
     <SafeAreaView style={styles.container}>

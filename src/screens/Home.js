@@ -6,19 +6,78 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   TextInput,
+  FlatList,
   Image,
   TouchableOpacity,
-  ScrollView,
-  FlatList,
-  Dimensions,
+  Pressable,
 } from 'react-native';
 import {React, useCallback, useContext, useState} from 'react';
 import {AuthContext} from '../context/AuthContext';
 import CustomButton from '../shared/components/CustomButton';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 
-export default function Home() {
+export default function Home({navigation}) {
   const {logout} = useContext(AuthContext);
+
+  let adData = [
+    {
+      key: '1',
+      title:
+        'Mobile for resale , used only for 6 months in warranty and in good condition',
+      price: '8000',
+      location: 'Nipania, Indore',
+      image: require('../assets/images/mobile.png'),
+      bgcolor: '#979',
+    },
+    {
+      key: '2',
+      title: 'Mobile for resale',
+      price: '8000',
+      location: 'Nipania, Indore',
+      image: require('../assets/images/mobile.png'),
+      bgcolor: '#989',
+    },
+    {
+      key: '3',
+      title: 'Mobile for resale',
+      price: '8000',
+      location: 'Nipania, Indore',
+      image: require('../assets/images/mobile.png'),
+      bgcolor: '#888',
+    },
+    {
+      key: '4',
+      title: 'Mobile for resale',
+      price: '8000',
+      location: 'Nipania, Indore',
+      image: require('../assets/images/mobile.png'),
+      bgcolor: '#777',
+    },
+    {
+      key: '5',
+      title: 'Mobile for resale',
+      price: '8000',
+      location: 'Nipania, Indore',
+      image: require('../assets/images/mobile.png'),
+      bgcolor: '#666',
+    },
+    {
+      key: '6',
+      title: 'Mobile for resale',
+      price: '8000',
+      location: 'Nipania, Indore',
+      image: require('../assets/images/mobile.png'),
+      bgcolor: '#666',
+    },
+    {
+      key: '7',
+      title: 'Mobile for resale ',
+      price: 8000,
+      location: 'Nipania, Indore',
+      image: require('../assets/images/mobile.png'),
+      bgcolor: '#666',
+    },
+  ];
 
   const data = [
     {
@@ -26,12 +85,14 @@ export default function Home() {
       title: 'Electronics',
       icon: 'live-tv',
       onpress: () => alert('Tv'),
+      color: '#777',
     },
     {
       key: '2',
       title: 'Bike',
       icon: 'two-wheeler',
       onpress: () => alert('bike'),
+      color: '#999',
     },
     {key: '3', title: 'Mobile', icon: 'phone-android'},
     {
@@ -50,30 +111,126 @@ export default function Home() {
     {key: 9, title: 'Mobile', icon: 'phone-android'},
     {key: 10, title: 'Mobile', icon: 'phone-android'},
   ];
-  const renderItem = useCallback(
-    ({item}) => (
-      <TouchableOpacity style={styles.category} onPress={item.onpress}>
-        <MaterialIcon name={item.icon} size={43} color={'#000'} />
-        <Text style={{fontSize: 16, color: '#111'}}>{item.title}</Text>
-      </TouchableOpacity>
-    ),
-    [],
-  );
-  const ITEM_WIDTH = 90;
+  const ITEM_WIDTH = 80;
   const getItemLayout = (_, index) => ({
     length: ITEM_WIDTH,
     offset: ITEM_WIDTH * index,
     index,
   });
-  const width = Dimensions.get('window').width;
+
+  const CARD_HEIGHT = 250;
+  const getAdCardLayout = (_, index) => ({
+    length: CARD_HEIGHT,
+    offset: CARD_HEIGHT * index,
+    index,
+  });
+
+  const renderItem = useCallback(
+    ({item}) => (
+      <TouchableOpacity
+        style={[
+          styles.category,
+          {
+            width: ITEM_WIDTH,
+            flex: 1,
+          },
+        ]}
+        onPress={item.onpress}>
+        <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+          <MaterialIcon name={item.icon} size={35} color={'#000'} />
+        </View>
+
+        <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+          <Text
+            style={{
+              fontSize: 16,
+              color: '#111',
+            }}>
+            {item.title}
+          </Text>
+        </View>
+      </TouchableOpacity>
+    ),
+    [],
+  );
+
+  const renderAds = useCallback(
+    ({item}) => (
+      <Pressable
+        style={{
+          // backgroundColor: item.bgcolor,
+          height: CARD_HEIGHT,
+          padding: '2%',
+          width: '49%',
+          marginBottom: '1%',
+          borderWidth: 2,
+          borderColor: '#CCC',
+          borderRadius: 5,
+        }}
+        onPress={() =>
+          navigation.navigate('AdDescription', {
+            key: item.key,
+            title: item.title,
+            price: item.price,
+            location: item.location,
+          })
+        }>
+        <View
+          pointerEvents="box-only"
+          style={{
+            flex: 1.5,
+            alignItems: 'center',
+            justifyContent: 'center',
+            // backgroundColor: '#664489',
+          }}>
+          <Image
+            source={item.image}
+            style={{height: '90%', resizeMode: 'contain'}}
+          />
+        </View>
+        <View
+          style={{
+            flex: 1,
+            // backgroundColor: '#ccc',
+            justifyContent: 'space-between',
+          }}>
+          <View>
+            <Text style={{fontSize: 14, fontWeight: 600, color: '#111'}}>
+              ₹ {item.price}
+            </Text>
+            <Text
+              numberOfLines={2}
+              style={{fontSize: 14, width: '90%', color: '#000'}}>
+              {item.title}
+            </Text>
+          </View>
+
+          <View style={{flexDirection: 'row', marginBottom: 5}}>
+            <MaterialIcon name="location-pin" size={16} color={'#666'} />
+            <Text
+              style={{
+                fontSize: 12,
+                textAlign: 'left',
+                fontWeight: 500,
+                color: '#666',
+              }}>
+              {item.location}
+            </Text>
+          </View>
+        </View>
+      </Pressable>
+    ),
+    [],
+  );
+
   return (
     <SafeAreaView style={styles.container}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.innerContainer}>
           <View style={styles.header}>
-            <View style={styles.btnConatiner}>
+            <View style={styles.btnSection}>
               <TouchableOpacity
-                onPress={() => navigation.navigate('Ads')}
+                onPress={() => navigation.navigate('Home')}
                 style={{
                   backgroundColor: '#FF8C00',
                   marginLeft: '5%',
@@ -86,7 +243,7 @@ export default function Home() {
                 <Text style={{fontSize: 20, color: '#111'}}>Ads</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                onPress={() => navigation.navigate('Services')}
+                onPress={() => navigation.navigate('Service')}
                 style={{
                   marginRight: '5%',
                   backgroundColor: '#bfbfbf',
@@ -100,7 +257,7 @@ export default function Home() {
               </TouchableOpacity>
             </View>
 
-            <View style={styles.searchBarContainer}>
+            <View style={styles.searchBarSection}>
               <TextInput
                 placeholder="Search Bar"
                 style={styles.searchInput}
@@ -108,16 +265,34 @@ export default function Home() {
               />
             </View>
           </View>
-          <View style={styles.categoryContainer}>
-            <TouchableOpacity style={styles.sellBtn}>
-              <MaterialIcon
-                name="add-circle-outline"
-                color={'#FF8C00'}
-                size={40}
-              />
-              <Text style={{fontSize: 18, color: '#000'}}>Sell</Text>
-            </TouchableOpacity>
+          <View style={styles.categorySection}>
+            {/* Sell Button to add item for sell */}
+            <TouchableOpacity
+              style={styles.sellBtn}
+              onPress={() => navigation.navigate('WhatAreYouOffering')}>
+              <View
+                style={{
+                  flex: 1,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                <MaterialIcon
+                  name="add-circle-outline"
+                  color={'#FF8C00'}
+                  size={35}
+                />
+              </View>
 
+              <View
+                style={{
+                  flex: 1,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                <Text style={{fontSize: 16, color: '#111'}}>Sell</Text>
+              </View>
+            </TouchableOpacity>
+            {/* Category Horizontal List */}
             <FlatList
               horizontal={true}
               data={data}
@@ -127,27 +302,22 @@ export default function Home() {
               initialNumToRender={5}
               maxToRenderPerBatch={5}
             />
-
-            {/* <ScrollView
-              horizontal
-              decelerationRate={'fast'}
-              showsHorizontalScrollIndicator={false}>
-              {data.map(item => {
-                return (
-                  <View key={item.key} style={styles.categoryList}>
-                    <MaterialIcon name={item.icon} size={23} color={'#000'} />
-                    <Text
-                      style={{fontSize: 16, fontWeight: 500, color: '#111'}}>
-                      {item.title}
-                    </Text>
-                  </View>
-                );
-              })}
-            </ScrollView> */}
           </View>
 
-          <View style={styles.featuredAds}></View>
-          <View style={styles.btmTab}></View>
+          <View style={styles.featuredAdsSection}>
+            <FlatList
+              data={adData}
+              renderItem={renderAds}
+              getItemLayout={getAdCardLayout}
+              numColumns={2}
+              columnWrapperStyle={{
+                justifyContent: 'space-between',
+              }}
+              initialNumToRender={15}
+              maxToRenderPerBatch={15}
+              showsVerticalScrollIndicator={false}
+            />
+          </View>
         </View>
       </TouchableWithoutFeedback>
     </SafeAreaView>
@@ -160,15 +330,15 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    flex: 0.7,
+    flex: 0.6,
   },
-  btnConatiner: {
+  btnSection: {
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  searchBarContainer: {
+  searchBarSection: {
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'center',
@@ -186,22 +356,21 @@ const styles = StyleSheet.create({
   searchIcon: {
     marginRight: '40%',
   },
-  categoryContainer: {
-    flex: 0.5,
+  categorySection: {
+    flex: 0.4,
     flexDirection: 'row',
+    padding: 5,
+    gap: 5,
   },
   sellBtn: {
+    paddingHorizontal: 5,
     alignItems: 'center',
     justifyContent: 'center',
-    width: '15%',
-    marginLeft: '1%',
   },
   category: {
-    width: 80,
     alignItems: 'center',
     justifyContent: 'center',
   },
   categoryImg: {width: 35, height: 35},
-  featuredAds: {flex: 3},
-  btmTab: {flex: 1},
+  featuredAdsSection: {flex: 3, padding: '1%'},
 });
