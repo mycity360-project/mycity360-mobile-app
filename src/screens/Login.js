@@ -15,7 +15,7 @@ import {AuthContext} from '../context/AuthContext';
 import {useNavigation} from '@react-navigation/native';
 
 export default function Login() {
-  const {login, showVerifyOtpScreen} = useContext(AuthContext);
+  const {login} = useContext(AuthContext);
   const [email, setEmail] = useState(null);
   const [password, setPassword] = useState(null);
   const navigation = useNavigation();
@@ -24,7 +24,7 @@ export default function Login() {
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.innerContainer}>
           <View style={styles.header}>
-            <CustomButton btnType="back" onpress={() => navigation.goBack()} />
+            {/* <CustomButton btnType="back" onpress={() => navigation.goBack()} /> */}
           </View>
           <View style={styles.imgContainer}>
             <Image
@@ -61,12 +61,19 @@ export default function Login() {
             <CustomButton
               btnTitle="Login"
               onpress={async () => {
-                (await login(email, password))
-                  ? navigation.navigate('VerifyOtp')
+                const response = await login(email, password);
+                console.log(response);
+                response.showVerifyOtpScreen
+                  ? navigation.navigate('VerifyOtp', {userid: response.userid})
                   : '';
               }}
               style={styles.loginBtn}
               icon="arrow-forward"
+            />
+
+            <CustomButton
+              btnTitle="Register Here"
+              onpress={() => navigation.navigate('SignUp')}
             />
           </View>
         </View>

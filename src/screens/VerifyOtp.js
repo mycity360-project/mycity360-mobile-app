@@ -1,22 +1,50 @@
 import {StyleSheet, View, Image, TextInput} from 'react-native';
-import React from 'react';
+import React, {useState} from 'react';
 import CustomButton from '../shared/components/CustomButton';
 import {AuthContext} from '../context/AuthContext';
 import {useContext} from 'react';
-export default function VerifyOtp() {
+import {http} from '../shared/lib';
+export default function VerifyOtp({route}) {
+  const {userid} = route.params;
+  console.log(route.params, 'route params');
   const {showVerifyOtpScreen, isVerified} = useContext(AuthContext);
+  const [enteredOtp, setEnteredOtp] = useState('');
 
+  const verifyOtp = async otp => {
+    try {
+      const url = `user/${userid}/verify-otp/`;
+      const config = {
+        headers: {
+          clientid: process.env.BACKEND_CLIENT_ID,
+        },
+      };
+      const data = {
+        phone_otp: otp,
+      };
+      console.log(otp, userid, url, config, data);
+
+      const resp = await http.post(url, data, config);
+      console.log(resp, '24');
+      return resp;
+    } catch (err) {
+      console.log(JSON.stringify(err), 'verifyotp');
+    }
+  };
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         {/* <CustomButton btnType="back" onpress={() => navigation.goBack()} /> */}
       </View>
       <View style={styles.formContainer}>
-        <TextInput style={styles.input} placeholder="Enter Mobile OTP" />
+        <TextInput
+          style={styles.input}
+          placeholder="Enter Mobile OTP"
+          onChangeText={otp => setEnteredOtp(otp)}
+        />
         <CustomButton
           btnTitle={'Verify'}
           onpress={() => {
-            isVerified(true);
+            isVerified(verifyOtp(enteredOtp));
           }}
         />
       </View>

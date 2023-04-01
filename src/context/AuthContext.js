@@ -7,8 +7,23 @@ export const AuthContext = createContext();
 
 export const AuthProvider = ({children}) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [userToken, setUserToken] = useState(null);
+  const [userToken, setUserToken] = useState('');
   const [showVerifyOtpScreen, setShowVerifyOtpScreen] = useState(false);
+
+  const onTokenAvailable = async (respData, token, userid) => {
+    console.log(token);
+    let userInfo = await http.get(`user/${userid}/`, {
+      headers: {
+        clientid: process.env.BACKEND_CLIENT_ID,
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    setUserToken(token);
+    AsyncStorage.setItem('userTokenInfo', JSON.stringify(respData));
+    AsyncStorage.setItem('token', token);
+    AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
+    setShowVerifyOtpScreen(false);
+  };
 
   const login = async (username, password) => {
     // setIsLoading(true);
@@ -24,34 +39,27 @@ export const AuthProvider = ({children}) => {
     };
 
     try {
-      let respData = await http
-        .post(url, data, config)
-        .catch(err => console.log(err));
+      let respData = await http.post(url, data, config);
       const token = respData.access_token;
-      const userid = respData.user_id;
-      let userInfo = await http
-        .get(`user/${userid}/`, {
-          headers: {
-            clientid: process.env.BACKEND_CLIENT_ID,
-            Authorization: `Bearer ${token}`,
-          },
-        })
-        .catch(err => console.log(err));
-      console.log(respData, userInfo, 'resp from login & get user by id');
+      const userid = token ? respData.user_id : respData.id;
+      const response = {};
+      console.log(respData, userid, 'resp from login & get user by id');
 
-      if (respData && userInfo) {
-        AsyncStorage.setItem('userTokenInfo', JSON.stringify(respData));
-        AsyncStorage.setItem('userToken', token);
-        AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
-        setShowVerifyOtpScreen(!userInfo.is_phone_verified);
-        setUserToken(token);
+      if (token) {
+        onTokenAvailable(respData, token, userid);
+        response.showVerifyOtpScreen = showVerifyOtpScreen;
         setIsLoading(false);
-        return showVerifyOtpScreen;
       } else {
-        // console.log('in else of login');
+        console.log(showVerifyOtpScreen, ' before');
+
+        setShowVerifyOtpScreen(true);
+
+        console.log(showVerifyOtpScreen, ' after');
+        response.showVerifyOtpScreen = showVerifyOtpScreen;
+        response.userid = userid;
         setIsLoading(false);
-        console.log('Some issue with the login AND/OR get user by id');
       }
+      return response;
     } catch (error) {
       console.log(JSON.stringify(error), 'err');
     }
@@ -64,10 +72,10 @@ export const AuthProvider = ({children}) => {
     setIsLoading(false);
   };
 
-  const isVerified = async verificationStatus => {
+  const isVerified = async respData => {
     try {
       setIsLoading(true);
-      setShowVerifyOtpScreen(!verificationStatus);
+      onTokenAvailable(respData, respData.access_token, respData.user_id);
       setIsLoading(false);
     } catch (e) {
       console.log(`isVerified error ${e}`);

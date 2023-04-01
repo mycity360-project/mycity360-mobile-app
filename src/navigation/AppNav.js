@@ -6,7 +6,7 @@ import {AuthContext} from '../context/AuthContext';
 import {ActivityIndicator, View} from 'react-native';
 
 export default function AppNav() {
-  const {isLoading, userToken, showVerifyOtpScreen} = useContext(AuthContext);
+  const {isLoading, userToken} = useContext(AuthContext);
 
   if (isLoading) {
     return (
@@ -17,11 +17,7 @@ export default function AppNav() {
   }
   return (
     <NavigationContainer>
-      {userToken !== null && !showVerifyOtpScreen ? (
-        <AppStack />
-      ) : (
-        <AuthStack />
-      )}
+      {userToken !== null ? <AppStack /> : <AuthStack />}
       {/* <AppStack /> */}
     </NavigationContainer>
   );

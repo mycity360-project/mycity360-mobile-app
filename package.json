@@ -9,6 +9,7 @@
     "lint": "eslint . --fix",
     "start": "npx react-native start",
     "test": "jest",
+    "build:android": "npx react-native run-android --variant=release",
     "release:major": "npm version major",
     "release:minor": "npm version minor",
     "release:patch": "npm version patch"
