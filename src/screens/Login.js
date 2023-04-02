@@ -44,16 +44,16 @@ export default function Login() {
             <TextInput
               placeholder="Enter Mobile Number / Email"
               style={styles.input}
-              onChangeText={text => {
-                setEmail(text);
+              onChangeText={email => {
+                setEmail(email);
               }}
             />
             <TextInput
               placeholder="Enter Password"
               style={styles.input}
               secureTextEntry={true}
-              onChangeText={text => {
-                setPassword(text);
+              onChangeText={password => {
+                setPassword(password);
               }}
             />
             <CustomButton
@@ -72,12 +72,11 @@ export default function Login() {
             <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
               <Text
                 style={{
-                  color: '#FA8C00',
                   fontSize: 16,
-                  textAlign: 'right',
-                  marginHorizontal: '12%',
+                  textAlign: 'center',
+                  marginTop: 1,
                 }}>
-                Register
+                Need an account? <Text style={{color: '#FA8C00'}}>Sign Up</Text>
               </Text>
             </TouchableOpacity>
           </View>

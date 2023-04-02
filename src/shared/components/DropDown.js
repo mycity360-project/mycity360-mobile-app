@@ -11,27 +11,18 @@ import {React, useState} from 'react';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 
 export default function DropDown(props) {
-  const {placeholder, locationArray, setLocation} = props;
+  const {placeholder, dataArray, selectedDataHandler, isDisabled} = props;
   const [selected, setSelected] = useState(`${placeholder}`);
   const [isClicked, setIsClicked] = useState(false);
-  const [data, setData] = useState(locationArray);
-  const onSearch = txt => {
-    if (txt !== '') {
-      let tempData = data.filter(item => {
-        return item.toLowerCase().indexOf(txt.toLowerCase()) > -1;
-      });
-      setData(tempData);
-    } else {
-      setData(locationArray);
-    }
-  };
+  const [data, setData] = useState(dataArray);
   return (
     <View style={styles.container}>
       <TouchableOpacity
         style={styles.dropdownSelector}
         onPress={() => {
           setIsClicked(!isClicked);
-        }}>
+        }}
+        disabled={isDisabled}>
         <Text style={{color: '#222'}}>{selected}</Text>
         {isClicked ? (
           <MaterialIcon name="arrow-drop-up" size={25} color={'#222'} />
@@ -41,13 +32,6 @@ export default function DropDown(props) {
       </TouchableOpacity>
       {isClicked ? (
         <View style={styles.dropdownArea}>
-          <TextInput
-            placeholder="Search"
-            onChangeText={txt => {
-              onSearch(txt);
-            }}
-            style={styles.searchInput}
-          />
           <FlatList
             data={data}
             renderItem={({item}) => {
@@ -56,15 +40,15 @@ export default function DropDown(props) {
                   style={styles.itemList}
                   onPress={() => {
                     setSelected(item.value);
-                    setLocation(item);
-                    onSearch('');
+                    console.log(selected, placeholder);
+                    selectedDataHandler(item);
                     setIsClicked(false);
                   }}>
                   <Text>{item.value}</Text>
                 </TouchableOpacity>
               );
             }}
-            extraData={data}
+            extraData={{data}}
           />
         </View>
       ) : null}

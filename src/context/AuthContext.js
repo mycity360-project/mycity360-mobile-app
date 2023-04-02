@@ -22,7 +22,6 @@ export const AuthProvider = ({children}) => {
     AsyncStorage.setItem('userTokenInfo', JSON.stringify(respData));
     AsyncStorage.setItem('token', token);
     AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
-    setShowVerifyOtpScreen(false);
   };
 
   const login = async (username, password) => {
@@ -47,15 +46,16 @@ export const AuthProvider = ({children}) => {
 
       if (token) {
         onTokenAvailable(respData, token, userid);
-        response.showVerifyOtpScreen = showVerifyOtpScreen;
+        setShowVerifyOtpScreen(false);
+        response.showVerifyOtpScreen = false;
         setIsLoading(false);
       } else {
         console.log(showVerifyOtpScreen, ' before');
-
-        setShowVerifyOtpScreen(true);
+        showScreen = true;
+        setShowVerifyOtpScreen(showScreen);
 
         console.log(showVerifyOtpScreen, ' after');
-        response.showVerifyOtpScreen = showVerifyOtpScreen;
+        response.showVerifyOtpScreen = showScreen;
         response.userid = userid;
         setIsLoading(false);
       }
@@ -75,6 +75,7 @@ export const AuthProvider = ({children}) => {
   const isVerified = async respData => {
     try {
       setIsLoading(true);
+      console.log(respData);
       onTokenAvailable(respData, respData.access_token, respData.user_id);
       setIsLoading(false);
     } catch (e) {

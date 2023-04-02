@@ -39,12 +39,15 @@ export default function VerifyOtp({route}) {
         <TextInput
           style={styles.input}
           placeholder="Enter Mobile OTP"
+          keyboardType="numeric"
           onChangeText={otp => setEnteredOtp(otp)}
         />
         <CustomButton
           btnTitle={'Verify'}
-          onpress={() => {
-            isVerified(verifyOtp(enteredOtp));
+          onpress={async () => {
+            let data = await verifyOtp(enteredOtp);
+            console.log(data);
+            isVerified(data);
           }}
         />
       </View>
