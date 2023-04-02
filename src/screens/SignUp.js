@@ -14,38 +14,64 @@ import DropDown from '../shared/components/DropDown';
 import {useNavigation} from '@react-navigation/native';
 import {http} from '../shared/lib';
 
-const delay = delayInms => {
-  return new Promise(resolve => setTimeout(resolve, delayInms));
-};
-
 export default function SignUp() {
   const navigation = useNavigation();
-  const [locations, setLocations] = useState([]);
+  const [locationData, setLocationData] = useState([]);
+  const [areaData, setAreaData] = useState([]);
+
   const [isLoading, setIsLoading] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState('');
 
   const getLocations = async () => {
     setIsLoading(true);
     try {
-      let respData = await http({
+      let locationRespdata = await http({
         method: 'GET',
         url: 'location/public/?isactive=true',
       });
 
-      const locationsData = respData.map(location => ({
+      const locations = locationRespdata.map(location => ({
         key: location.id.toString(),
         value: location.name,
       }));
-      console.log(locationsData);
-      setLocations(locationsData);
+      console.log(locations);
+      setLocationData(locations);
     } catch (error) {
       console.log('Something went wrong while fetching locations' + error);
     }
     setIsLoading(false);
   };
+
   useEffect(() => {
     getLocations();
   }, []);
+
+  const getAreas = async () => {
+    setIsLoading(true);
+    try {
+      let areaRespData = await http({
+        method: 'GET',
+        url: `area/public/?${selectedLocation.key}/`,
+      });
+
+      const areas = areaRespData.map(area => ({
+        key: area.id.toString(),
+        value: area.name,
+      }));
+      console.log(areas);
+      setAreaData(areas);
+    } catch (error) {
+      console.log('Something went wrong while fetching area' + error);
+    }
+    setIsLoading(false);
+  };
+  useEffect(() => {
+    getAreas();
+  }, [selectedLocation]);
+
+  const setLocation = async location => {
+    setSelectedLocation(location);
+  };
 
   return isLoading ? (
     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
@@ -79,7 +105,6 @@ export default function SignUp() {
                 ]}
               />
             </View>
-
             <TextInput
               placeholder="Enter Mobile Number"
               style={[styles.input, styles.inputCommon]}
@@ -103,11 +128,16 @@ export default function SignUp() {
               secureTextEntry={true}
               autoCapitalize={'none'}
             />
-            <DropDown placeholder="Select Location" locationArray={locations} />
             <DropDown
-              placeholder="Select Area"
-              dataArr={['India', 'America', 'Russia', 'Japan', 'China']}
+              placeholder="Select Location"
+              locationArray={locationData}
+              setLocation={location => setLocation(location)}
             />
+            {areaData.length ? (
+              <DropDown placeholder="Select Area" areaArray={areaData} />
+            ) : (
+              ''
+            )}
             <CustomButton
               btnTitle={'Sign Up'}
               onpress={() => navigation.navigate('VerifyOtp')}

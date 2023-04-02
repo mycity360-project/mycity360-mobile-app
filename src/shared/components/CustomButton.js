@@ -23,7 +23,7 @@ export default function CustomButton(props) {
   const navigation = useNavigation();
   let btnStyle = [styles.btn, style];
   let btnView = (
-    <View style={styles.btnTitleContainer}>
+    <View style={styles.btnTitleSection}>
       <Text style={[styles.btnTitle, textStyle]}>{btnTitle}</Text>
       <MaterialIcon name={icon} size={20} color={'#FFF'} />
     </View>
@@ -53,7 +53,8 @@ const styles = StyleSheet.create({
     backgroundColor: button.buttonColor,
     borderRadius: 15,
     padding: 10,
-    width: '40%',
+    width: '60%',
+    alignSelf: 'center',
   },
   backBtn: {
     backgroundColor: button.buttonColor,
@@ -61,7 +62,7 @@ const styles = StyleSheet.create({
     padding: 10,
     width: '13%',
   },
-  btnTitleContainer: {
+  btnTitleSection: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',

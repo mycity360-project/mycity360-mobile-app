@@ -23,17 +23,15 @@ export default function Login() {
     <SafeAreaView style={styles.container}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.innerContainer}>
-          <View style={styles.header}>
-            {/* <CustomButton btnType="back" onpress={() => navigation.goBack()} /> */}
-          </View>
-          <View style={styles.imgContainer}>
+          <View style={styles.headerSection}></View>
+          <View style={styles.logoSection}>
             <Image
               source={require('../assets/images/logo.png')}
               style={{width: 75, height: 75}}
             />
             <Text style={styles.logoName}>MyCity360</Text>
           </View>
-          <View style={styles.loginFormContainer}>
+          <View style={styles.loginFormSection}>
             <Text
               style={{
                 fontSize: 24,
@@ -71,10 +69,17 @@ export default function Login() {
               icon="arrow-forward"
             />
 
-            <CustomButton
-              btnTitle="Register Here"
-              onpress={() => navigation.navigate('SignUp')}
-            />
+            <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
+              <Text
+                style={{
+                  color: '#FA8C00',
+                  fontSize: 16,
+                  textAlign: 'right',
+                  marginHorizontal: '12%',
+                }}>
+                Register
+              </Text>
+            </TouchableOpacity>
           </View>
         </View>
       </TouchableWithoutFeedback>
@@ -90,14 +95,13 @@ const styles = StyleSheet.create({
   innerContainer: {
     flex: 1,
   },
-  header: {flex: -1},
-  imgContainer: {
-    flex: -1,
+  headerSection: {flex: 0.5},
+  logoSection: {
+    flex: 1,
     alignItems: 'center',
   },
-  loginFormContainer: {
-    flex: 4,
-
+  loginFormSection: {
+    flex: 5,
     justifyContent: 'center',
   },
 

@@ -11,7 +11,7 @@ import {React, useState} from 'react';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 
 export default function DropDown(props) {
-  const {placeholder, locationArray} = props;
+  const {placeholder, locationArray, setLocation} = props;
   const [selected, setSelected] = useState(`${placeholder}`);
   const [isClicked, setIsClicked] = useState(false);
   const [data, setData] = useState(locationArray);
@@ -56,6 +56,7 @@ export default function DropDown(props) {
                   style={styles.itemList}
                   onPress={() => {
                     setSelected(item.value);
+                    setLocation(item);
                     onSearch('');
                     setIsClicked(false);
                   }}>
