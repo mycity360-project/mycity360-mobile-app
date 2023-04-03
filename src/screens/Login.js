@@ -68,17 +68,25 @@ export default function Login() {
               style={styles.loginBtn}
               icon="arrow-forward"
             />
-
-            <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
-              <Text
-                style={{
-                  fontSize: 16,
-                  textAlign: 'center',
-                  marginTop: 1,
-                }}>
-                Need an account? <Text style={{color: '#FA8C00'}}>Sign Up</Text>
-              </Text>
-            </TouchableOpacity>
+            <View
+              style={{
+                flex: 0.1,
+                alignItems: 'flex-start',
+                justifyContent: 'center',
+                flexDirection: 'row',
+                gap: 5,
+              }}>
+              <Text style={{fontSize: 16}}>Need an account?</Text>
+              <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    color: '#FA8C00',
+                  }}>
+                  Sign Up
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </TouchableWithoutFeedback>

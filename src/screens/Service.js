@@ -18,7 +18,11 @@ import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 
 export default function Home({navigation}) {
   const services = [
-    {title: 'service1', icon: 'miscellaneous-services'},
+    {
+      title: 'Mobile Repair',
+      icon: 'miscellaneous-services',
+      onpress: () => navigation.navigate('ServiceDescription', {serviceId: 1}),
+    },
     {title: 'service2', icon: 'miscellaneous-services'},
     {title: 'service3', icon: 'miscellaneous-services'},
     {title: 'service4', icon: 'miscellaneous-services'},
@@ -34,7 +38,8 @@ export default function Home({navigation}) {
     {title: 'service15', icon: 'miscellaneous-services'},
     {title: 'service16', icon: 'miscellaneous-services'},
   ];
-  const numColumns = 4;
+
+  const numColumns = 3;
   const CARD_HEIGHT = 50;
   const getServiceCardLayout = (_, index) => ({
     length: CARD_HEIGHT,
@@ -57,8 +62,9 @@ export default function Home({navigation}) {
         style={{
           height: CARD_HEIGHT,
           flex: 2,
-          marginTop: 10,
-        }}>
+          marginTop: 30,
+        }}
+        onPress={item.onpress}>
         <View
           style={{
             flex: 1,
@@ -109,14 +115,6 @@ export default function Home({navigation}) {
             <Text style={{fontSize: 20, color: '#111'}}>Services</Text>
           </TouchableOpacity>
         </View>
-
-        <View style={styles.searchBarSection}>
-          <TextInput
-            placeholder="Search Bar"
-            style={styles.searchInput}
-            onChangeText={text => {}}
-          />
-        </View>
       </View>
       <View style={styles.serviceListSection}>
         <FlatList
@@ -139,7 +137,7 @@ export default function Home({navigation}) {
 const styles = StyleSheet.create({
   container: {flex: 1},
   header: {
-    flex: 1,
+    flex: 0.5,
   },
   btnSection: {
     flex: 1,
@@ -147,21 +145,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  searchBarSection: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  searchInput: {
-    width: '85%',
-    backgroundColor: '#EFEFEF',
-    height: '85%',
-    borderRadius: 20,
-    padding: 10,
-    elevation: 5, //Android Only
-    shadowRadius: 5, // IOS Only
-  },
+
   serviceListSection: {
     flex: 6,
     padding: '5%',

@@ -11,13 +11,15 @@ import {
   TouchableOpacity,
   Pressable,
 } from 'react-native';
-import {React, useCallback, useContext, useState} from 'react';
+import {React, useCallback, useContext, useEffect, useState} from 'react';
 import {AuthContext} from '../context/AuthContext';
 import CustomButton from '../shared/components/CustomButton';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {http} from '../shared/lib';
 export default function Home({navigation}) {
   const {logout} = useContext(AuthContext);
+  const [categoriesData, setCategoriesData] = useState([]);
 
   let adData = [
     {
@@ -28,6 +30,7 @@ export default function Home({navigation}) {
       location: 'Nipania, Indore',
       image: require('../assets/images/mobile.png'),
       bgcolor: '#979',
+      isFeatured: true,
     },
     {
       key: '2',
@@ -52,6 +55,7 @@ export default function Home({navigation}) {
       location: 'Nipania, Indore',
       image: require('../assets/images/mobile.png'),
       bgcolor: '#777',
+      isFeatured: true,
     },
     {
       key: '5',
@@ -79,38 +83,33 @@ export default function Home({navigation}) {
     },
   ];
 
-  const data = [
-    {
-      key: '1',
-      title: 'Electronics',
-      icon: 'live-tv',
-      onpress: () => alert('Tv'),
-      color: '#777',
-    },
-    {
-      key: '2',
-      title: 'Bike',
-      icon: 'two-wheeler',
-      onpress: () => alert('bike'),
-      color: '#999',
-    },
-    {key: '3', title: 'Mobile', icon: 'phone-android'},
-    {
-      key: '4',
-      title: 'Properties',
-      icon: 'house',
-    },
-    {key: '5', title: 'Jobs', icon: 'work-outline'},
-    {key: '6', title: 'Jobs', icon: 'work-outline'},
-    {key: '7', title: 'Jobs', icon: 'work-outline'},
-    {
-      key: 8,
-      title: 'Electronics',
-      icon: 'live-tv',
-    },
-    {key: 9, title: 'Mobile', icon: 'phone-android'},
-    {key: 10, title: 'Mobile', icon: 'phone-android'},
-  ];
+  const getCategories = async () => {
+    try {
+      const token = await AsyncStorage.getItem('token');
+      const categoriesRespData = await http.get(`category/user/`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      // console.log(categoriesRespData.results);
+      const categories = categoriesRespData.results.map(category => ({
+        key: category.id.toString(),
+        title: category.name,
+        icon: category.icon,
+      }));
+      setCategoriesData(categories);
+    } catch (err) {
+      console.log(
+        'Something went wrong while fetching categories',
+        JSON.stringify(err),
+      );
+    }
+  };
+
+  useEffect(() => {
+    getCategories();
+  }, []);
+
   const ITEM_WIDTH = 80;
   const getItemLayout = (_, index) => ({
     length: ITEM_WIDTH,
@@ -137,7 +136,13 @@ export default function Home({navigation}) {
         ]}
         onPress={item.onpress}>
         <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-          <MaterialIcon name={item.icon} size={35} color={'#000'} />
+          <Image
+            source={{
+              uri: item.icon,
+              width: 50,
+              height: 50,
+            }}
+          />
         </View>
 
         <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
@@ -153,6 +158,24 @@ export default function Home({navigation}) {
     ),
     [],
   );
+
+  const featuredTag = () => {
+    return (
+      <View
+        style={{
+          backgroundColor: '#fba333',
+          paddingHorizontal: 10,
+          position: 'absolute',
+          left: 5,
+          top: 5,
+          borderRadius: 2,
+        }}>
+        <Text style={{color: '#222', fontSize: 12, fontWeight: 500}}>
+          FEATURED
+        </Text>
+      </View>
+    );
+  };
 
   const renderAds = useCallback(
     ({item}) => (
@@ -187,6 +210,7 @@ export default function Home({navigation}) {
             source={item.image}
             style={{height: '90%', resizeMode: 'contain'}}
           />
+          {item.isFeatured ? featuredTag() : ''}
         </View>
         <View
           style={{
@@ -256,13 +280,14 @@ export default function Home({navigation}) {
                 <Text style={{fontSize: 20, color: '#111'}}>Services</Text>
               </TouchableOpacity>
             </View>
-
             <View style={styles.searchBarSection}>
-              <TextInput
-                placeholder="Search Bar"
+              <TouchableOpacity
                 style={styles.searchInput}
-                onChangeText={text => {}}
-              />
+                onPress={() => navigation.navigate('AdSearch')}
+                activeOpacity={1}>
+                <MaterialIcon name="search" size={28} color={'#222'} />
+                <Text>Search here</Text>
+              </TouchableOpacity>
             </View>
           </View>
           <View style={styles.categorySection}>
@@ -295,7 +320,7 @@ export default function Home({navigation}) {
             {/* Category Horizontal List */}
             <FlatList
               horizontal={true}
-              data={data}
+              data={categoriesData}
               renderItem={renderItem}
               showsHorizontalScrollIndicator={false}
               getItemLayout={getItemLayout}
@@ -345,6 +370,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   searchInput: {
+    flexDirection: 'row',
+    gap: 5,
     width: '85%',
     backgroundColor: '#EFEFEF',
     height: '85%',

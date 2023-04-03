@@ -209,17 +209,26 @@ export default function SignUp() {
               icon="arrow-forward"
               onpress={async () => await handleOnSignUpPress()}
             />
-            <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-              <Text
-                style={{
-                  fontSize: 16,
-                  textAlign: 'center',
-                  marginTop: 1,
-                }}>
-                Already Registered?{' '}
-                <Text style={{color: '#FA8C00'}}>Login</Text>
-              </Text>
-            </TouchableOpacity>
+
+            <View
+              style={{
+                flex: 0.1,
+                alignItems: 'flex-start',
+                justifyContent: 'center',
+                flexDirection: 'row',
+                gap: 5,
+              }}>
+              <Text style={{fontSize: 16}}>Already Registered?</Text>
+              <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    color: '#FA8C00',
+                  }}>
+                  Login
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </TouchableWithoutFeedback>

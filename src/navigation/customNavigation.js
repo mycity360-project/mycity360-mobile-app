@@ -45,6 +45,7 @@ const HomeTabs = () => {
   const iconSize = 24;
   return (
     <Tab.Navigator
+      initialRouteName="HomeStackScreen"
       screenOptions={{
         headerShown: false,
         tabBarStyle: {backgroundColor: '#FA8C00'},

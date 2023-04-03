@@ -1,7 +1,6 @@
 import {React, createContext, useState, useEffect} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {http} from '../shared/lib';
-//import axios from 'axios';
 
 export const AuthContext = createContext();
 
@@ -11,15 +10,15 @@ export const AuthProvider = ({children}) => {
   const [showVerifyOtpScreen, setShowVerifyOtpScreen] = useState(false);
 
   const onTokenAvailable = async (respData, token, userid) => {
-    console.log(token);
     let userInfo = await http.get(`user/${userid}/`, {
       headers: {
         clientid: process.env.BACKEND_CLIENT_ID,
         Authorization: `Bearer ${token}`,
       },
     });
+    console.log(userInfo);
     setUserToken(token);
-    AsyncStorage.setItem('userTokenInfo', JSON.stringify(respData));
+    AsyncStorage.setItem('tokenInfo', JSON.stringify(respData));
     AsyncStorage.setItem('token', token);
     AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
   };
@@ -68,7 +67,10 @@ export const AuthProvider = ({children}) => {
   const logout = async () => {
     setIsLoading(true);
     setUserToken(null);
-    AsyncStorage.removeItem('userToken');
+    AsyncStorage.removeItem('token');
+    AsyncStorage.removeItem('tokenInfo');
+    AsyncStorage.removeItem('userInfor');
+
     setIsLoading(false);
   };
 
