@@ -33,10 +33,7 @@ export default function SignUp() {
   const getLocations = async () => {
     setIsLoading(true);
     try {
-      let locationRespdata = await http({
-        method: 'GET',
-        url: 'location/public/?isactive=true',
-      });
+      let locationRespdata = await http.get('location/public/?isactive=true');
 
       const locations = locationRespdata.map(location => ({
         key: location.id.toString(),
@@ -54,20 +51,25 @@ export default function SignUp() {
     getLocations();
   }, []);
 
+  useEffect(() => {
+    console.log(areaData, 'In use Effect');
+  }, [areaData]);
+
   const getAreas = async location => {
+    setIsLoading(true);
     try {
-      let areaRespData = await http({
-        method: 'GET',
-        url: `area/public/?location_id=${location.key}`,
-      });
+      let areaRespData = await http.get(
+        `area/public/?location_id=${location.key}`,
+      );
 
       const areas = areaRespData.map(area => ({
         key: area.id.toString(),
         value: area.name,
       }));
-      console.log(areas);
+
       setAreaData(areas);
       setIsDisabled(false);
+      setIsLoading(false);
     } catch (error) {
       console.log('Something went wrong while fetching area' + error);
     }
@@ -75,23 +77,40 @@ export default function SignUp() {
 
   const setLocation = async location => {
     setSelectedLocation(location);
-    getAreas(location);
+    await getAreas(location);
   };
   const setArea = async area => {
     setSelectedArea(area);
   };
 
-  formData = () => {
-    dataObject = {
-      first_name: firstName,
-      last_name: lastName,
-      email: email,
-      phone: mobileNumber,
-      password: password,
-      area: {id: selectedArea.key},
-    };
-    return dataObject;
+  const handleOnSignUpPress = async () => {
+    try {
+      let data = {
+        email: email,
+        phone: mobileNumber,
+        password: password,
+        first_name: firstName,
+        last_name: lastName,
+        area: {id: selectedArea.key},
+      };
+
+      const config = {
+        headers: {
+          clientid: process.env.BACKEND_CLIENT_ID,
+        },
+      };
+
+      const {id: user_id} = await http.post('user/signup/', data, config);
+      if (user_id) {
+        navigation.navigate('VerifyOtp', {userid: user_id});
+      } else {
+        throw new Error('Not able to get UserId Something went wrong');
+      }
+    } catch (error) {
+      console.log(JSON.stringify(error));
+    }
   };
+
   return isLoading ? (
     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
       <ActivityIndicator size={'large'} />
@@ -100,7 +119,7 @@ export default function SignUp() {
     <SafeAreaView style={styles.container}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.innerContainer}>
-          <View style={styles.header}></View>
+          <View style={styles.header} />
 
           <View style={styles.registerFormContainer}>
             <Text style={styles.registerFormHeading}>Register</Text>
@@ -112,6 +131,7 @@ export default function SignUp() {
                   {marginLeft: '10%'},
                 ]}
                 placeholder="First Name"
+                value={firstName}
                 onChangeText={firstname => {
                   setFirstName(firstname);
                 }}
@@ -123,6 +143,7 @@ export default function SignUp() {
                   styles.inputCommon,
                   {marginRight: '10%'},
                 ]}
+                value={lastName}
                 onChangeText={lastname => {
                   setLastName(lastname);
                 }}
@@ -135,6 +156,7 @@ export default function SignUp() {
               onChangeText={mobileNumber => {
                 setMobileNumber(mobileNumber);
               }}
+              value={mobileNumber}
             />
             <TextInput
               placeholder="Enter you email"
@@ -144,6 +166,7 @@ export default function SignUp() {
               onChangeText={email => {
                 setEmail(email);
               }}
+              value={email}
             />
             <TextInput
               style={[styles.input, styles.inputCommon]}
@@ -153,6 +176,7 @@ export default function SignUp() {
               onChangeText={password => {
                 setPassword(password);
               }}
+              value={password}
             />
             <TextInput
               style={[styles.input, styles.inputCommon]}
@@ -162,28 +186,28 @@ export default function SignUp() {
               onChangeText={confirmPassword => {
                 setConfirmPassword(confirmPassword);
               }}
+              value={confirmPassword}
             />
             <DropDown
               placeholder="Select Location"
               dataArray={locationData}
               selectedDataHandler={location => setLocation(location)}
               isDisabled={false}
+              selectedValue={selectedLocation}
             />
             <DropDown
               placeholder="Select Area"
               dataArray={areaData}
               isDisabled={isDisabled}
               selectedDataHandler={area => setArea(area)}
+              selectedValue={selectedArea}
             />
             {/* navigation.navigate('VerifyOtp') */}
             <CustomButton
               btnTitle={'Sign Up'}
-              onpress={() => {
-                let dataD = formData();
-                console.log(dataD);
-              }}
               style={styles.registerBtn}
               icon="arrow-forward"
+              onpress={async () => await handleOnSignUpPress()}
             />
             <TouchableOpacity onPress={() => navigation.navigate('Login')}>
               <Text
@@ -211,8 +235,6 @@ const styles = StyleSheet.create({
   innerContainer: {
     flex: 1,
   },
-  header: {flex: 0.5},
-
   registerFormContainer: {
     flex: 4,
     justifyContent: 'flex-start',

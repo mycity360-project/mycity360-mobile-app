@@ -11,8 +11,17 @@ import {React, useState} from 'react';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 
 export default function DropDown(props) {
-  const {placeholder, dataArray, selectedDataHandler, isDisabled} = props;
-  const [selected, setSelected] = useState(`${placeholder}`);
+  console.log(props);
+  const {
+    placeholder,
+    dataArray,
+    selectedDataHandler,
+    isDisabled,
+    selectedValue,
+  } = props;
+  const [selected, setSelected] = useState(
+    selectedValue === '' ? `${placeholder}` : selectedValue.value,
+  );
   const [isClicked, setIsClicked] = useState(false);
   const [data, setData] = useState(dataArray);
   return (

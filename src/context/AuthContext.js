@@ -51,7 +51,7 @@ export const AuthProvider = ({children}) => {
         setIsLoading(false);
       } else {
         console.log(showVerifyOtpScreen, ' before');
-        showScreen = true;
+        let showScreen = true;
         setShowVerifyOtpScreen(showScreen);
 
         console.log(showVerifyOtpScreen, ' after');
