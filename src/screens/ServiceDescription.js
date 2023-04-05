@@ -4,38 +4,43 @@ import {
   StyleSheet,
   Text,
   View,
-  Button,
-  TouchableOpacity,
+  Linking,
+  Platform,
 } from 'react-native';
 import React from 'react';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import style from '../shared/constants/style';
 
 export default function ServiceDescription({route, navigation}) {
-  // Data from API call for specific ad, for now using dummy data
-  // const data=[];
-  const {title, price, serviceId} = route.params;
+  const {title, description, phone} = route.params;
+
+  const openDialer = contactNumber => {
+    Platform.OS === 'ios'
+      ? Linking.openURL(`telprompt:${contactNumber}`)
+      : Linking.openURL(`tel:${contactNumber}`);
+  };
+
   return (
     <View style={styles.container}>
-      <View style={styles.adHeaderSection}>
-        <View style={styles.adImgSection}>
+      <View style={styles.headerSection}>
+        <View style={styles.imgSection}>
           <Image
             source={require('../assets/images/mobile.png')}
             style={{height: '90%', resizeMode: 'contain'}}
           />
         </View>
-        <View style={styles.adInfoSection}>
+        <View style={styles.infoSection}>
           <View style={styles.infoSectionTop}>
-            <Text style={styles.priceText}>Mobile Repair</Text>
+            <Text style={styles.title}>{title}</Text>
           </View>
 
-          <Text numberOfLines={1} style={styles.infoSectionMiddle}>
+          <Text numberOfLines={1} style={styles.infoSectionBottom}>
             {title}
           </Text>
         </View>
       </View>
 
-      <View style={styles.adDetailsSection}>
+      <View style={styles.detailsSection}>
         <Text style={{fontSize: 16, fontWeight: 600, color: '#111'}}>
           Details
         </Text>
@@ -44,11 +49,11 @@ export default function ServiceDescription({route, navigation}) {
         </View>
       </View>
 
-      <View style={styles.adDescriptionSection}>
+      <View style={styles.descriptionSection}>
         <Text style={{fontSize: 16, fontWeight: 600, color: '#111'}}>
           Description
         </Text>
-        <Text>Description of service </Text>
+        <Text>{description} </Text>
       </View>
 
       <View style={styles.otherDetailsSection}>
@@ -57,9 +62,9 @@ export default function ServiceDescription({route, navigation}) {
       </View>
 
       <View style={styles.footer}>
-        <TouchableOpacity style={styles.makeOfferButton}>
-          <Text style={styles.makeOfferButtonText}>Call Now</Text>
-        </TouchableOpacity>
+        <Pressable style={styles.callButton} onPress={() => openDialer(phone)}>
+          <Text style={styles.callButtonText}>Call Now</Text>
+        </Pressable>
       </View>
     </View>
   );
@@ -67,32 +72,28 @@ export default function ServiceDescription({route, navigation}) {
 
 const styles = StyleSheet.create({
   container: {flex: 1},
-  adHeaderSection: {flex: 4},
-  adImgSection: {
+  headerSection: {flex: 4},
+  imgSection: {
     flex: 3,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  adInfoSection: {flex: 1, padding: 5},
+  infoSection: {flex: 1, padding: 5},
   infoSectionTop: {
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
-  priceText: {fontSize: 20, fontWeight: 600, color: '#111'},
-  infoSectionMiddle: {
-    flex: 1,
-    fontSize: 16,
-    width: '90%',
-    color: '#000',
-  },
-  dateAdded: {
-    fontSize: 14,
-    fontWeight: 500,
-    color: '#444',
-  },
-  adDetailsSection: {flex: 1, padding: 5},
-  adDescriptionSection: {flex: 2, padding: 5},
+  title: {fontSize: 20, fontWeight: 600, color: '#111'},
+  // infoSectionMiddle: {
+  //   flex: 1,
+  //   fontSize: 16,
+  //   width: '90%',
+  //   color: '#000',
+  // },
+
+  detailsSection: {flex: 1, padding: 5},
+  descriptionSection: {flex: 2, padding: 5},
   otherDetailsSection: {
     flex: 0.2,
     flexDirection: 'row',
@@ -105,14 +106,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  makeOfferButton: {
+  callButton: {
     backgroundColor: '#FA8C00',
     width: '70%',
     height: '60%',
     justifyContent: 'center',
     borderRadius: 10,
   },
-  makeOfferButtonText: {
+  callButtonText: {
     fontSize: 20,
     textAlign: 'center',
     color: '#111',

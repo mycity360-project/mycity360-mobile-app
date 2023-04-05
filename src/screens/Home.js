@@ -135,17 +135,19 @@ export default function Home({navigation}) {
           },
         ]}
         onPress={item.onpress}>
-        <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+        <View
+          style={{flex: 1.2, alignItems: 'center', justifyContent: 'center'}}>
           <Image
             source={{
               uri: item.icon,
-              width: 50,
-              height: 50,
+              width: 45,
+              height: 45,
             }}
           />
         </View>
 
-        <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+        <View
+          style={{flex: 0.8, alignItems: 'center', justifyContent: 'center'}}>
           <Text
             style={{
               fontSize: 16,

@@ -1,6 +1,7 @@
 import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import HomeTabs from './customNavigation';
+
+import CustomNavigation from './CustomNavigation';
 import AdDescription from '../screens/AdDescription';
 import WhatAreYouOffering from '../screens/WhatAreYouOffering';
 import SubCategory from '../screens/SubCategory';
@@ -13,7 +14,7 @@ const RootStack = createNativeStackNavigator();
 export default function AppStack() {
   return (
     <RootStack.Navigator screenOptions={{headerShown: false}}>
-      <RootStack.Screen name="HomeTabs" component={HomeTabs} />
+      <RootStack.Screen name="HomeTabs" component={CustomNavigation} />
       <RootStack.Screen name="AdDescription" component={AdDescription} />
       <RootStack.Screen
         name="WhatAreYouOffering"

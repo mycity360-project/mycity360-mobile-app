@@ -7,7 +7,6 @@ export const AuthContext = createContext();
 export const AuthProvider = ({children}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [userToken, setUserToken] = useState('');
-  const [showVerifyOtpScreen, setShowVerifyOtpScreen] = useState(false);
 
   const onTokenAvailable = async (respData, token, userid) => {
     let userInfo = await http.get(`user/${userid}/`, {
@@ -45,16 +44,10 @@ export const AuthProvider = ({children}) => {
 
       if (token) {
         onTokenAvailable(respData, token, userid);
-        setShowVerifyOtpScreen(false);
         response.showVerifyOtpScreen = false;
         setIsLoading(false);
       } else {
-        console.log(showVerifyOtpScreen, ' before');
-        let showScreen = true;
-        setShowVerifyOtpScreen(showScreen);
-
-        console.log(showVerifyOtpScreen, ' after');
-        response.showVerifyOtpScreen = showScreen;
+        response.showVerifyOtpScreen = true;
         response.userid = userid;
         setIsLoading(false);
       }
@@ -69,7 +62,7 @@ export const AuthProvider = ({children}) => {
     setUserToken(null);
     AsyncStorage.removeItem('token');
     AsyncStorage.removeItem('tokenInfo');
-    AsyncStorage.removeItem('userInfor');
+    AsyncStorage.removeItem('userInfo');
 
     setIsLoading(false);
   };
@@ -104,7 +97,6 @@ export const AuthProvider = ({children}) => {
         logout,
         isLoading,
         userToken,
-        showVerifyOtpScreen,
         isVerified,
       }}>
       {children}

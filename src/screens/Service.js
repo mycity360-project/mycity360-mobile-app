@@ -3,7 +3,6 @@ import {
   Text,
   View,
   SafeAreaView,
-  TouchableWithoutFeedback,
   Keyboard,
   TextInput,
   FlatList,
@@ -11,36 +10,47 @@ import {
   TouchableOpacity,
   Pressable,
 } from 'react-native';
-import {React, useCallback, useContext, useState} from 'react';
-import {AuthContext} from '../context/AuthContext';
+import {React, useCallback, useState, useEffect} from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import CustomButton from '../shared/components/CustomButton';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
+import {http} from '../shared/lib';
 
 export default function Home({navigation}) {
-  const services = [
-    {
-      title: 'Mobile Repair',
-      icon: 'miscellaneous-services',
-      onpress: () => navigation.navigate('ServiceDescription', {serviceId: 1}),
-    },
-    {title: 'service2', icon: 'miscellaneous-services'},
-    {title: 'service3', icon: 'miscellaneous-services'},
-    {title: 'service4', icon: 'miscellaneous-services'},
-    {title: 'service5', icon: 'miscellaneous-services'},
-    {title: 'service7', icon: 'miscellaneous-services'},
-    {title: 'service8', icon: 'miscellaneous-services'},
-    {title: 'service9', icon: 'miscellaneous-services'},
-    {title: 'service10', icon: 'miscellaneous-services'},
-    {title: 'service11', icon: 'miscellaneous-services'},
-    {title: 'service12', icon: 'miscellaneous-services'},
-    {title: 'service13', icon: 'miscellaneous-services'},
-    {title: 'service14', icon: 'miscellaneous-services'},
-    {title: 'service15', icon: 'miscellaneous-services'},
-    {title: 'service16', icon: 'miscellaneous-services'},
-  ];
+  const [servicesData, setServicesData] = useState([]);
 
+  const getServices = async () => {
+    try {
+      console.log('inside get services');
+      const token = await AsyncStorage.getItem('token');
+      console.log(token);
+      const servicesRespData = await http.get(`service/user/`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      // console.log(servicesRespData);
+      const services = servicesRespData.map(service => ({
+        key: service.id.toString(),
+        title: service.name,
+        icon: service.icon,
+        description: service.description,
+        phone: service.phone,
+      }));
+      setServicesData(services);
+    } catch (err) {
+      console.log(
+        'Something went wrong while fetching services',
+        JSON.stringify(err),
+      );
+    }
+  };
+
+  useEffect(() => {
+    getServices();
+  }, []);
   const numColumns = 3;
-  const CARD_HEIGHT = 50;
+  const CARD_HEIGHT = 65;
   const getServiceCardLayout = (_, index) => ({
     length: CARD_HEIGHT,
     offset: CARD_HEIGHT * index,
@@ -53,39 +63,59 @@ export default function Home({navigation}) {
       services.push({key: `blank-${numberOfItemsLastRow}`, empty: true});
       numberOfItemsLastRow++;
     }
+    console.log(services);
     return services;
   };
 
-  const renderServiceList = useCallback(
-    ({item}) => (
-      <TouchableOpacity
-        style={{
-          height: CARD_HEIGHT,
-          flex: 2,
-          marginTop: 30,
-        }}
-        onPress={item.onpress}>
-        <View
-          style={{
-            flex: 1,
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}>
-          <MaterialIcon name={item.icon} size={35} color={'#000'} />
-          <Text
+  const renderServiceList = ({item}) => (
+    <Pressable
+      style={{
+        height: CARD_HEIGHT,
+        flex: 4,
+        marginTop: 30,
+      }}
+      disabled={item.empty ? true : false}
+      onPress={() =>
+        navigation.navigate('ServiceDescription', {
+          title: item.title,
+          description: item.description,
+          phone: item.phone,
+        })
+      }>
+      {item.empty ? (
+        // <View></View>
+        ''
+      ) : (
+        <View style={{flex: 1}}>
+          <View
             style={{
-              fontSize: 16,
-              color: '#111',
+              flex: 1.3,
+              alignItems: 'center',
+              justifyContent: 'center',
             }}>
-            {item.title}
-          </Text>
+            <Image source={{uri: item.icon, width: 45, height: 45}} />
+          </View>
+          <View
+            style={{
+              flex: 0.7,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+            <Text
+              style={{
+                fontSize: 16,
+                color: '#111',
+              }}>
+              {item.title}
+            </Text>
+          </View>
         </View>
-      </TouchableOpacity>
-    ),
-    [],
+      )}
+    </Pressable>
   );
+
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <View style={styles.btnSection}>
           <TouchableOpacity
@@ -118,7 +148,7 @@ export default function Home({navigation}) {
       </View>
       <View style={styles.serviceListSection}>
         <FlatList
-          data={formatData(services, numColumns)}
+          data={formatData(servicesData, numColumns)}
           renderItem={renderServiceList}
           getItemLayout={getServiceCardLayout}
           numColumns={numColumns}
@@ -130,7 +160,7 @@ export default function Home({navigation}) {
           showsVerticalScrollIndicator={false}
         />
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -148,6 +178,5 @@ const styles = StyleSheet.create({
 
   serviceListSection: {
     flex: 6,
-    padding: '5%',
   },
 });
