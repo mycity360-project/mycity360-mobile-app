@@ -5,11 +5,11 @@ import {
   SafeAreaView,
   TouchableWithoutFeedback,
   Keyboard,
-  TextInput,
   FlatList,
   Image,
   TouchableOpacity,
   Pressable,
+  ActivityIndicator,
 } from 'react-native';
 import {React, useCallback, useContext, useEffect, useState} from 'react';
 import {AuthContext} from '../context/AuthContext';
@@ -20,7 +20,7 @@ import {http} from '../shared/lib';
 export default function Home({navigation}) {
   const {logout} = useContext(AuthContext);
   const [categoriesData, setCategoriesData] = useState([]);
-
+  const [isLoading, setIsLoading] = useState(false);
   let adData = [
     {
       key: '1',
@@ -85,6 +85,7 @@ export default function Home({navigation}) {
 
   const getCategories = async () => {
     try {
+      setIsLoading(true);
       const token = await AsyncStorage.getItem('token');
       const categoriesRespData = await http.get(`category/user/`, {
         headers: {
@@ -98,11 +99,13 @@ export default function Home({navigation}) {
         icon: category.icon,
       }));
       setCategoriesData(categories);
+      setIsLoading(false);
     } catch (err) {
       console.log(
         'Something went wrong while fetching categories',
         JSON.stringify(err),
       );
+      setIsLoading(false);
     }
   };
 
@@ -124,41 +127,36 @@ export default function Home({navigation}) {
     index,
   });
 
-  const renderItem = useCallback(
-    ({item}) => (
-      <TouchableOpacity
-        style={[
-          styles.category,
-          {
-            width: ITEM_WIDTH,
-            flex: 1,
-          },
-        ]}
-        onPress={item.onpress}>
-        <View
-          style={{flex: 1.2, alignItems: 'center', justifyContent: 'center'}}>
-          <Image
-            source={{
-              uri: item.icon,
-              width: 45,
-              height: 45,
-            }}
-          />
-        </View>
+  const renderItem = ({item}) => (
+    <TouchableOpacity
+      style={[
+        styles.category,
+        {
+          width: ITEM_WIDTH,
+          flex: 1,
+        },
+      ]}
+      onPress={item.onpress}>
+      <View style={{flex: 1.2, alignItems: 'center', justifyContent: 'center'}}>
+        <Image
+          source={{
+            uri: item.icon,
+            width: 45,
+            height: 45,
+          }}
+        />
+      </View>
 
-        <View
-          style={{flex: 0.8, alignItems: 'center', justifyContent: 'center'}}>
-          <Text
-            style={{
-              fontSize: 16,
-              color: '#111',
-            }}>
-            {item.title}
-          </Text>
-        </View>
-      </TouchableOpacity>
-    ),
-    [],
+      <View style={{flex: 0.8, alignItems: 'center', justifyContent: 'center'}}>
+        <Text
+          style={{
+            fontSize: 16,
+            color: '#111',
+          }}>
+          {item.title}
+        </Text>
+      </View>
+    </TouchableOpacity>
   );
 
   const featuredTag = () => {
@@ -249,7 +247,11 @@ export default function Home({navigation}) {
     [],
   );
 
-  return (
+  return isLoading ? (
+    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+      <ActivityIndicator size={'large'} />
+    </View>
+  ) : (
     <SafeAreaView style={styles.container}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.innerContainer}>

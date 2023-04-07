@@ -46,7 +46,7 @@ export default function IncludeSomeDetails({navigation: {goBack}}) {
         style={{flex: 1.5, justifyContent: 'center', alignContent: 'center'}}>
         <CustomButton
           btnTitle="Next"
-          onpress={() => navigation.navigate('UploadYourPhotos')}
+          onpress={() => navigation.navigate('UploadAdPhotos')}
           style={{width: '90%', marginHorizontal: '5%'}}
         />
       </View>

@@ -46,7 +46,7 @@ export default function ProfileScreen() {
               size={styles.rowIcon.size}
               color={styles.rowIcon.color}
             />
-            {/* <Text style={styles.rowText}>{userInfo.area.name}</Text> */}
+            <Text style={styles.rowText}>{userInfo?.area?.name}</Text>
           </View>
           <View style={styles.row}>
             <MaterialIcon

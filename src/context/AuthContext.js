@@ -23,7 +23,7 @@ export const AuthProvider = ({children}) => {
   };
 
   const login = async (username, password) => {
-    // setIsLoading(true);
+    setIsLoading(true);
     const url = 'user/login/';
     const config = {
       headers: {

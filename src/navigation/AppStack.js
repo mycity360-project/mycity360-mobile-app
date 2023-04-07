@@ -6,7 +6,7 @@ import AdDescription from '../screens/AdDescription';
 import WhatAreYouOffering from '../screens/WhatAreYouOffering';
 import SubCategory from '../screens/SubCategory';
 import IncludeSomeDetails from '../screens/IncludeSomeDetails';
-import UploadYourPhotos from '../screens/UploadYourPhotos';
+import UploadAdPhotos from '../screens/UploadAdPhotos';
 import ServiceDescription from '../screens/ServiceDescription';
 import AdSearch from '../screens/AdSearch';
 const RootStack = createNativeStackNavigator();
@@ -25,7 +25,7 @@ export default function AppStack() {
         name="IncludeSomeDetails"
         component={IncludeSomeDetails}
       />
-      <RootStack.Screen name="UploadYourPhotos" component={UploadYourPhotos} />
+      <RootStack.Screen name="UploadAdPhotos" component={UploadAdPhotos} />
       <RootStack.Screen
         name="ServiceDescription"
         component={ServiceDescription}
