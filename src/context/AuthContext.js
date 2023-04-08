@@ -1,6 +1,7 @@
 import {React, createContext, useState, useEffect} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {http} from '../shared/lib';
+import {BACKEND_CLIENT_ID} from '../shared/constants';
 
 export const AuthContext = createContext();
 
@@ -11,7 +12,7 @@ export const AuthProvider = ({children}) => {
   const onTokenAvailable = async (respData, token, userid) => {
     let userInfo = await http.get(`user/${userid}/`, {
       headers: {
-        clientid: process.env.BACKEND_CLIENT_ID,
+        clientid: BACKEND_CLIENT_ID,
         Authorization: `Bearer ${token}`,
       },
     });
@@ -27,7 +28,7 @@ export const AuthProvider = ({children}) => {
     const url = 'user/login/';
     const config = {
       headers: {
-        clientid: process.env.BACKEND_CLIENT_ID,
+        clientid: BACKEND_CLIENT_ID,
       },
     };
     const data = {

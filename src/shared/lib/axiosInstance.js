@@ -1,9 +1,7 @@
 import axios, {HttpStatusCode} from 'axios';
-import {BACKEND_URL} from '@env';
+import {BACKEND_URL} from '../constants/env';
 
 const APP_PREFIX = 'api/v1/';
-
-//console.log(BACKEND_URL, 'backendurl');
 
 const axiosInstance = axios.create({
   baseURL: `${BACKEND_URL}/${APP_PREFIX}`,

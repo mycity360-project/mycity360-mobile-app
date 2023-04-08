@@ -4,6 +4,8 @@ import CustomButton from '../shared/components/CustomButton';
 import {AuthContext} from '../context/AuthContext';
 import {useContext} from 'react';
 import {http} from '../shared/lib';
+import {BACKEND_CLIENT_ID} from '../shared/constants';
+
 export default function VerifyOtp({route}) {
   const {userid} = route.params;
   console.log(route.params, 'route params');
@@ -15,7 +17,7 @@ export default function VerifyOtp({route}) {
       const url = `user/${userid}/verify-otp/`;
       const config = {
         headers: {
-          clientid: process.env.BACKEND_CLIENT_ID,
+          clientid: BACKEND_CLIENT_ID,
         },
       };
       const data = {
