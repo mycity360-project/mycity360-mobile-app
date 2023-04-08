@@ -1,7 +1,7 @@
 import {React, createContext, useState, useEffect} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {http} from '../shared/lib';
-import {BACKEND_CLIENT_ID} from '../shared/constants';
+import {BACKEND_CLIENT_ID} from '../shared/constants/env';
 
 export const AuthContext = createContext();
 

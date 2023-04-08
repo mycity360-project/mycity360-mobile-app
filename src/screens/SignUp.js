@@ -15,7 +15,7 @@ import CustomButton from '../shared/components/CustomButton';
 import DropDown from '../shared/components/DropDown';
 import {useNavigation} from '@react-navigation/native';
 import {http} from '../shared/lib';
-import {BACKEND_CLIENT_ID} from '../shared/constants';
+import {BACKEND_CLIENT_ID} from '../shared/constants/env';
 
 export default function SignUp() {
   const navigation = useNavigation();

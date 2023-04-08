@@ -1,7 +1,7 @@
 import {StyleSheet, Text, View, Image, SafeAreaView} from 'react-native';
 import React from 'react';
 import CustomButton from '../shared/components/CustomButton';
-import {APP_TITLE} from '../shared/constants';
+import {APP_TITLE} from '../shared/constants/env';
 
 export default function OnBoarding({navigation}) {
   return (

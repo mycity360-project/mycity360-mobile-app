@@ -4,7 +4,7 @@ import CustomButton from '../shared/components/CustomButton';
 import {AuthContext} from '../context/AuthContext';
 import {useContext} from 'react';
 import {http} from '../shared/lib';
-import {BACKEND_CLIENT_ID} from '../shared/constants';
+import {BACKEND_CLIENT_ID} from '../shared/constants/env';
 
 export default function VerifyOtp({route}) {
   const {userid} = route.params;

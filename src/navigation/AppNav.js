@@ -6,7 +6,8 @@ import {AuthContext} from '../context/AuthContext';
 import {ActivityIndicator, View} from 'react-native';
 
 export default function AppNav() {
-  const {isLoading, userToken} = useContext(AuthContext);
+  const {isLoading, userToken = null} = useContext(AuthContext);
+  console.log(userToken, 'This is token');
 
   if (isLoading) {
     return (
@@ -16,10 +17,18 @@ export default function AppNav() {
       </View>
     );
   }
+
+  if (userToken === null || userToken === '') {
+    return (
+      <NavigationContainer>
+        <AuthStack />
+      </NavigationContainer>
+    );
+  }
+
   return (
     <NavigationContainer>
-      {userToken !== null ? <AppStack /> : <AuthStack />}
-      {/* <AppStack /> */}
+      <AppStack />
     </NavigationContainer>
   );
 }
