@@ -1,17 +1,36 @@
 import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
-import Home from '../screens/Home';
-const Stack = createNativeStackNavigator();
+import CustomNavigation from './customNavigation';
+import AdDescription from '../screens/AdDescription';
+import WhatAreYouOffering from '../screens/WhatAreYouOffering';
+import SubCategory from '../screens/SubCategory';
+import IncludeSomeDetails from '../screens/IncludeSomeDetails';
+import UploadAdPhotos from '../screens/UploadAdPhotos';
+import ServiceDescription from '../screens/ServiceDescription';
+import AdSearch from '../screens/AdSearch';
+const RootStack = createNativeStackNavigator();
 
 export default function AppStack() {
   return (
-    <Stack.Navigator>
-      <Stack.Screen
-        name="Home"
-        component={Home}
-        options={{headerShown: false}}
+    <RootStack.Navigator screenOptions={{headerShown: false}}>
+      <RootStack.Screen name="HomeTabs" component={CustomNavigation} />
+      <RootStack.Screen name="AdDescription" component={AdDescription} />
+      <RootStack.Screen
+        name="WhatAreYouOffering"
+        component={WhatAreYouOffering}
       />
-    </Stack.Navigator>
+      <RootStack.Screen name="SubCategory" component={SubCategory} />
+      <RootStack.Screen
+        name="IncludeSomeDetails"
+        component={IncludeSomeDetails}
+      />
+      <RootStack.Screen name="UploadAdPhotos" component={UploadAdPhotos} />
+      <RootStack.Screen
+        name="ServiceDescription"
+        component={ServiceDescription}
+      />
+      <RootStack.Screen name="AdSearch" component={AdSearch} />
+    </RootStack.Navigator>
   );
 }

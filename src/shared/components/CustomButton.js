@@ -1,8 +1,7 @@
 import {StyleSheet, Text, View, Pressable} from 'react-native';
 import React from 'react';
-import style, {button} from '../constants/style';
+import {button} from '../constants/style';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
-import {useNavigation} from '@react-navigation/native';
 /**
  *
  * @param {String} ButtonType
@@ -20,15 +19,14 @@ export default function CustomButton(props) {
    */
 
   const {btnTitle, onpress, style, textStyle, icon, btnType} = props;
-  const navigation = useNavigation();
   let btnStyle = [styles.btn, style];
   let btnView = (
-    <View style={styles.btnTitleContainer}>
+    <View style={styles.btnTitleSection}>
       <Text style={[styles.btnTitle, textStyle]}>{btnTitle}</Text>
       <MaterialIcon name={icon} size={20} color={'#FFF'} />
     </View>
   );
-  if (btnType == 'back') {
+  if (btnType === 'back') {
     btnStyle = styles.backBtn;
     btnView = <MaterialIcon name="arrow-back" size={23} color={'#FFF'} />;
   }
@@ -53,7 +51,8 @@ const styles = StyleSheet.create({
     backgroundColor: button.buttonColor,
     borderRadius: 15,
     padding: 10,
-    width: '40%',
+    width: '60%',
+    alignSelf: 'center',
   },
   backBtn: {
     backgroundColor: button.buttonColor,
@@ -61,7 +60,7 @@ const styles = StyleSheet.create({
     padding: 10,
     width: '13%',
   },
-  btnTitleContainer: {
+  btnTitleSection: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',

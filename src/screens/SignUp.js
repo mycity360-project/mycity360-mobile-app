@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import {
   StyleSheet,
   View,
@@ -7,45 +8,110 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   ActivityIndicator,
+  TouchableOpacity,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import CustomButton from '../shared/components/CustomButton';
 import DropDown from '../shared/components/DropDown';
 import {useNavigation} from '@react-navigation/native';
 import {http} from '../shared/lib';
-
-const delay = delayInms => {
-  return new Promise(resolve => setTimeout(resolve, delayInms));
-};
+import {BACKEND_CLIENT_ID} from '../shared/constants/env';
 
 export default function SignUp() {
   const navigation = useNavigation();
-  const [locations, setLocations] = useState([]);
+  const [locationData, setLocationData] = useState([]);
+  const [areaData, setAreaData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState('');
+  const [selectedArea, setSelectedArea] = useState('');
+  const [isDisabled, setIsDisabled] = useState(true);
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [mobileNumber, setMobileNumber] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+
+  const getLocations = async () => {
+    setIsLoading(true);
+    try {
+      let locationRespdata = await http.get('location/public/?isactive=true');
+
+      const locations = locationRespdata.map(location => ({
+        key: location.id.toString(),
+        value: location.name,
+      }));
+      console.log(selectedLocation);
+      setLocationData(locations);
+    } catch (error) {
+      console.log('Something went wrong while fetching locations' + error);
+    }
+    setIsLoading(false);
+  };
 
   useEffect(() => {
-    const getLocations = async () => {
-      setIsLoading(true);
-      try {
-        let respData = await http({
-          method: 'GET',
-          url: '/location/public/?isactive=true',
-        });
-
-        const locationsData = respData.map(location => ({
-          key: location.id.toString(),
-          value: location.name,
-        }));
-        console.log(locationsData);
-        setLocations(locationsData);
-      } catch (error) {
-        console.log('Something went wrong while fetching locations');
-      }
-      setIsLoading(false);
-    };
     getLocations();
-  }, []);
+  });
+
+  useEffect(() => {
+    console.log(areaData, 'In use Effect');
+  }, [areaData]);
+
+  const getAreas = async location => {
+    setIsLoading(true);
+    try {
+      let areaRespData = await http.get(
+        `area/public/?location_id=${location.key}`,
+      );
+
+      const areas = areaRespData.map(area => ({
+        key: area.id.toString(),
+        value: area.name,
+      }));
+
+      setAreaData(areas);
+      setIsDisabled(false);
+      setIsLoading(false);
+    } catch (error) {
+      console.log('Something went wrong while fetching area' + error);
+    }
+  };
+
+  const setLocation = async location => {
+    setSelectedLocation(location);
+    await getAreas(location);
+  };
+  const setArea = async area => {
+    setSelectedArea(area);
+  };
+
+  const handleOnSignUpPress = async () => {
+    try {
+      let data = {
+        email: email,
+        phone: mobileNumber,
+        password: password,
+        first_name: firstName,
+        last_name: lastName,
+        area: {id: selectedArea.key},
+      };
+
+      const config = {
+        headers: {
+          clientid: BACKEND_CLIENT_ID,
+        },
+      };
+
+      const {id: user_id} = await http.post('user/signup/', data, config);
+      if (user_id) {
+        navigation.navigate('VerifyOtp', {userid: user_id});
+      } else {
+        throw new Error('Not able to get UserId Something went wrong');
+      }
+    } catch (error) {
+      console.log(JSON.stringify(error));
+    }
+  };
 
   return isLoading ? (
     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
@@ -55,9 +121,7 @@ export default function SignUp() {
     <SafeAreaView style={styles.container}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.innerContainer}>
-          <View style={styles.header}>
-            <CustomButton btnType="back" onpress={() => navigation.goBack()} />
-          </View>
+          <View style={styles.header} />
 
           <View style={styles.registerFormContainer}>
             <Text style={styles.registerFormHeading}>Register</Text>
@@ -69,6 +133,10 @@ export default function SignUp() {
                   {marginLeft: '10%'},
                 ]}
                 placeholder="First Name"
+                value={firstName}
+                onChangeText={firstname => {
+                  setFirstName(firstname);
+                }}
               />
               <TextInput
                 placeholder="Last Name"
@@ -77,48 +145,92 @@ export default function SignUp() {
                   styles.inputCommon,
                   {marginRight: '10%'},
                 ]}
+                value={lastName}
+                onChangeText={lastname => {
+                  setLastName(lastname);
+                }}
               />
             </View>
-
             <TextInput
               placeholder="Enter Mobile Number"
               style={[styles.input, styles.inputCommon]}
               keyboardType="numeric"
+              onChangeText={value => {
+                setMobileNumber(value);
+              }}
+              value={mobileNumber}
             />
             <TextInput
               placeholder="Enter you email"
               style={[styles.input, styles.inputCommon]}
               autoCapitalize={'none'}
               keyboardType="email-address"
+              onChangeText={mail => {
+                setEmail(mail);
+              }}
+              value={email}
             />
             <TextInput
               style={[styles.input, styles.inputCommon]}
               placeholder="Enter your password"
               secureTextEntry={true}
               autoCapitalize={'none'}
+              onChangeText={pass => {
+                setPassword(pass);
+              }}
+              value={password}
             />
             <TextInput
               style={[styles.input, styles.inputCommon]}
               placeholder="Confirm password"
               secureTextEntry={true}
               autoCapitalize={'none'}
+              onChangeText={confirmpass => {
+                setConfirmPassword(confirmpass);
+              }}
+              value={confirmPassword}
             />
             <DropDown
               placeholder="Select Location"
-              data={locations}
-              onSelect={setSelectedLocation}
+              dataArray={locationData}
+              selectedDataHandler={location => setLocation(location)}
+              isDisabled={false}
               selectedValue={selectedLocation}
             />
             <DropDown
               placeholder="Select Area"
-              dataArr={['India', 'America', 'Russia', 'Japan', 'China']}
+              dataArray={areaData}
+              isDisabled={isDisabled}
+              selectedDataHandler={area => setArea(area)}
+              selectedValue={selectedArea}
             />
+            {/* navigation.navigate('VerifyOtp') */}
             <CustomButton
               btnTitle={'Sign Up'}
-              onpress={() => navigation.navigate('VerifyOtp')}
               style={styles.registerBtn}
               icon="arrow-forward"
+              onpress={async () => await handleOnSignUpPress()}
             />
+
+            <View
+              style={{
+                flex: 0.1,
+                alignItems: 'flex-start',
+                justifyContent: 'center',
+                flexDirection: 'row',
+                gap: 5,
+              }}>
+              <Text style={{fontSize: 16}}>Already Registered?</Text>
+              <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    color: '#FA8C00',
+                  }}>
+                  Login
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </TouchableWithoutFeedback>
@@ -134,8 +246,6 @@ const styles = StyleSheet.create({
   innerContainer: {
     flex: 1,
   },
-  header: {flex: -1},
-
   registerFormContainer: {
     flex: 4,
     justifyContent: 'flex-start',

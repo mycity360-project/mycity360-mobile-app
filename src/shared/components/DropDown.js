@@ -1,37 +1,30 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  TouchableWithoutFeedback,
-  TouchableOpacity,
-  TextInput,
-  FlatList,
-} from 'react-native';
+/* eslint-disable react-native/no-inline-styles */
+import {StyleSheet, Text, View, TouchableOpacity, FlatList} from 'react-native';
 import {React, useState} from 'react';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 
 export default function DropDown(props) {
-  const {placeholder, data: dataArr, onSelect, selectedValue} = props;
-  const [selected, setSelected] = useState(`${placeholder}`);
+  console.log(props);
+  const {
+    placeholder,
+    dataArray,
+    selectedDataHandler,
+    isDisabled,
+    selectedValue,
+  } = props;
+  const [selected, setSelected] = useState(
+    selectedValue === '' ? `${placeholder}` : selectedValue.value,
+  );
   const [isClicked, setIsClicked] = useState(false);
-  const [data, setData] = useState(dataArr);
-  const onSearch = txt => {
-    if (txt !== '') {
-      let tempData = data.filter(item => {
-        return item.toLowerCase().indexOf(txt.toLowerCase()) > -1;
-      });
-      setData(tempData);
-    } else {
-      setData(dataArr);
-    }
-  };
+  const [data] = useState(dataArray);
   return (
     <View style={styles.container}>
       <TouchableOpacity
         style={styles.dropdownSelector}
         onPress={() => {
           setIsClicked(!isClicked);
-        }}>
+        }}
+        disabled={isDisabled}>
         <Text style={{color: '#222'}}>{selected}</Text>
         {isClicked ? (
           <MaterialIcon name="arrow-drop-up" size={25} color={'#222'} />
@@ -41,32 +34,23 @@ export default function DropDown(props) {
       </TouchableOpacity>
       {isClicked ? (
         <View style={styles.dropdownArea}>
-          <TextInput
-            placeholder="Search"
-            onChangeText={txt => {
-              onSearch(txt);
-            }}
-            style={styles.searchInput}
-          />
           <FlatList
             data={data}
-            renderItem={({item, index}) => {
+            renderItem={({item}) => {
               return (
                 <TouchableOpacity
                   style={styles.itemList}
                   onPress={() => {
-                    setSelected(item);
-                    onSearch('');
+                    setSelected(item.value);
+                    console.log(selected, placeholder);
+                    selectedDataHandler(item);
                     setIsClicked(false);
                   }}>
                   <Text>{item.value}</Text>
                 </TouchableOpacity>
               );
             }}
-            // renderItem={({item}) => {
-            //   <Text>{item.value}</Text>;
-            // }}
-            // keyExtractor={item => item.key}
+            extraData={{data}}
           />
         </View>
       ) : null}

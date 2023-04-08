@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import {
   StyleSheet,
   View,
@@ -11,7 +12,6 @@ import {
 } from 'react-native';
 import {React, useContext, useState} from 'react';
 import CustomButton from '../shared/components/CustomButton';
-
 import {AuthContext} from '../context/AuthContext';
 import {useNavigation} from '@react-navigation/native';
 
@@ -19,23 +19,20 @@ export default function Login() {
   const {login} = useContext(AuthContext);
   const [email, setEmail] = useState(null);
   const [password, setPassword] = useState(null);
-  const [showVerifyOtpScreen, setShowVerifyOtpScreen] = useState(false);
   const navigation = useNavigation();
   return (
     <SafeAreaView style={styles.container}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.innerContainer}>
-          <View style={styles.header}>
-            <CustomButton btnType="back" onpress={() => navigation.goBack()} />
-          </View>
-          <View style={styles.imgContainer}>
+          <View style={styles.headerSection} />
+          <View style={styles.logoSection}>
             <Image
               source={require('../assets/images/logo.png')}
               style={{width: 75, height: 75}}
             />
             <Text style={styles.logoName}>MyCity360</Text>
           </View>
-          <View style={styles.loginFormContainer}>
+          <View style={styles.loginFormSection}>
             <Text
               style={{
                 fontSize: 24,
@@ -48,28 +45,49 @@ export default function Login() {
             <TextInput
               placeholder="Enter Mobile Number / Email"
               style={styles.input}
-              onChangeText={text => {
-                setEmail(text);
+              onChangeText={mail => {
+                setEmail(mail);
               }}
             />
             <TextInput
               placeholder="Enter Password"
               style={styles.input}
               secureTextEntry={true}
-              onChangeText={text => {
-                setPassword(text);
+              onChangeText={value => {
+                setPassword(value);
               }}
             />
             <CustomButton
               btnTitle="Login"
               onpress={async () => {
-                (await login(email, password))
-                  ? navigation.navigate('VerifyOtp')
+                const response = await login(email, password);
+                console.log(response);
+                response.showVerifyOtpScreen
+                  ? navigation.navigate('VerifyOtp', {userid: response.userid})
                   : '';
               }}
               style={styles.loginBtn}
               icon="arrow-forward"
             />
+            <View
+              style={{
+                flex: 0.1,
+                alignItems: 'flex-start',
+                justifyContent: 'center',
+                flexDirection: 'row',
+                gap: 5,
+              }}>
+              <Text style={{fontSize: 16}}>Need an account?</Text>
+              <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    color: '#FA8C00',
+                  }}>
+                  Sign Up
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </TouchableWithoutFeedback>
@@ -85,14 +103,13 @@ const styles = StyleSheet.create({
   innerContainer: {
     flex: 1,
   },
-  header: {flex: -1},
-  imgContainer: {
-    flex: -1,
+  headerSection: {flex: 0.5},
+  logoSection: {
+    flex: 1,
     alignItems: 'center',
   },
-  loginFormContainer: {
-    flex: 4,
-
+  loginFormSection: {
+    flex: 5,
     justifyContent: 'center',
   },
 

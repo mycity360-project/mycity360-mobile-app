@@ -1,19 +1,56 @@
-import {StyleSheet, View, Image, TextInput} from 'react-native';
-import React from 'react';
+import {StyleSheet, View, TextInput} from 'react-native';
+import React, {useState} from 'react';
 import CustomButton from '../shared/components/CustomButton';
-import {useNavigation} from '@react-navigation/native';
-export default function VerifyOtp() {
-  const navigation = useNavigation();
+import {AuthContext} from '../context/AuthContext';
+import {useContext} from 'react';
+import {http} from '../shared/lib';
+import {BACKEND_CLIENT_ID} from '../shared/constants/env';
+
+export default function VerifyOtp({route}) {
+  const {userid} = route.params;
+  console.log(route.params, 'route params');
+  const {isVerified} = useContext(AuthContext);
+  const [enteredOtp, setEnteredOtp] = useState('');
+
+  const verifyOtp = async otp => {
+    try {
+      const url = `user/${userid}/verify-otp/`;
+      const config = {
+        headers: {
+          clientid: BACKEND_CLIENT_ID,
+        },
+      };
+      const data = {
+        phone_otp: otp,
+      };
+      console.log(otp, userid, url, config, data);
+
+      const resp = await http.post(url, data, config);
+      console.log(resp, '24');
+      return resp;
+    } catch (err) {
+      console.log(JSON.stringify(err), 'verifyotp');
+    }
+  };
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <CustomButton btnType="back" onpress={() => navigation.goBack()} />
+        {/* <CustomButton btnType="back" onpress={() => navigation.goBack()} /> */}
       </View>
       <View style={styles.formContainer}>
-        <TextInput style={styles.input} placeholder="Enter Mobile OTP" />
+        <TextInput
+          style={styles.input}
+          placeholder="Enter Mobile OTP"
+          keyboardType="numeric"
+          onChangeText={otp => setEnteredOtp(otp)}
+        />
         <CustomButton
           btnTitle={'Verify'}
-          onpress={() => navigation.navigate('OnBoarding')}
+          onpress={async () => {
+            let data = await verifyOtp(enteredOtp);
+            console.log(data);
+            isVerified(data);
+          }}
         />
       </View>
     </View>
