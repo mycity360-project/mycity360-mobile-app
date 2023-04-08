@@ -1,19 +1,16 @@
+/* eslint-disable react-native/no-inline-styles */
 import {
   StyleSheet,
   Text,
   View,
   SafeAreaView,
-  Keyboard,
-  TextInput,
   FlatList,
   Image,
   TouchableOpacity,
   Pressable,
 } from 'react-native';
-import {React, useCallback, useState, useEffect} from 'react';
+import {React, useState, useEffect} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import CustomButton from '../shared/components/CustomButton';
-import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import {http} from '../shared/lib';
 
 export default function Home({navigation}) {
@@ -24,7 +21,7 @@ export default function Home({navigation}) {
       console.log('inside get services');
       const token = await AsyncStorage.getItem('token');
       console.log(token);
-      const servicesRespData = await http.get(`service/user/`, {
+      const servicesRespData = await http.get('service/user/', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -56,10 +53,10 @@ export default function Home({navigation}) {
     offset: CARD_HEIGHT * index,
     index,
   });
-  const formatData = (services, numColumns) => {
-    const numberOfFullRows = Math.floor(services.length / numColumns);
-    let numberOfItemsLastRow = services.length - numberOfFullRows * numColumns;
-    while (numberOfItemsLastRow !== numColumns && numberOfItemsLastRow !== 0) {
+  const formatData = (services, num) => {
+    const numberOfFullRows = Math.floor(services.length / num);
+    let numberOfItemsLastRow = services.length - numberOfFullRows * num;
+    while (numberOfItemsLastRow !== num && numberOfItemsLastRow !== 0) {
       services.push({key: `blank-${numberOfItemsLastRow}`, empty: true});
       numberOfItemsLastRow++;
     }

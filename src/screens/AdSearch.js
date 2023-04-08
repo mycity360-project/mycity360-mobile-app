@@ -1,14 +1,5 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  SafeAreaView,
-  TextInput,
-  Button,
-  TouchableOpacity,
-} from 'react-native';
+import {StyleSheet, View, SafeAreaView, TextInput} from 'react-native';
 import React from 'react';
-import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 
 export default function AdSearch() {
   return (
@@ -22,7 +13,7 @@ export default function AdSearch() {
           />
         </View>
       </View>
-      <View style={styles.body}></View>
+      <View style={styles.body} />
     </SafeAreaView>
   );
 }
@@ -37,7 +28,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#EFEFEF',
     height: '85%',
     borderRadius: 20,
-    padding: 10,
     elevation: 5, //Android Only
     shadowRadius: 5, // IOS Only
   },

@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import {
   StyleSheet,
   View,
@@ -23,7 +24,7 @@ export default function Login() {
     <SafeAreaView style={styles.container}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.innerContainer}>
-          <View style={styles.headerSection}></View>
+          <View style={styles.headerSection} />
           <View style={styles.logoSection}>
             <Image
               source={require('../assets/images/logo.png')}
@@ -44,16 +45,16 @@ export default function Login() {
             <TextInput
               placeholder="Enter Mobile Number / Email"
               style={styles.input}
-              onChangeText={email => {
-                setEmail(email);
+              onChangeText={mail => {
+                setEmail(mail);
               }}
             />
             <TextInput
               placeholder="Enter Password"
               style={styles.input}
               secureTextEntry={true}
-              onChangeText={password => {
-                setPassword(password);
+              onChangeText={value => {
+                setPassword(value);
               }}
             />
             <CustomButton

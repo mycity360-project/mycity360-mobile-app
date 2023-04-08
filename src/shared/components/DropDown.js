@@ -1,12 +1,5 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  TouchableWithoutFeedback,
-  TouchableOpacity,
-  TextInput,
-  FlatList,
-} from 'react-native';
+/* eslint-disable react-native/no-inline-styles */
+import {StyleSheet, Text, View, TouchableOpacity, FlatList} from 'react-native';
 import {React, useState} from 'react';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 
@@ -23,7 +16,7 @@ export default function DropDown(props) {
     selectedValue === '' ? `${placeholder}` : selectedValue.value,
   );
   const [isClicked, setIsClicked] = useState(false);
-  const [data, setData] = useState(dataArray);
+  const [data] = useState(dataArray);
   return (
     <View style={styles.container}>
       <TouchableOpacity

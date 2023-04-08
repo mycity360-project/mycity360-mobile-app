@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import {
   Image,
   Pressable,
@@ -8,8 +9,6 @@ import {
   Platform,
 } from 'react-native';
 import React from 'react';
-import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
-import style from '../shared/constants/style';
 
 export default function ServiceDescription({route, navigation}) {
   const {title, description, phone} = route.params;

@@ -1,4 +1,4 @@
-import {StyleSheet, View, Image, TextInput} from 'react-native';
+import {StyleSheet, View, TextInput} from 'react-native';
 import React, {useState} from 'react';
 import CustomButton from '../shared/components/CustomButton';
 import {AuthContext} from '../context/AuthContext';
@@ -7,7 +7,7 @@ import {http} from '../shared/lib';
 export default function VerifyOtp({route}) {
   const {userid} = route.params;
   console.log(route.params, 'route params');
-  const {showVerifyOtpScreen, isVerified} = useContext(AuthContext);
+  const {isVerified} = useContext(AuthContext);
   const [enteredOtp, setEnteredOtp] = useState('');
 
   const verifyOtp = async otp => {

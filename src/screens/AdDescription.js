@@ -1,20 +1,12 @@
-import {
-  Image,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-  Button,
-  TouchableOpacity,
-} from 'react-native';
+/* eslint-disable react-native/no-inline-styles */
+import {Image, StyleSheet, Text, View, TouchableOpacity} from 'react-native';
 import React from 'react';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
-import style from '../shared/constants/style';
 
 export default function AdDescription({route, navigation}) {
   // Data from API call for specific ad, for now using dummy data
   // const data=[];
-  const {title, price, location, dateAdded} = route.params;
+  const {title, price, location} = route.params;
   return (
     <View style={styles.container}>
       <View style={styles.adHeaderSection}>

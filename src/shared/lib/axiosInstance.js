@@ -1,5 +1,5 @@
 import axios, {HttpStatusCode} from 'axios';
-import {BACKEND_URL, BACKEND_CLIENT_ID} from '@env';
+import {BACKEND_URL} from '@env';
 
 const APP_PREFIX = 'api/v1/';
 

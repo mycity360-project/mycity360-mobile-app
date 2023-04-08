@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import {
   StyleSheet,
   View,
@@ -49,7 +50,7 @@ export default function SignUp() {
 
   useEffect(() => {
     getLocations();
-  }, []);
+  });
 
   useEffect(() => {
     console.log(areaData, 'In use Effect');
@@ -153,8 +154,8 @@ export default function SignUp() {
               placeholder="Enter Mobile Number"
               style={[styles.input, styles.inputCommon]}
               keyboardType="numeric"
-              onChangeText={mobileNumber => {
-                setMobileNumber(mobileNumber);
+              onChangeText={value => {
+                setMobileNumber(value);
               }}
               value={mobileNumber}
             />
@@ -163,8 +164,8 @@ export default function SignUp() {
               style={[styles.input, styles.inputCommon]}
               autoCapitalize={'none'}
               keyboardType="email-address"
-              onChangeText={email => {
-                setEmail(email);
+              onChangeText={mail => {
+                setEmail(mail);
               }}
               value={email}
             />
@@ -173,8 +174,8 @@ export default function SignUp() {
               placeholder="Enter your password"
               secureTextEntry={true}
               autoCapitalize={'none'}
-              onChangeText={password => {
-                setPassword(password);
+              onChangeText={pass => {
+                setPassword(pass);
               }}
               value={password}
             />
@@ -183,8 +184,8 @@ export default function SignUp() {
               placeholder="Confirm password"
               secureTextEntry={true}
               autoCapitalize={'none'}
-              onChangeText={confirmPassword => {
-                setConfirmPassword(confirmPassword);
+              onChangeText={confirmpass => {
+                setConfirmPassword(confirmpass);
               }}
               value={confirmPassword}
             />

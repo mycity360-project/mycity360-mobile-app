@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import {
   StyleSheet,
   Text,
@@ -11,14 +12,11 @@ import {
   Pressable,
   ActivityIndicator,
 } from 'react-native';
-import {React, useCallback, useContext, useEffect, useState} from 'react';
-import {AuthContext} from '../context/AuthContext';
-import CustomButton from '../shared/components/CustomButton';
+import {React, useCallback, useEffect, useState} from 'react';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {http} from '../shared/lib';
 export default function Home({navigation}) {
-  const {logout} = useContext(AuthContext);
   const [categoriesData, setCategoriesData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   let adData = [
@@ -87,7 +85,7 @@ export default function Home({navigation}) {
     try {
       setIsLoading(true);
       const token = await AsyncStorage.getItem('token');
-      const categoriesRespData = await http.get(`category/user/`, {
+      const categoriesRespData = await http.get('category/user/', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -244,7 +242,7 @@ export default function Home({navigation}) {
         </View>
       </Pressable>
     ),
-    [],
+    [navigation],
   );
 
   return isLoading ? (

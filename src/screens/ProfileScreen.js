@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import React, {useContext, useState, useEffect} from 'react';
 import {SafeAreaView, StyleSheet, View} from 'react-native';
 import {
@@ -17,8 +18,8 @@ export default function ProfileScreen() {
   const [userInfo, setUserInfo] = useState({});
 
   const getInfo = async () => {
-    const userInfo = await AsyncStorage.getItem('userInfo');
-    setUserInfo(JSON.parse(userInfo));
+    const userData = await AsyncStorage.getItem('userInfo');
+    setUserInfo(JSON.parse(userData));
   };
 
   useEffect(() => {
@@ -31,7 +32,8 @@ export default function ProfileScreen() {
         <View style={styles.userInfoHeader}>
           <Avatar.Image
             source={require('../assets/images/anurag.jpg')}
-            size={80}></Avatar.Image>
+            size={80}
+          />
           <View style={{marginLeft: '4%'}}>
             <Title style={styles.title}>
               {userInfo.first_name + ' ' + userInfo.last_name}

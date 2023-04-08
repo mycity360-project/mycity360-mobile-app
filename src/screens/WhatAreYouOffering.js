@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import {StyleSheet, Text, TouchableOpacity, View, FlatList} from 'react-native';
 import React, {useCallback} from 'react';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';

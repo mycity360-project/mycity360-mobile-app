@@ -10,6 +10,7 @@ export default function AppNav() {
 
   if (isLoading) {
     return (
+      // eslint-disable-next-line react-native/no-inline-styles
       <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
         <ActivityIndicator size={'large'} />
       </View>

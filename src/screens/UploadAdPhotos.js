@@ -1,21 +1,15 @@
+/* eslint-disable react-native/no-inline-styles */
 import {
   StyleSheet,
-  Text,
   View,
   Image,
   SafeAreaView,
   TouchableOpacity,
   FlatList,
-  ScrollView,
   Dimensions,
-  Animated,
 } from 'react-native';
-import React, {useState, useRef, useCallback, useEffect} from 'react';
-import {
-  ImagePicker,
-  launchCamera,
-  launchImageLibrary,
-} from 'react-native-image-picker';
+import React, {useState} from 'react';
+import {launchCamera} from 'react-native-image-picker';
 import CustomButton from '../shared/components/CustomButton';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 
@@ -144,10 +138,11 @@ export default function UploadAdPhotos() {
                 key={index}
                 style={[
                   styles.dotCommon,
-                  currentIndex == index
+                  currentIndex === index
                     ? styles.dotActive
                     : styles.dotNotActive,
-                ]}></View>
+                ]}
+              />
             );
           })}
         </View>

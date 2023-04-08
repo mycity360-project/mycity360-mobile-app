@@ -1,8 +1,7 @@
 import {StyleSheet, Text, View, Pressable} from 'react-native';
 import React from 'react';
-import style, {button} from '../constants/style';
+import {button} from '../constants/style';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
-import {useNavigation} from '@react-navigation/native';
 /**
  *
  * @param {String} ButtonType
@@ -20,7 +19,6 @@ export default function CustomButton(props) {
    */
 
   const {btnTitle, onpress, style, textStyle, icon, btnType} = props;
-  const navigation = useNavigation();
   let btnStyle = [styles.btn, style];
   let btnView = (
     <View style={styles.btnTitleSection}>
@@ -28,7 +26,7 @@ export default function CustomButton(props) {
       <MaterialIcon name={icon} size={20} color={'#FFF'} />
     </View>
   );
-  if (btnType == 'back') {
+  if (btnType === 'back') {
     btnStyle = styles.backBtn;
     btnView = <MaterialIcon name="arrow-back" size={23} color={'#FFF'} />;
   }
