@@ -30,7 +30,10 @@ export default function CustomButton(props) {
     btnStyle = styles.backBtn;
     btnView = <MaterialIcon name="arrow-back" size={23} color={'#FFF'} />;
   }
-
+  if (btnType === 'backAd') {
+    btnStyle = style;
+    btnView = <MaterialIcon name="arrow-back" size={26} color={'#222'} />;
+  }
   return (
     <View style={styles.container}>
       <Pressable
@@ -60,6 +63,7 @@ const styles = StyleSheet.create({
     padding: 10,
     width: '13%',
   },
+
   btnTitleSection: {
     flexDirection: 'row',
     alignItems: 'center',

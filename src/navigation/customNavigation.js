@@ -5,11 +5,11 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Service from '../screens/Service';
 import Home from '../screens/Home';
-import SavedAds from '../screens/SavedAds';
+import YourAds from '../screens/YourAds';
 import ProfileScreen from '../screens/ProfileScreen';
 
 const HomeStack = createNativeStackNavigator();
-const SavedAdsStack = createNativeStackNavigator();
+const YourAdsStack = createNativeStackNavigator();
 const ProfileStack = createNativeStackNavigator();
 
 const Tab = createBottomTabNavigator();
@@ -33,11 +33,11 @@ const CustomNavigation = () => (
       }}
     />
     <Tab.Screen
-      name="SavedAdsTabScreen"
-      component={SavedAdsStackScreen}
+      name="YourAdsTabScreen"
+      component={YourAdsStackScreen}
       options={{
         tabBarLabel: props => (
-          <Text style={{color: props.color}}>Saved Ads</Text>
+          <Text style={{color: props.color}}>Your Ads</Text>
         ),
         tabBarIcon: props => (
           <Ionicons name="heart-outline" size={24} color={props.color} />
@@ -66,10 +66,10 @@ const HomeStackScreen = ({navigation}) => (
   </HomeStack.Navigator>
 );
 
-const SavedAdsStackScreen = ({navigation}) => (
-  <SavedAdsStack.Navigator screenOptions={{headerShown: false}}>
-    <SavedAdsStack.Screen name="SavedAds" component={SavedAds} />
-  </SavedAdsStack.Navigator>
+const YourAdsStackScreen = ({navigation}) => (
+  <YourAdsStack.Navigator screenOptions={{headerShown: false}}>
+    <YourAdsStack.Screen name="YourAds" component={YourAds} />
+  </YourAdsStack.Navigator>
 );
 
 const ProfileStackScreen = ({navigation}) => (

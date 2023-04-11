@@ -1,41 +1,21 @@
 /* eslint-disable react-native/no-inline-styles */
-import {StyleSheet, Text, TouchableOpacity, View, FlatList} from 'react-native';
-import React, {useCallback} from 'react';
+import {
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  FlatList,
+  Image,
+} from 'react-native';
+import React from 'react';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 
-import {StackActions, useNavigation} from '@react-navigation/native';
+import {StackActions} from '@react-navigation/native';
 
-export default function WhatAreYouOffering({navgation}) {
-  const navigation = useNavigation();
-  const closeSellScreen = StackActions.pop(1);
-
-  const data = [
-    {key: '1', name: 'Cars', icon: 'car-repair', bgcolor: '#999'},
-    {key: '2', name: 'Properties', icon: 'house', bgcolor: '#888'},
-    {
-      key: '3',
-      name: 'Mobiles',
-      icon: 'phone-android',
-      bgcolor: '#777',
-      onPress: () => navigation.navigate('SubCategory'),
-    },
-    {key: '4', name: 'Jobs', icon: 'work-outline', bgcolor: '#666'},
-    {key: '5', name: 'Bikes', icon: 'two-wheeler', bgcolor: '#555'},
-    {
-      key: '6',
-      name: 'Electronics & Appliances',
-      icon: 'live-tv',
-      bgcolor: '#777',
-    },
-    {
-      key: '7',
-      name: 'Commercial Vehicles & Spares',
-      icon: 'miscellaneous-services',
-      bgcolor: '#888',
-    },
-    {key: '8', name: 'More Categories', icon: 'view-headline', bgcolor: '#999'},
-  ];
-
+export default function WhatAreYouOffering({navigation, route}) {
+  const {categoriesData} = route.params;
+  const closeSellScreen = StackActions.pop(1); // close screen on press of close btn
+  console.log(categoriesData);
   const CARD_HEIGHT = 100;
   const getCategoryCardLayout = (_, index) => ({
     length: CARD_HEIGHT,
@@ -43,37 +23,45 @@ export default function WhatAreYouOffering({navgation}) {
     index,
   });
 
-  const renderItem = useCallback(
-    ({item}) => (
-      <TouchableOpacity
-        style={[
-          styles.category,
-          {
-            height: CARD_HEIGHT,
-            width: '49%',
-            padding: 15,
-            borderRightWidth: 0.5,
-            borderRightColor: '#999',
-            borderBottomWidth: 0.5,
-            borderBottomColor: '#999',
-            // backgroundColor: item.bgcolor,
-          },
-        ]}
-        onPress={item.onPress}>
-        <View style={{alignItems: 'center', justifyContent: 'center'}}>
-          <MaterialIcon name={item.icon} size={35} color={'#000'} />
-          <Text
-            style={{
-              fontSize: 12,
-              color: '#111',
-              marginTop: 4,
-            }}>
-            {item.name}
-          </Text>
-        </View>
-      </TouchableOpacity>
-    ),
-    [],
+  const renderItem = ({item}) => (
+    <TouchableOpacity
+      style={[
+        styles.category,
+        {
+          height: CARD_HEIGHT,
+          width: '49%',
+          padding: 15,
+          borderRightWidth: 0.5,
+          borderRightColor: '#999',
+          borderBottomWidth: 0.5,
+          borderBottomColor: '#999',
+          // backgroundColor: item.bgcolor,
+        },
+      ]}
+      onPress={() =>
+        navigation.navigate('SubCategory', {
+          categoryID: item.key,
+          categoryName: item.name,
+        })
+      }>
+      <View style={{alignItems: 'center', justifyContent: 'center'}}>
+        <Image
+          source={{
+            uri: item.icon,
+            width: 45,
+            height: 45,
+          }}
+        />
+        <Text
+          style={{
+            fontSize: 12,
+            color: '#111',
+            marginTop: 4,
+          }}>
+          {item.name}
+        </Text>
+      </View>
+    </TouchableOpacity>
   );
 
   return (
@@ -91,7 +79,7 @@ export default function WhatAreYouOffering({navgation}) {
       <View style={styles.categoryListSection}>
         {/* Render catrgory cards */}
         <FlatList
-          data={data}
+          data={categoriesData}
           renderItem={renderItem}
           getItemLayout={getCategoryCardLayout}
           numColumns={2}

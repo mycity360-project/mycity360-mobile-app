@@ -19,68 +19,19 @@ import {http} from '../shared/lib';
 export default function Home({navigation}) {
   const [categoriesData, setCategoriesData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  let adData = [
-    {
-      key: '1',
-      title:
-        'Mobile for resale , used only for 6 months in warranty and in good condition',
-      price: '8000',
-      location: 'Nipania, Indore',
-      image: require('../assets/images/mobile.png'),
-      bgcolor: '#979',
-      isFeatured: true,
-    },
-    {
-      key: '2',
-      title: 'Mobile for resale',
-      price: '8000',
-      location: 'Nipania, Indore',
-      image: require('../assets/images/mobile.png'),
-      bgcolor: '#989',
-    },
-    {
-      key: '3',
-      title: 'Mobile for resale',
-      price: '8000',
-      location: 'Nipania, Indore',
-      image: require('../assets/images/mobile.png'),
-      bgcolor: '#888',
-    },
-    {
-      key: '4',
-      title: 'Mobile for resale',
-      price: '8000',
-      location: 'Nipania, Indore',
-      image: require('../assets/images/mobile.png'),
-      bgcolor: '#777',
-      isFeatured: true,
-    },
-    {
-      key: '5',
-      title: 'Mobile for resale',
-      price: '8000',
-      location: 'Nipania, Indore',
-      image: require('../assets/images/mobile.png'),
-      bgcolor: '#666',
-    },
-    {
-      key: '6',
-      title: 'Mobile for resale',
-      price: '8000',
-      location: 'Nipania, Indore',
-      image: require('../assets/images/mobile.png'),
-      bgcolor: '#666',
-    },
-    {
-      key: '7',
-      title: 'Mobile for resale ',
-      price: 8000,
-      location: 'Nipania, Indore',
-      image: require('../assets/images/mobile.png'),
-      bgcolor: '#666',
-    },
-  ];
+  const [selectedLocation, setSelectedLocation] = useState('');
+  // console.log(categoriesData);
 
+  const getUserInfo = async () => {
+    const info = await AsyncStorage.getItem('userInfo');
+    const location = JSON.parse(info)?.area?.name;
+    console.log(location);
+    setSelectedLocation(location);
+  };
+
+  useEffect(() => {
+    getUserInfo();
+  }, []);
   const getCategories = async () => {
     try {
       setIsLoading(true);
@@ -93,7 +44,7 @@ export default function Home({navigation}) {
       // console.log(categoriesRespData.results);
       const categories = categoriesRespData.results.map(category => ({
         key: category.id.toString(),
-        title: category.name,
+        name: category.name,
         icon: category.icon,
       }));
       setCategoriesData(categories);
@@ -110,6 +61,42 @@ export default function Home({navigation}) {
   useEffect(() => {
     getCategories();
   }, []);
+
+  const [userAdsData, setUserAdsData] = useState([]);
+  const getUserAds = async () => {
+    try {
+      setIsLoading(true);
+      const token = await AsyncStorage.getItem('token');
+      const userAdsRespData = await http.get('/user-ad/?is_active=True', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log(userAdsRespData.results, '68');
+      const ads = userAdsRespData.results.map(ad => ({
+        id: ad.id.toString(),
+        title: ad.name,
+        createdDate: ad.created_date,
+        description: ad.description,
+        images: ad.images,
+        isFeatured: ad.is_featured,
+        price: ad.price,
+      }));
+      console.log(ads);
+      setUserAdsData(ads);
+      setIsLoading(false);
+    } catch (err) {
+      console.log(
+        'Something went wrong while fetching user ads 80 Home',
+        JSON.stringify(err),
+      );
+      setIsLoading(false);
+    }
+  };
+
+  // useEffect(() => {
+  //   getUserAds();
+  // }, []);
 
   const ITEM_WIDTH = 80;
   const getItemLayout = (_, index) => ({
@@ -151,7 +138,7 @@ export default function Home({navigation}) {
             fontSize: 16,
             color: '#111',
           }}>
-          {item.title}
+          {item.name}
         </Text>
       </View>
     </TouchableOpacity>
@@ -175,74 +162,71 @@ export default function Home({navigation}) {
     );
   };
 
-  const renderAds = useCallback(
-    ({item}) => (
-      <Pressable
+  const renderAds = ({item}) => (
+    <Pressable
+      style={{
+        // backgroundColor: item.bgcolor,
+        height: CARD_HEIGHT,
+        padding: '2%',
+        width: '49%',
+        marginBottom: '1%',
+        borderWidth: 2,
+        borderColor: '#CCC',
+        borderRadius: 5,
+      }}
+      onPress={() =>
+        navigation.navigate('AdDescription', {
+          key: item.key,
+          title: item.name,
+          price: item.price,
+          location: item.location,
+        })
+      }>
+      <View
+        pointerEvents="box-only"
         style={{
-          // backgroundColor: item.bgcolor,
-          height: CARD_HEIGHT,
-          padding: '2%',
-          width: '49%',
-          marginBottom: '1%',
-          borderWidth: 2,
-          borderColor: '#CCC',
-          borderRadius: 5,
-        }}
-        onPress={() =>
-          navigation.navigate('AdDescription', {
-            key: item.key,
-            title: item.title,
-            price: item.price,
-            location: item.location,
-          })
-        }>
-        <View
-          pointerEvents="box-only"
-          style={{
-            flex: 1.5,
-            alignItems: 'center',
-            justifyContent: 'center',
-            // backgroundColor: '#664489',
-          }}>
-          <Image
-            source={item.image}
-            style={{height: '90%', resizeMode: 'contain'}}
-          />
-          {item.isFeatured ? featuredTag() : ''}
+          flex: 1.5,
+          alignItems: 'center',
+          justifyContent: 'center',
+          // backgroundColor: '#664489',
+        }}>
+        {/* <Image
+          source={{uri: item.images[0].image}}
+          style={{height: '90%', resizeMode: 'contain'}}
+        /> */}
+        {item.isFeatured ? featuredTag() : ''}
+      </View>
+      <View
+        style={{
+          flex: 1,
+          // backgroundColor: '#ccc',
+          justifyContent: 'space-between',
+        }}>
+        <View>
+          <Text style={{fontSize: 14, fontWeight: 600, color: '#111'}}>
+            ₹ {item.price}
+          </Text>
+          <Text
+            numberOfLines={2}
+            style={{fontSize: 14, width: '90%', color: '#000'}}>
+            {item.name}
+          </Text>
         </View>
-        <View
-          style={{
-            flex: 1,
-            // backgroundColor: '#ccc',
-            justifyContent: 'space-between',
-          }}>
-          <View>
-            <Text style={{fontSize: 14, fontWeight: 600, color: '#111'}}>
-              ₹ {item.price}
-            </Text>
-            <Text
-              numberOfLines={2}
-              style={{fontSize: 14, width: '90%', color: '#000'}}>
-              {item.title}
-            </Text>
-          </View>
 
-          <View style={{flexDirection: 'row', marginBottom: 5}}>
-            <MaterialIcon name="location-pin" size={16} color={'#666'} />
-            <Text
-              style={{
-                fontSize: 12,
-                textAlign: 'left',
-                fontWeight: 500,
-                color: '#666',
-              }}>
-              {item.location}
-            </Text>
-          </View>
+        <View style={{flexDirection: 'row', marginBottom: 5}}>
+          <MaterialIcon name="location-pin" size={16} color={'#666'} />
+          <Text
+            style={{
+              fontSize: 12,
+              textAlign: 'left',
+              fontWeight: 500,
+              color: '#666',
+            }}>
+            {item.location}
+          </Text>
         </View>
-      </Pressable>
-    ),
-    [navigation],
+      </View>
+    </Pressable>
   );
 
   return isLoading ? (
@@ -254,6 +238,24 @@ export default function Home({navigation}) {
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.innerContainer}>
           <View style={styles.header}>
+            <View style={styles.locationSection}>
+              <TouchableOpacity
+                style={{
+                  flexDirection: 'row',
+                  padding: '1%',
+                  justifyContent: 'flex-end',
+                }}
+                onPress={() => navigation.navigate('LocationModal')}>
+                <MaterialIcon name="location-pin" color={'#222'} size={20} />
+                <Text
+                  style={{
+                    color: '#222',
+                    fontWeight: 500,
+                  }}>
+                  {selectedLocation}
+                </Text>
+              </TouchableOpacity>
+            </View>
             <View style={styles.btnSection}>
               <TouchableOpacity
                 onPress={() => navigation.navigate('Home')}
@@ -296,23 +298,27 @@ export default function Home({navigation}) {
             {/* Sell Button to add item for sell */}
             <TouchableOpacity
               style={styles.sellBtn}
-              onPress={() => navigation.navigate('WhatAreYouOffering')}>
+              onPress={() => {
+                navigation.navigate('WhatAreYouOffering', {
+                  categoriesData: categoriesData,
+                });
+              }}>
               <View
                 style={{
-                  flex: 1,
+                  flex: 1.2,
                   alignItems: 'center',
                   justifyContent: 'center',
                 }}>
                 <MaterialIcon
                   name="add-circle-outline"
                   color={'#FF8C00'}
-                  size={35}
+                  size={40}
                 />
               </View>
 
               <View
                 style={{
-                  flex: 1,
+                  flex: 0.8,
                   alignItems: 'center',
                   justifyContent: 'center',
                 }}>
@@ -333,7 +339,7 @@ export default function Home({navigation}) {
 
           <View style={styles.featuredAdsSection}>
             <FlatList
-              data={adData}
+              data={userAdsData}
               renderItem={renderAds}
               getItemLayout={getAdCardLayout}
               numColumns={2}
@@ -357,8 +363,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    flex: 0.6,
+    flex: 1,
   },
+
+  locationSection: {flex: 0.5},
   btnSection: {
     flex: 1,
     flexDirection: 'row',
@@ -386,20 +394,21 @@ const styles = StyleSheet.create({
     marginRight: '40%',
   },
   categorySection: {
-    flex: 0.4,
+    flex: 0.5,
     flexDirection: 'row',
     padding: 5,
     gap: 5,
   },
   sellBtn: {
-    paddingHorizontal: 5,
+    paddingLeft: 5,
     alignItems: 'center',
     justifyContent: 'center',
+    marginRight: '-4%',
   },
   category: {
     alignItems: 'center',
     justifyContent: 'center',
   },
   categoryImg: {width: 35, height: 35},
-  featuredAdsSection: {flex: 3, padding: '1%'},
+  featuredAdsSection: {flex: 4, padding: '1%'},
 });

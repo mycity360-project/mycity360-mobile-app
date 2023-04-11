@@ -19,8 +19,22 @@ export default function Login() {
   const {login} = useContext(AuthContext);
   const [email, setEmail] = useState(null);
   const [password, setPassword] = useState(null);
+  const [Loading, setLoading] = useState(false);
   const navigation = useNavigation();
-  return (
+
+  const loginHandler = async () => {
+    const response = await login(email, password);
+    console.log(response, Loading);
+    if (response.showVerifyOtpScreen) {
+      navigation.navigate('VerifyOtp', {userid: response.userid});
+    }
+  };
+
+  return Loading ? (
+    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+      <ActivityIndicator size={'large'} />
+    </View>
+  ) : (
     <SafeAreaView style={styles.container}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.innerContainer}>
@@ -59,12 +73,8 @@ export default function Login() {
             />
             <CustomButton
               btnTitle="Login"
-              onpress={async () => {
-                const response = await login(email, password);
-                console.log(response);
-                response.showVerifyOtpScreen
-                  ? navigation.navigate('VerifyOtp', {userid: response.userid})
-                  : '';
+              onpress={() => {
+                loginHandler();
               }}
               style={styles.loginBtn}
               icon="arrow-forward"

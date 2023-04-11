@@ -1,20 +1,93 @@
 /* eslint-disable react-native/no-inline-styles */
-import {Image, StyleSheet, Text, View, TouchableOpacity} from 'react-native';
-import React from 'react';
+import {
+  Image,
+  StyleSheet,
+  Text,
+  View,
+  Dimensions,
+  TouchableOpacity,
+  FlatList,
+  Pressable,
+} from 'react-native';
+import React, {useState} from 'react';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
+import SwipeImage from '../shared/components/SwipeImage';
+import CustomButton from '../shared/components/CustomButton';
+// import {useNavigation} from '@react-navigation/native';
+const {width, height} = Dimensions.get('window');
 
 export default function AdDescription({route, navigation}) {
   // Data from API call for specific ad, for now using dummy data
   // const data=[];
+
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const images = [
+    {
+      id: 1,
+      uri: {uri: 'https://picsum.photos/300/400'},
+    },
+    {
+      id: 2,
+      uri: {uri: 'https://picsum.photos/400/500'},
+    },
+    {
+      id: 3,
+      uri: {uri: 'https://picsum.photos/500/600'},
+    },
+  ];
   const {title, price, location} = route.params;
   return (
     <View style={styles.container}>
       <View style={styles.adHeaderSection}>
         <View style={styles.adImgSection}>
-          <Image
-            source={require('../assets/images/mobile.png')}
-            style={{height: '90%', resizeMode: 'contain'}}
+          <FlatList
+            data={images}
+            keyExtractor={item => item.id}
+            onScroll={event => {
+              const x = event.nativeEvent.contentOffset.x;
+              console.log(x, (x / width).toFixed(0), 'line 84');
+              setCurrentIndex((x / width).toFixed(0));
+            }}
+            horizontal={true}
+            showsHorizontalScrollIndicator={false}
+            pagingEnabled={true}
+            renderItem={({item, index}) => {
+              return (
+                <Image
+                  source={item.uri}
+                  resizeMode="contain"
+                  style={styles.wrapper}
+                />
+              );
+            }}
           />
+
+          <View style={styles.dotWrapper}>
+            {images.map((e, index) => {
+              return (
+                <View
+                  key={index}
+                  style={[
+                    styles.dotCommon,
+                    parseInt(currentIndex) === index
+                      ? styles.dotActive
+                      : styles.dotNotActive,
+                  ]}
+                />
+              );
+            })}
+          </View>
+          <TouchableOpacity
+            style={{
+              position: 'absolute',
+              top: 10,
+              left: 15,
+            }}
+            onPress={() => {
+              navigation.goBack();
+            }}>
+            <MaterialIcon name="arrow-back" size={24} color={'#222'} />
+          </TouchableOpacity>
         </View>
         <View style={styles.adInfoSection}>
           <View style={styles.infoSectionTop}>
@@ -69,7 +142,7 @@ export default function AdDescription({route, navigation}) {
 
 const styles = StyleSheet.create({
   container: {flex: 1},
-  adHeaderSection: {flex: 4},
+  adHeaderSection: {flex: 4, paddingTop: 5},
   adImgSection: {
     flex: 3,
     alignItems: 'center',
@@ -131,5 +204,20 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#111',
     fontWeight: 500,
+  },
+  wrapper: {width: width, height: height * 0.3},
+
+  dotWrapper: {
+    flexDirection: 'row',
+    position: 'absolute',
+    alignSelf: 'center',
+    bottom: 10,
+  },
+  dotCommon: {width: 12, height: 12, borderRadius: 6, marginLeft: 5},
+  dotActive: {
+    backgroundColor: '#FA8C00',
+  },
+  dotNotActive: {
+    backgroundColor: '#fff',
   },
 });

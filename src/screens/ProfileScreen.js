@@ -12,33 +12,41 @@ import {AuthContext} from '../context/AuthContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import {ActivityIndicator} from 'react-native';
 
 export default function ProfileScreen() {
   const {logout} = useContext(AuthContext);
   const [userInfo, setUserInfo] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
 
   const getInfo = async () => {
+    setIsLoading(true);
     const userData = await AsyncStorage.getItem('userInfo');
+    console.log(userData, '25');
     setUserInfo(JSON.parse(userData));
+    setIsLoading(false);
   };
 
   useEffect(() => {
     getInfo();
   }, []);
   console.log(userInfo);
-  return (
+  return isLoading ? (
+    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+      <ActivityIndicator size={'large'} />
+    </View>
+  ) : (
     <SafeAreaView style={styles.container}>
       <View style={styles.userInfoSection}>
         <View style={styles.userInfoHeader}>
-          <Avatar.Image
-            source={require('../assets/images/anurag.jpg')}
-            size={80}
-          />
+          <Avatar.Image source={{uri: userInfo.profile_image}} size={80} />
           <View style={{marginLeft: '4%'}}>
             <Title style={styles.title}>
               {userInfo.first_name + ' ' + userInfo.last_name}
             </Title>
-            <Caption style={styles.caption}>@anuragchachan</Caption>
+            <Caption style={styles.caption}>
+              {`@${userInfo.first_name}${userInfo.last_name}`.toLowerCase()}
+            </Caption>
           </View>
         </View>
         <View style={styles.userInfoBody}>
