@@ -12,7 +12,7 @@ import {
   Pressable,
   ActivityIndicator,
 } from 'react-native';
-import {React, useCallback, useEffect, useState} from 'react';
+import {React, useEffect, useState} from 'react';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {http} from '../shared/lib';
@@ -21,9 +21,11 @@ export default function Home({navigation}) {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState('');
   // console.log(categoriesData);
+  const [userInfo, setUserInfo] = useState([]);
 
   const getUserInfo = async () => {
     const info = await AsyncStorage.getItem('userInfo');
+    setUserInfo(info);
     const location = JSON.parse(info)?.area?.name;
     console.log(location);
     setSelectedLocation(location);
@@ -43,7 +45,7 @@ export default function Home({navigation}) {
       });
       // console.log(categoriesRespData.results);
       const categories = categoriesRespData.results.map(category => ({
-        key: category.id.toString(),
+        id: category.id.toString(),
         name: category.name,
         icon: category.icon,
       }));
@@ -72,7 +74,7 @@ export default function Home({navigation}) {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log(userAdsRespData.results, '68');
+      // console.log(userAdsRespData.results, '68');
       const ads = userAdsRespData.results.map(ad => ({
         id: ad.id.toString(),
         title: ad.name,
@@ -82,7 +84,7 @@ export default function Home({navigation}) {
         isFeatured: ad.is_featured,
         price: ad.price,
       }));
-      console.log(ads);
+      console.log('before ', ads[0].images[0], '87');
       setUserAdsData(ads);
       setIsLoading(false);
     } catch (err) {
@@ -94,9 +96,9 @@ export default function Home({navigation}) {
     }
   };
 
-  // useEffect(() => {
-  //   getUserAds();
-  // }, []);
+  useEffect(() => {
+    getUserAds();
+  }, []);
 
   const ITEM_WIDTH = 80;
   const getItemLayout = (_, index) => ({
@@ -121,7 +123,11 @@ export default function Home({navigation}) {
           flex: 1,
         },
       ]}
-      onPress={item.onpress}>
+      onPress={() =>
+        navigation.navigate('AdSearch', {
+          categoryID: item.id,
+        })
+      }>
       <View style={{flex: 1.2, alignItems: 'center', justifyContent: 'center'}}>
         <Image
           source={{
@@ -176,7 +182,7 @@ export default function Home({navigation}) {
       }}
       onPress={() =>
         navigation.navigate('AdDescription', {
-          key: item.key,
+          id: item.id,
           title: item.name,
           price: item.price,
           location: item.location,
@@ -191,9 +197,10 @@ export default function Home({navigation}) {
           // backgroundColor: '#664489',
         }}>
         {/* <Image
-          source={{uri: item.images[0].image}}
+          source={{uri: ''}}
           style={{height: '90%', resizeMode: 'contain'}}
         /> */}
+
         {item.isFeatured ? featuredTag() : ''}
       </View>
       <View

@@ -5,20 +5,69 @@ import {
   View,
   TouchableOpacity,
   TextInput,
+  ActivityIndicator,
+  FlatList,
 } from 'react-native';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import CustomButton from '../shared/components/CustomButton';
-import {useNavigation} from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {http} from '../shared/lib';
+export default function IncludeSomeDetails({navigation}) {
+  const [isLoading, setIsLoading] = useState(false);
+  const [questionData, setQuestionData] = useState([]);
+  const [answerData, setAnswerData] = useState([]);
 
-export default function IncludeSomeDetails({navigation: {goBack}}) {
-  const navigation = useNavigation();
-  return (
+  const getQuestions = async () => {
+    try {
+      setIsLoading(true);
+      const token = await AsyncStorage.getItem('token');
+      const questionsRespData = await http.get('question/user/', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log(questionsRespData.results, '29');
+      const questions = questionsRespData.results.map(question => ({
+        id: question.id.toString(),
+        question: question.question,
+      }));
+      console.log(questions);
+      setQuestionData(questions);
+      setIsLoading(false);
+    } catch (err) {
+      console.log(
+        'Something went wrong while fetching questions 40',
+        JSON.stringify(err),
+      );
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getQuestions();
+  }, []);
+
+  const renderQuestion = ({item, index}) => {
+    return (
+      <View>
+        <Text style={{color: '#222'}}>
+          {index + 1}. {item.question}
+        </Text>
+        <TextInput style={styles.inputField} />
+      </View>
+    );
+  };
+  return isLoading ? (
+    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+      <ActivityIndicator size={'large'} />
+    </View>
+  ) : (
     <View style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity
           onPress={() => {
-            goBack();
+            navigation.goBack();
           }}>
           <MaterialIcon name="arrow-back" color={'#111'} size={28} />
         </TouchableOpacity>
@@ -26,22 +75,7 @@ export default function IncludeSomeDetails({navigation: {goBack}}) {
         <Text style={styles.headingText}>Include Some Details</Text>
       </View>
       <View style={styles.detailsFormSection}>
-        <TextInput style={styles.inputField} placeholder="Brand Name *" />
-        <TextInput style={styles.inputField} placeholder="Ad Title *" />
-        <TextInput
-          multiline={true}
-          style={styles.inputField}
-          placeholder="Describe your product *"
-        />
-        <Text
-          style={{
-            fontSize: 12,
-            color: '#444',
-            marginTop: -30,
-            marginLeft: '85%',
-          }}>
-          (0/3000)
-        </Text>
+        <FlatList data={questionData} renderItem={renderQuestion} />
       </View>
       <View
         style={{flex: 1.5, justifyContent: 'center', alignContent: 'center'}}>

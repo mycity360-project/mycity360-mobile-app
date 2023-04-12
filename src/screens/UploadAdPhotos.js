@@ -8,6 +8,8 @@ import {
   FlatList,
   Dimensions,
   Text,
+  Modal,
+  Alert,
 } from 'react-native';
 import React, {useState, useRef} from 'react';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
@@ -23,6 +25,33 @@ export default function UploadAdPhotos() {
   const [maxImageExceed, setMaxImageExceed] = useState(false);
   const [id, setId] = useState(1);
   const ref = useRef();
+
+  const buttonView = (name, iconName, open) => {
+    return (
+      <TouchableOpacity
+        style={{
+          width: '20%',
+          height: '15%',
+          padding: 5,
+          backgroundColor: '#ececec',
+          alignItems: 'center',
+          justifyContent: 'center',
+          borderWidth: 0.1,
+          marginRight: 15,
+          elevation: 5,
+          shadowOffset: 5,
+        }}
+        onPress={() => open()}>
+        <MaterialIcon
+          name={iconName}
+          size={30}
+          color={'#222'}
+          style={{flex: 1}}
+        />
+        <Text style={{color: '#222', flex: 1, fontSize: 16}}>{name}</Text>
+      </TouchableOpacity>
+    );
+  };
 
   const removeFromArray = idToRemove => {
     const imagesUpdated = images.filter(item => {
@@ -56,9 +85,13 @@ export default function UploadAdPhotos() {
       } else {
         const source = {id: id, uri: {uri: response.assets[0].uri}};
         const updatedImages = images;
-        updatedImages.push(source);
-        setImages(updatedImages);
-        setId(id + 1);
+        if (updatedImages.length >= MAX_IMAGE_ALLOWED) setMaxImageExceed(true);
+        else {
+          setMaxImageExceed(false);
+          updatedImages.push(source);
+          setImages(updatedImages);
+          setId(id + 1);
+        }
       }
     });
   };
@@ -162,28 +195,38 @@ export default function UploadAdPhotos() {
             );
           })}
         </View>
-      </View>
-      <View style={styles.cardButtonSection}>
-        {maxImageExceed ? (
-          <Text style={{color: 'red'}}>
-            Number of Image Execeeded {MAX_IMAGE_ALLOWED}. Please Select only
-            {MAX_IMAGE_ALLOWED} Images.
-          </Text>
+        {images.length ? (
+          <View
+            style={{
+              position: 'absolute',
+              right: 0,
+              bottom: 0,
+              marginRight: 15,
+              marginBottom: 10,
+            }}>
+            <Text style={{color: '#222'}}>
+              {parseInt(currentIndex) + 1}/{images.length}
+            </Text>
+          </View>
         ) : (
           ''
         )}
-        <CustomButton
-          btnTitle="Open Camera"
-          onpress={() => {
-            openCamera();
-          }}
-        />
-        <CustomButton
-          btnTitle="Gallery"
-          onpress={() => {
-            openGallery();
-          }}
-        />
+      </View>
+      <View style={styles.cardButtonSection}>
+        <Text style={{color: '#222', textAlign: 'center', fontWeight: 500}}>
+          * Select only {MAX_IMAGE_ALLOWED} images to Upload.
+        </Text>
+        {maxImageExceed
+          ? Alert.alert(
+              `* Please Select upto ${MAX_IMAGE_ALLOWED} images only.`,
+            )
+          : ''}
+
+        <View style={{flex: 1, flexDirection: 'row', marginTop: '3%'}}>
+          {buttonView('Camera', 'camera', openCamera)}
+          {buttonView('Gallery', 'folder-open', openGallery)}
+        </View>
+        <CustomButton btnTitle="Publish Ad" />
       </View>
     </SafeAreaView>
   );
@@ -205,5 +248,9 @@ const styles = StyleSheet.create({
   },
   dotNotActive: {
     backgroundColor: '#fff',
+  },
+  cardButtonSection: {
+    flex: 1,
+    padding: '2%',
   },
 });
