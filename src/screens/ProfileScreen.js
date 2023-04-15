@@ -1,29 +1,37 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {useContext, useState, useEffect} from 'react';
-import {SafeAreaView, StyleSheet, View} from 'react-native';
 import {
-  Avatar,
-  Title,
-  TouchableRipple,
-  Text,
-  Caption,
-} from 'react-native-paper';
+  Animated,
+  ImageBackground,
+  SafeAreaView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import {Title, TouchableRipple, Text, Caption} from 'react-native-paper';
 import {AuthContext} from '../context/AuthContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {ActivityIndicator} from 'react-native';
+import CustomButton from '../shared/components/CustomButton';
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import Modal from 'react-native-modal';
 
 export default function ProfileScreen() {
   const {logout} = useContext(AuthContext);
   const [userInfo, setUserInfo] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const [showImagePicker, setShowImagePicker] = useState(false);
+  const [profileImage, setProfileImage] = useState({});
 
   const getInfo = async () => {
     setIsLoading(true);
     const userData = await AsyncStorage.getItem('userInfo');
     console.log(userData, '25');
-    setUserInfo(JSON.parse(userData));
+    const info = JSON.parse(userData);
+    setUserInfo(info);
+    setProfileImage({uri: info.profile_image});
     setIsLoading(false);
   };
 
@@ -31,6 +39,49 @@ export default function ProfileScreen() {
     getInfo();
   }, []);
   console.log(userInfo);
+
+  const openCamera = () => {
+    console.log('clicked 47');
+    const options = {
+      storageOptions: {path: 'images', mediaType: 'photo'},
+      saveToPhotos: true,
+    };
+
+    launchCamera(options, response => {
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.error) {
+        console.log('ImagePicker Error: ', response.error);
+      } else if (response.customButton) {
+        console.log('User tapped custom button: ', response.customButton);
+      } else {
+        const source = {uri: response.assets[0].uri};
+        setProfileImage(source);
+      }
+    });
+  };
+
+  const openGallery = () => {
+    const options = {
+      storageOptions: {path: 'images', mediaType: 'photo'},
+      selectionLimit: 1,
+    };
+
+    launchImageLibrary(options, response => {
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.error) {
+        console.log('ImagePicker Error: ', response.error);
+      } else if (response.customButton) {
+        console.log('User tapped custom button: ', response.customButton);
+      } else {
+        // console.log(response.assets);
+        const source = {uri: response.assets[0].uri};
+        setProfileImage(source);
+      }
+    });
+  };
+
   return isLoading ? (
     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
       <ActivityIndicator size={'large'} />
@@ -39,8 +90,36 @@ export default function ProfileScreen() {
     <SafeAreaView style={styles.container}>
       <View style={styles.userInfoSection}>
         <View style={styles.userInfoHeader}>
-          <Avatar.Image source={{uri: userInfo.profile_image}} size={80} />
-          <View style={{marginLeft: '4%'}}>
+          <ImageBackground
+            source={
+              profileImage.uri == null
+                ? require('../assets/icons/account.png')
+                : profileImage
+            }
+            style={{width: 100, height: 100}}
+            imageStyle={{
+              borderRadius: 50,
+            }}>
+            <TouchableOpacity
+              style={{
+                flex: 1,
+                position: 'absolute',
+                bottom: 10,
+                right: 0,
+              }}
+              onPress={() => setShowImagePicker(true)}>
+              <MaterialIcon
+                name="photo-camera"
+                color={'#111'}
+                size={26}
+                style={{
+                  opacity: 0.5,
+                }}
+              />
+            </TouchableOpacity>
+          </ImageBackground>
+
+          <View style={{marginLeft: '4%', flex: 1}}>
             <Title style={styles.title}>
               {userInfo.first_name + ' ' + userInfo.last_name}
             </Title>
@@ -112,8 +191,8 @@ export default function ProfileScreen() {
             logout();
           }}>
           <View style={styles.menuItems}>
-            <Ionicons
-              name="heart-outline"
+            <MaterialIcon
+              name="logout"
               color={styles.menuItemIcon.color}
               size={styles.menuItemIcon.size}
             />
@@ -131,6 +210,49 @@ export default function ProfileScreen() {
           </View>
         </TouchableRipple>
       </View>
+      <Modal
+        isVisible={showImagePicker}
+        style={{
+          width: '100%',
+          marginLeft: 0,
+          marginBottom: 0,
+        }}
+        backdropOpacity={0.1}
+        backdropColor="#999"
+        animationIn={'slideInUp'}
+        animationInTiming={400}
+        hideModalContentWhileAnimating={true}
+        onBackdropPress={() => setShowImagePicker(false)}
+        onSwipeComplete={() => setShowImagePicker(false)}
+        swipeDirection={'down'}>
+        <View
+          style={{
+            flex: 1,
+            position: 'absolute',
+            bottom: 0,
+            width: '100%',
+            height: 100,
+            backgroundColor: '#f7f7f7',
+            borderTopEndRadius: 15,
+            borderTopStartRadius: 15,
+            padding: 10,
+            borderColor: '#999',
+            borderBottomWidth: 0.4,
+          }}>
+          <TouchableOpacity
+            onPress={() => openCamera()}
+            style={{width: '100%', height: 40, flexDirection: 'row', gap: 5}}>
+            <MaterialIcon name="photo-camera" size={24} color={'#222'} />
+            <Text style={{fontSize: 18}}>Camera</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => openGallery()}
+            style={{width: '100%', height: 50, flexDirection: 'row', gap: 5}}>
+            <MaterialIcon name="folder-open" size={24} color={'#222'} />
+            <Text style={{fontSize: 18}}>Gallery</Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }

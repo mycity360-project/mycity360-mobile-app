@@ -7,41 +7,29 @@ import {
   Dimensions,
   TouchableOpacity,
   FlatList,
-  Pressable,
+  Linking,
+  Platform,
 } from 'react-native';
 import React, {useState} from 'react';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
-import SwipeImage from '../shared/components/SwipeImage';
-import CustomButton from '../shared/components/CustomButton';
-// import {useNavigation} from '@react-navigation/native';
+
 const {width, height} = Dimensions.get('window');
 
 export default function AdDescription({route, navigation}) {
-  // Data from API call for specific ad, for now using dummy data
-  // const data=[];
-
   const [currentIndex, setCurrentIndex] = useState(0);
-  const images = [
-    {
-      id: 1,
-      uri: {uri: 'https://picsum.photos/300/400'},
-    },
-    {
-      id: 2,
-      uri: {uri: 'https://picsum.photos/400/500'},
-    },
-    {
-      id: 3,
-      uri: {uri: 'https://picsum.photos/500/600'},
-    },
-  ];
-  const {title, price, location} = route.params;
+  const adDetails = route.params.adDetails;
+  const openDialer = contactNumber => {
+    Platform.OS === 'ios'
+      ? Linking.openURL(`telprompt:${contactNumber}`)
+      : Linking.openURL(`tel:${contactNumber}`);
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.adHeaderSection}>
         <View style={styles.adImgSection}>
           <FlatList
-            data={images}
+            data={adDetails.images}
             keyExtractor={item => item.id}
             onScroll={event => {
               const x = event.nativeEvent.contentOffset.x;
@@ -54,7 +42,7 @@ export default function AdDescription({route, navigation}) {
             renderItem={({item, index}) => {
               return (
                 <Image
-                  source={item.uri}
+                  source={{uri: item.image}}
                   resizeMode="contain"
                   style={styles.wrapper}
                 />
@@ -63,7 +51,7 @@ export default function AdDescription({route, navigation}) {
           />
 
           <View style={styles.dotWrapper}>
-            {images.map((e, index) => {
+            {adDetails.images.map((e, index) => {
               return (
                 <View
                   key={index}
@@ -91,19 +79,19 @@ export default function AdDescription({route, navigation}) {
         </View>
         <View style={styles.adInfoSection}>
           <View style={styles.infoSectionTop}>
-            <Text style={styles.priceText}>₹ {price}</Text>
+            <Text style={styles.priceText}>₹ {adDetails.price}</Text>
             <MaterialIcon name="favorite-border" size={28} />
           </View>
 
           <Text numberOfLines={1} style={styles.infoSectionMiddle}>
-            {title}
+            {adDetails.title}
           </Text>
           <View style={styles.infoSectionBottom}>
             <View style={styles.locationSection}>
               <MaterialIcon name="location-pin" size={18} color={'#444'} />
-              <Text style={styles.locationText}>{location}</Text>
+              {/* <Text style={styles.locationText}>{location}</Text> */}
             </View>
-            <Text style={styles.dateAdded}>25 March 2023</Text>
+            <Text style={styles.dateAdded}>{adDetails.createdOn}</Text>
           </View>
         </View>
       </View>
@@ -112,18 +100,14 @@ export default function AdDescription({route, navigation}) {
         <Text style={{fontSize: 16, fontWeight: 600, color: '#111'}}>
           Details
         </Text>
-        <View style={{fontSize: 14, marginLeft: '20%'}}>
-          <Text>Brand: Mi</Text>
-          <Text>RAM: 8 GB</Text>
-          <Text>Memory : 64 GB</Text>
-        </View>
+        <View style={{fontSize: 14, marginLeft: '20%'}}></View>
       </View>
 
       <View style={styles.adDescriptionSection}>
         <Text style={{fontSize: 16, fontWeight: 600, color: '#111'}}>
           Description
         </Text>
-        <Text>Will display user entered description here</Text>
+        <Text>{adDetails.description}</Text>
       </View>
 
       <View style={styles.otherDetailsSection}>
@@ -132,8 +116,10 @@ export default function AdDescription({route, navigation}) {
       </View>
 
       <View style={styles.footer}>
-        <TouchableOpacity style={styles.makeOfferButton}>
-          <Text style={styles.makeOfferButtonText}>Make Offer</Text>
+        <TouchableOpacity
+          style={styles.makeOfferButton}
+          onPress={() => openDialer(adDetails.phone)}>
+          <Text style={styles.makeOfferButtonText}>Call Now</Text>
         </TouchableOpacity>
       </View>
     </View>

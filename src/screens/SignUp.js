@@ -10,15 +10,17 @@ import {
   ActivityIndicator,
   TouchableOpacity,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import CustomButton from '../shared/components/CustomButton';
 import DropDown from '../shared/components/DropDown';
 import {useNavigation} from '@react-navigation/native';
 import {http} from '../shared/lib';
 import {BACKEND_CLIENT_ID} from '../shared/constants/env';
+import {AuthContext} from '../context/AuthContext';
 
 export default function SignUp() {
   const navigation = useNavigation();
+  const {login} = useContext(AuthContext);
   const [locationData, setLocationData] = useState([]);
   const [areaData, setAreaData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -51,11 +53,7 @@ export default function SignUp() {
 
   useEffect(() => {
     getLocations();
-  });
-
-  useEffect(() => {
-    console.log(areaData, 'In use Effect');
-  }, [areaData]);
+  }, []);
 
   const getAreas = async location => {
     setIsLoading(true);
@@ -102,9 +100,13 @@ export default function SignUp() {
         },
       };
 
-      const {id: user_id} = await http.post('user/signup/', data, config);
+      const resp = await http.post('user/signup/', data, config);
+      // console.log(resp);
+      const user_id = resp.id;
       if (user_id) {
-        navigation.navigate('VerifyOtp', {userid: user_id});
+        resp.is_phone_verified
+          ? await login(email, password)
+          : navigation.navigate('VerifyOtp', {userid: user_id});
       } else {
         throw new Error('Not able to get UserId Something went wrong');
       }

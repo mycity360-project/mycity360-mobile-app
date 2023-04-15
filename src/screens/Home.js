@@ -74,17 +74,19 @@ export default function Home({navigation}) {
           Authorization: `Bearer ${token}`,
         },
       });
-      // console.log(userAdsRespData.results, '68');
+      // const respData = JSON.parse(userAdsRespData.results);
+      console.log(userAdsRespData.results[0], '77');
       const ads = userAdsRespData.results.map(ad => ({
         id: ad.id.toString(),
         title: ad.name,
-        createdDate: ad.created_date,
+        createdOn: ad.created_date,
         description: ad.description,
         images: ad.images,
         isFeatured: ad.is_featured,
         price: ad.price,
+        userID: ad.user?.id,
       }));
-      console.log('before ', ads[0].images[0], '87');
+
       setUserAdsData(ads);
       setIsLoading(false);
     } catch (err) {
@@ -182,10 +184,17 @@ export default function Home({navigation}) {
       }}
       onPress={() =>
         navigation.navigate('AdDescription', {
-          id: item.id,
-          title: item.name,
-          price: item.price,
-          location: item.location,
+          adDetails: {
+            id: item.id,
+            title: item.name,
+            price: item.price,
+            description: item.description,
+            location: item.location,
+            createdOn: item.createdOn,
+            images: item.images,
+            userID: item.userID,
+            phone: item.phone,
+          },
         })
       }>
       <View
@@ -196,10 +205,10 @@ export default function Home({navigation}) {
           justifyContent: 'center',
           // backgroundColor: '#664489',
         }}>
-        {/* <Image
-          source={{uri: ''}}
-          style={{height: '90%', resizeMode: 'contain'}}
-        /> */}
+        <Image
+          source={{uri: item.images[0].image}}
+          style={{height: '90%', width: '80%', resizeMode: 'contain'}}
+        />
 
         {item.isFeatured ? featuredTag() : ''}
       </View>
@@ -216,7 +225,7 @@ export default function Home({navigation}) {
           <Text
             numberOfLines={2}
             style={{fontSize: 14, width: '90%', color: '#000'}}>
-            {item.name}
+            {item.title}
           </Text>
         </View>
 

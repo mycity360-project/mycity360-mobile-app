@@ -8,14 +8,12 @@ import {
   FlatList,
   Dimensions,
   Text,
-  Modal,
   Alert,
 } from 'react-native';
 import React, {useState, useRef} from 'react';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import CustomButton from '../shared/components/CustomButton';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
-import SwipeImage from '../shared/components/SwipeImage';
 import {MAX_IMAGE_ALLOWED} from '../shared/constants/env';
 const {width, height} = Dimensions.get('window');
 

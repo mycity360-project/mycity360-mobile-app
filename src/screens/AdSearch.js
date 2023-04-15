@@ -22,6 +22,7 @@ export default function AdSearch({navigation}) {
             returnKeyType="search"
             placeholder="Find Mobile, Cars ....."
             style={styles.inputBox}
+            autoFocus={true}
           />
           <TouchableOpacity style={styles.searchBtn}>
             <MaterialIcon name="search" size={26} color={'#FFF'} />
