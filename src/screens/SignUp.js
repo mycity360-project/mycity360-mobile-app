@@ -19,6 +19,7 @@ import {BACKEND_CLIENT_ID} from '../shared/constants/env';
 import {AuthContext} from '../context/AuthContext';
 import * as Yup from 'yup';
 import {Formik} from 'formik';
+import {number} from 'yargs';
 export default function SignUp() {
   const navigation = useNavigation();
   const {login} = useContext(AuthContext);
@@ -34,6 +35,8 @@ export default function SignUp() {
   const [mobileNumber, setMobileNumber] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [showLocationError, setShowLocationError] = useState(false);
+  const [showAreaError, setShowAreaError] = useState(false);
 
   const getLocations = async () => {
     setIsLoading(true);
@@ -78,14 +81,17 @@ export default function SignUp() {
 
   const setLocation = async location => {
     setSelectedLocation(location);
+    setShowLocationError(false);
     await getAreas(location);
   };
   const setArea = async area => {
     setSelectedArea(area);
+    setShowAreaError(false);
   };
 
   const handleOnSignUpPress = async () => {
     try {
+      console.log('handle 94');
       let data = {
         email: email,
         phone: mobileNumber,
@@ -153,7 +159,18 @@ export default function SignUp() {
         confirmPassword: confirmPassword,
       }}
       validateOnMount={true}
-      onSubmit={values => console.log(values, '158')}
+      onSubmit={() => {
+        if (selectedLocation == '') {
+          setShowLocationError(true);
+        } else if (selectedArea == '') {
+          setShowAreaError(true);
+        } else {
+          console.log('165');
+          setShowLocationError(false);
+          setShowAreaError(false);
+          handleOnSignUpPress();
+        }
+      }}
       validationSchema={signUpValidationSchema}>
       {({
         handleChange,
@@ -197,12 +214,12 @@ export default function SignUp() {
                 {errors.firstName && touched.firstName ? (
                   <Text style={styles.error}>{errors.firstName}</Text>
                 ) : (
-                  ''
+                  setFirstName(values.firstName)
                 )}
                 {errors.lastName && touched.lastName ? (
                   <Text style={styles.error}>{errors.lastName}</Text>
                 ) : (
-                  ''
+                  setLastName(values.lastName)
                 )}
                 <TextInput
                   placeholder="Enter Mobile Number"
@@ -214,7 +231,7 @@ export default function SignUp() {
                 {errors.mobileNumber && touched.mobileNumber ? (
                   <Text style={styles.error}>{errors.mobileNumber}</Text>
                 ) : (
-                  ''
+                  setMobileNumber(values.mobileNumber)
                 )}
                 <TextInput
                   placeholder="Enter you email"
@@ -227,7 +244,7 @@ export default function SignUp() {
                 {errors.email && touched.email ? (
                   <Text style={styles.error}>{errors.email}</Text>
                 ) : (
-                  ''
+                  setEmail(values.email)
                 )}
                 <TextInput
                   style={[styles.input, styles.inputCommon]}
@@ -240,7 +257,7 @@ export default function SignUp() {
                 {errors.password && touched.password ? (
                   <Text style={styles.error}>{errors.password}</Text>
                 ) : (
-                  ''
+                  setPassword(values.password)
                 )}
                 <TextInput
                   style={[styles.input, styles.inputCommon]}
@@ -253,8 +270,9 @@ export default function SignUp() {
                 {errors.confirmPassword && touched.confirmPassword ? (
                   <Text style={styles.error}> {errors.confirmPassword}</Text>
                 ) : (
-                  ''
+                  setConfirmPassword(values.confirmPassword)
                 )}
+
                 <DropDown
                   placeholder="Select Location"
                   dataArray={locationData}
@@ -262,6 +280,11 @@ export default function SignUp() {
                   isDisabled={false}
                   selectedValue={selectedLocation}
                 />
+                {showLocationError ? (
+                  <Text style={styles.error}>Please Select Location</Text>
+                ) : (
+                  ''
+                )}
                 <DropDown
                   placeholder="Select Area"
                   dataArray={areaData}
@@ -269,7 +292,11 @@ export default function SignUp() {
                   selectedDataHandler={area => setArea(area)}
                   selectedValue={selectedArea}
                 />
-                {/* navigation.navigate('VerifyOtp') */}
+                {showAreaError ? (
+                  <Text style={styles.error}>Please Select Area</Text>
+                ) : (
+                  ''
+                )}
                 <CustomButton
                   btnTitle={'Sign Up'}
                   style={styles.registerBtn}

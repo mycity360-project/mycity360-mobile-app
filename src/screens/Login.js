@@ -18,13 +18,13 @@ import * as Yup from 'yup';
 import {Formik} from 'formik';
 export default function Login() {
   const {login} = useContext(AuthContext);
-  const [email, setEmail] = useState(null);
+  const [emailOrPhone, setEmailOrPhone] = useState(null);
   const [password, setPassword] = useState(null);
   const [Loading, setLoading] = useState(false);
   const navigation = useNavigation();
 
   const loginHandler = async () => {
-    const response = await login(email, password);
+    const response = await login(emailOrPhone, password);
     console.log(response, Loading);
     if (response.showVerifyOtpScreen) {
       navigation.navigate('VerifyOtp', {userid: response.userid});
@@ -32,8 +32,11 @@ export default function Login() {
   };
   const loginValidationSchema = Yup.object().shape({
     email: Yup.string()
-      .email('Please Enter Valid Email')
-      .required('Please Enter Email Address'),
+      .email('Please enter valid Email')
+      .required('Email/Phone is required'),
+    mobileNumber: Yup.string()
+      .min(10, 'Atleast 10')
+      .required('Mobile Required'),
     password: Yup.string()
       .min(8, ({min}) => `Password must be atleast ${min} characters`)
       .required('Please Enter Password'),
@@ -44,20 +47,21 @@ export default function Login() {
       <ActivityIndicator size={'large'} />
     </View>
   ) : (
-    <SafeAreaView style={styles.container}>
-      <Formik
-        initialValues={{email: '', password: ''}}
-        validateOnMount={true}
-        onSubmit={values => console.log(values)}>
-        {({
-          handleChange,
-          handleBlur,
-          handleSubmit,
-          values,
-          isValid,
-          touched,
-          errors,
-        }) => (
+    <Formik
+      initialValues={{mobileNumber: '', email: '', password: ''}}
+      validateOnMount={true}
+      validationSchema={loginValidationSchema}
+      onSubmit={values => console.log(values, '57')}>
+      {({
+        handleChange,
+        handleBlur,
+        handleSubmit,
+        values,
+        isValid,
+        touched,
+        errors,
+      }) => (
+        <SafeAreaView style={styles.container}>
           <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <View style={styles.innerContainer}>
               <View style={styles.headerSection} />
@@ -81,23 +85,32 @@ export default function Login() {
                 <TextInput
                   placeholder="Enter Mobile Number / Email"
                   style={styles.input}
-                  onChangeText={mail => {
-                    setEmail(mail);
-                  }}
+                  onChangeText={text => setEmailOrPhone(text)}
                 />
+                {errors.email && touched.email ? (
+                  <Text style={styles.error}>{errors.email}</Text>
+                ) : (
+                  setEmailOrPhone(values.email)
+                )}
+                {errors.mobileNumber && touched.mobileNumber ? (
+                  <Text style={styles.error}>{errors.mobileNumber}</Text>
+                ) : (
+                  setEmailOrPhone(values.mobileNumber)
+                )}
                 <TextInput
                   placeholder="Enter Password"
                   style={styles.input}
                   secureTextEntry={true}
-                  onChangeText={value => {
-                    setPassword(value);
-                  }}
+                  onChangeText={handleChange('password')}
                 />
+                {errors.password && touched.password ? (
+                  <Text style={styles.error}>{errors.password}</Text>
+                ) : (
+                  setPassword(values.password)
+                )}
                 <CustomButton
                   btnTitle="Login"
-                  onpress={() => {
-                    loginHandler();
-                  }}
+                  onpress={handleSubmit}
                   style={styles.loginBtn}
                   icon="arrow-forward"
                 />
@@ -124,9 +137,9 @@ export default function Login() {
               </View>
             </View>
           </TouchableWithoutFeedback>
-        )}
-      </Formik>
-    </SafeAreaView>
+        </SafeAreaView>
+      )}
+    </Formik>
   );
 }
 
@@ -165,5 +178,11 @@ const styles = StyleSheet.create({
   },
   loginBtn: {
     marginTop: '2%',
+  },
+  error: {
+    fontSize: 14,
+    color: 'red',
+    marginTop: 5,
+    textAlign: 'center',
   },
 });
