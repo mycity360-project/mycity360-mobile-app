@@ -1,6 +1,6 @@
 import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import CustomNavigation from '../navigation/CustomNavigation';
+import CustomNavigation from './CustomNavigation';
 import AdDescription from '../screens/AdDescription';
 import WhatAreYouOffering from '../screens/WhatAreYouOffering';
 import SubCategory from '../screens/SubCategory';

@@ -9,137 +9,151 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   TouchableOpacity,
+  ActivityIndicator,
 } from 'react-native';
 import {React, useContext, useState} from 'react';
 import CustomButton from '../shared/components/CustomButton';
 import {AuthContext} from '../context/AuthContext';
 import {useNavigation} from '@react-navigation/native';
-import * as Yup from 'yup';
-import {Formik} from 'formik';
+
 export default function Login() {
   const {login} = useContext(AuthContext);
-  const [emailOrPhone, setEmailOrPhone] = useState(null);
+  const [email, setEmail] = useState(null);
   const [password, setPassword] = useState(null);
+  const [isEmailError, setEmailError] = useState(false);
+  const [isPhoneError, setPhoneError] = useState(false);
+  const [ispasswordError, setPasswordError] = useState(false);
   const [Loading, setLoading] = useState(false);
   const navigation = useNavigation();
 
+  const errors = {
+    password: 'Password must be atleast 8 characters',
+    phone: 'Please enter valid phone number',
+    email: 'Please enter the valid email',
+  };
+
   const loginHandler = async () => {
-    const response = await login(emailOrPhone, password);
-    console.log(response, Loading);
+    setLoading(true);
+    var phoneRegex = /^\d{10}$/;
+    var emailRegex =
+      /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+
+    if (email.length === 10) {
+      if (!email.match(phoneRegex)) {
+        setEmailError(false);
+        setLoading(false);
+        setPhoneError(true);
+        return;
+      }
+    }
+
+    if (!email.match(emailRegex)) {
+      setPhoneError(false);
+      setLoading(false);
+      setEmailError(true);
+      return;
+    }
+
+    if (password === '' || password.length <= 8) {
+      setLoading(false);
+      setPasswordError(true);
+      return;
+    }
+
+    const response = await login(email, password);
+    setLoading(false);
     if (response.showVerifyOtpScreen) {
       navigation.navigate('VerifyOtp', {userid: response.userid});
     }
   };
-  const loginValidationSchema = Yup.object().shape({
-    email: Yup.string()
-      .email('Please enter valid Email')
-      .required('Email/Phone is required'),
-    mobileNumber: Yup.string()
-      .min(10, 'Atleast 10')
-      .required('Mobile Required'),
-    password: Yup.string()
-      .min(8, ({min}) => `Password must be atleast ${min} characters`)
-      .required('Please Enter Password'),
-  });
 
   return Loading ? (
     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
       <ActivityIndicator size={'large'} />
     </View>
   ) : (
-    <Formik
-      initialValues={{mobileNumber: '', email: '', password: ''}}
-      validateOnMount={true}
-      validationSchema={loginValidationSchema}
-      onSubmit={values => console.log(values, '57')}>
-      {({
-        handleChange,
-        handleBlur,
-        handleSubmit,
-        values,
-        isValid,
-        touched,
-        errors,
-      }) => (
-        <SafeAreaView style={styles.container}>
-          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <View style={styles.innerContainer}>
-              <View style={styles.headerSection} />
-              <View style={styles.logoSection}>
-                <Image
-                  source={require('../assets/images/logo.png')}
-                  style={{width: 75, height: 75}}
-                />
-                <Text style={styles.logoName}>MyCity360</Text>
-              </View>
-              <View style={styles.loginFormSection}>
+    <SafeAreaView style={styles.container}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View style={styles.innerContainer}>
+          <View style={styles.headerSection} />
+          <View style={styles.logoSection}>
+            <Image
+              source={require('../assets/images/logo.png')}
+              style={{width: 75, height: 75}}
+            />
+            <Text style={styles.logoName}>MyCity360</Text>
+          </View>
+          <View style={styles.loginFormSection}>
+            <Text
+              style={{
+                fontSize: 24,
+                fontWeight: '400',
+                color: '#FF8C00',
+                textAlign: 'center',
+              }}>
+              Login
+            </Text>
+            <TextInput
+              placeholder="Enter Mobile Number / Email"
+              style={styles.input}
+              onChangeText={mail => {
+                setEmail(mail);
+              }}
+            />
+            {isEmailError ? (
+              <Text style={styles.error}>{errors.email}</Text>
+            ) : (
+              ''
+            )}
+            {isPhoneError ? (
+              <Text style={styles.error}>{errors.phone}</Text>
+            ) : (
+              ''
+            )}
+            <TextInput
+              placeholder="Enter Password"
+              style={styles.input}
+              secureTextEntry={true}
+              onChangeText={value => {
+                setPassword(value);
+              }}
+            />
+            {ispasswordError ? (
+              <Text style={styles.error}>{errors.password}</Text>
+            ) : (
+              ''
+            )}
+            <CustomButton
+              btnTitle="Login"
+              onpress={() => {
+                loginHandler();
+              }}
+              style={styles.loginBtn}
+              icon="arrow-forward"
+            />
+            <View
+              style={{
+                flex: 0.1,
+                alignItems: 'flex-start',
+                justifyContent: 'center',
+                flexDirection: 'row',
+                gap: 5,
+              }}>
+              <Text style={{fontSize: 16}}>Need an account?</Text>
+              <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
                 <Text
                   style={{
-                    fontSize: 24,
-                    fontWeight: '400',
-                    color: '#FF8C00',
-                    textAlign: 'center',
+                    fontSize: 16,
+                    color: '#FA8C00',
                   }}>
-                  Login
+                  Sign Up
                 </Text>
-                <TextInput
-                  placeholder="Enter Mobile Number / Email"
-                  style={styles.input}
-                  onChangeText={text => setEmailOrPhone(text)}
-                />
-                {errors.email && touched.email ? (
-                  <Text style={styles.error}>{errors.email}</Text>
-                ) : (
-                  setEmailOrPhone(values.email)
-                )}
-                {errors.mobileNumber && touched.mobileNumber ? (
-                  <Text style={styles.error}>{errors.mobileNumber}</Text>
-                ) : (
-                  setEmailOrPhone(values.mobileNumber)
-                )}
-                <TextInput
-                  placeholder="Enter Password"
-                  style={styles.input}
-                  secureTextEntry={true}
-                  onChangeText={handleChange('password')}
-                />
-                {errors.password && touched.password ? (
-                  <Text style={styles.error}>{errors.password}</Text>
-                ) : (
-                  setPassword(values.password)
-                )}
-                <CustomButton
-                  btnTitle="Login"
-                  onpress={handleSubmit}
-                  style={styles.loginBtn}
-                  icon="arrow-forward"
-                />
-                <View
-                  style={{
-                    flex: 0.1,
-                    alignItems: 'flex-start',
-                    justifyContent: 'center',
-                    flexDirection: 'row',
-                    gap: 5,
-                  }}>
-                  <Text style={{fontSize: 16}}>Need an account?</Text>
-                  <TouchableOpacity
-                    onPress={() => navigation.navigate('SignUp')}>
-                    <Text
-                      style={{
-                        fontSize: 16,
-                        color: '#FA8C00',
-                      }}>
-                      Sign Up
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
+              </TouchableOpacity>
             </View>
-          </TouchableWithoutFeedback>
-        </SafeAreaView>
-      )}
-    </Formik>
+          </View>
+        </View>
+      </TouchableWithoutFeedback>
+    </SafeAreaView>
   );
 }
 

@@ -83,8 +83,9 @@ export default function UploadAdPhotos() {
       } else {
         const source = {id: id, uri: {uri: response.assets[0].uri}};
         const updatedImages = images;
-        if (updatedImages.length >= MAX_IMAGE_ALLOWED) setMaxImageExceed(true);
-        else {
+        if (updatedImages.length >= MAX_IMAGE_ALLOWED) {
+          setMaxImageExceed(true);
+        } else {
           setMaxImageExceed(false);
           updatedImages.push(source);
           setImages(updatedImages);
