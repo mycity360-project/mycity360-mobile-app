@@ -10,6 +10,7 @@
     "start": "npx react-native start",
     "test": "jest",
     "build:android": "npx react-native run-android --mode release --active-arch-only true ",
+    "build:ios": "npx react-native run-ios --mode=Release",
     "release:major": "npm version major",
     "release:minor": "npm version minor",
     "release:patch": "npm version patch"

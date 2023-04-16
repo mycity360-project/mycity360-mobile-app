@@ -145,12 +145,12 @@ export default function SignUp() {
   ) : (
     <Formik
       initialValues={{
-        firstName: '',
-        lastName: '',
-        mobileNumber: '',
-        email: '',
-        password: '',
-        confirmPassword: '',
+        firstName: firstName,
+        lastName: lastName,
+        mobileNumber: mobileNumber,
+        email: email,
+        password: password,
+        confirmPassword: confirmPassword,
       }}
       validateOnMount={true}
       onSubmit={values => console.log(values, '158')}
