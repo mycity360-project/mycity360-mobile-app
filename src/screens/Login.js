@@ -14,7 +14,8 @@ import {React, useContext, useState} from 'react';
 import CustomButton from '../shared/components/CustomButton';
 import {AuthContext} from '../context/AuthContext';
 import {useNavigation} from '@react-navigation/native';
-
+import * as Yup from 'yup';
+import {Formik} from 'formik';
 export default function Login() {
   const {login} = useContext(AuthContext);
   const [email, setEmail] = useState(null);
@@ -29,6 +30,14 @@ export default function Login() {
       navigation.navigate('VerifyOtp', {userid: response.userid});
     }
   };
+  const loginValidationSchema = Yup.object().shape({
+    email: Yup.string()
+      .email('Please Enter Valid Email')
+      .required('Please Enter Email Address'),
+    password: Yup.string()
+      .min(8, ({min}) => `Password must be atleast ${min} characters`)
+      .required('Please Enter Password'),
+  });
 
   return Loading ? (
     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
@@ -36,71 +45,87 @@ export default function Login() {
     </View>
   ) : (
     <SafeAreaView style={styles.container}>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={styles.innerContainer}>
-          <View style={styles.headerSection} />
-          <View style={styles.logoSection}>
-            <Image
-              source={require('../assets/images/logo.png')}
-              style={{width: 75, height: 75}}
-            />
-            <Text style={styles.logoName}>MyCity360</Text>
-          </View>
-          <View style={styles.loginFormSection}>
-            <Text
-              style={{
-                fontSize: 24,
-                fontWeight: '400',
-                color: '#FF8C00',
-                textAlign: 'center',
-              }}>
-              Login
-            </Text>
-            <TextInput
-              placeholder="Enter Mobile Number / Email"
-              style={styles.input}
-              onChangeText={mail => {
-                setEmail(mail);
-              }}
-            />
-            <TextInput
-              placeholder="Enter Password"
-              style={styles.input}
-              secureTextEntry={true}
-              onChangeText={value => {
-                setPassword(value);
-              }}
-            />
-            <CustomButton
-              btnTitle="Login"
-              onpress={() => {
-                loginHandler();
-              }}
-              style={styles.loginBtn}
-              icon="arrow-forward"
-            />
-            <View
-              style={{
-                flex: 0.1,
-                alignItems: 'flex-start',
-                justifyContent: 'center',
-                flexDirection: 'row',
-                gap: 5,
-              }}>
-              <Text style={{fontSize: 16}}>Need an account?</Text>
-              <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
+      <Formik
+        initialValues={{email: '', password: ''}}
+        validateOnMount={true}
+        onSubmit={values => console.log(values)}>
+        {({
+          handleChange,
+          handleBlur,
+          handleSubmit,
+          values,
+          isValid,
+          touched,
+          errors,
+        }) => (
+          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            <View style={styles.innerContainer}>
+              <View style={styles.headerSection} />
+              <View style={styles.logoSection}>
+                <Image
+                  source={require('../assets/images/logo.png')}
+                  style={{width: 75, height: 75}}
+                />
+                <Text style={styles.logoName}>MyCity360</Text>
+              </View>
+              <View style={styles.loginFormSection}>
                 <Text
                   style={{
-                    fontSize: 16,
-                    color: '#FA8C00',
+                    fontSize: 24,
+                    fontWeight: '400',
+                    color: '#FF8C00',
+                    textAlign: 'center',
                   }}>
-                  Sign Up
+                  Login
                 </Text>
-              </TouchableOpacity>
+                <TextInput
+                  placeholder="Enter Mobile Number / Email"
+                  style={styles.input}
+                  onChangeText={mail => {
+                    setEmail(mail);
+                  }}
+                />
+                <TextInput
+                  placeholder="Enter Password"
+                  style={styles.input}
+                  secureTextEntry={true}
+                  onChangeText={value => {
+                    setPassword(value);
+                  }}
+                />
+                <CustomButton
+                  btnTitle="Login"
+                  onpress={() => {
+                    loginHandler();
+                  }}
+                  style={styles.loginBtn}
+                  icon="arrow-forward"
+                />
+                <View
+                  style={{
+                    flex: 0.1,
+                    alignItems: 'flex-start',
+                    justifyContent: 'center',
+                    flexDirection: 'row',
+                    gap: 5,
+                  }}>
+                  <Text style={{fontSize: 16}}>Need an account?</Text>
+                  <TouchableOpacity
+                    onPress={() => navigation.navigate('SignUp')}>
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        color: '#FA8C00',
+                      }}>
+                      Sign Up
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
             </View>
-          </View>
-        </View>
-      </TouchableWithoutFeedback>
+          </TouchableWithoutFeedback>
+        )}
+      </Formik>
     </SafeAreaView>
   );
 }

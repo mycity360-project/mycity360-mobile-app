@@ -17,7 +17,8 @@ import {useNavigation} from '@react-navigation/native';
 import {http} from '../shared/lib';
 import {BACKEND_CLIENT_ID} from '../shared/constants/env';
 import {AuthContext} from '../context/AuthContext';
-
+import * as Yup from 'yup';
+import {Formik} from 'formik';
 export default function SignUp() {
   const navigation = useNavigation();
   const {login} = useContext(AuthContext);
@@ -115,128 +116,193 @@ export default function SignUp() {
     }
   };
 
+  const signUpValidationSchema = Yup.object().shape({
+    firstName: Yup.string().required('First Name Required'),
+    lastName: Yup.string().required('Last Name Required'),
+    mobileNumber: Yup.string()
+      .min(10, 'Mobile Number must be of 10 digits')
+      .max(10, 'Mobile Number can not have more than 10 digits.')
+      .required('Please Enter Mobile Number'),
+    email: Yup.string()
+      .email('Please Enter Valid Email')
+      .required('Please Enter Email Address'),
+    password: Yup.string()
+      .min(8, ({min}) => `Password must be atleast ${min} characters`)
+      .required('Please Enter Password')
+      .matches(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+        'Minimum 8 characters, at least 1 uppercase letter, 1 lowercase letter, 1 number and 1 special character',
+      ),
+    confirmPassword: Yup.string()
+      .oneOf([Yup.ref('password'), null], 'Passwords must match')
+      .required('Please Enter Confirm Password'),
+  });
+
   return isLoading ? (
     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
       <ActivityIndicator size={'large'} />
     </View>
   ) : (
-    <SafeAreaView style={styles.container}>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={styles.innerContainer}>
-          <View style={styles.header} />
+    <Formik
+      initialValues={{
+        firstName: '',
+        lastName: '',
+        mobileNumber: '',
+        email: '',
+        password: '',
+        confirmPassword: '',
+      }}
+      validateOnMount={true}
+      onSubmit={values => console.log(values, '158')}
+      validationSchema={signUpValidationSchema}>
+      {({
+        handleChange,
+        handleBlur,
+        handleSubmit,
+        values,
+        isValid,
+        touched,
+        errors,
+      }) => (
+        <SafeAreaView style={styles.container}>
+          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            <View style={styles.innerContainer}>
+              <View style={styles.header} />
 
-          <View style={styles.registerFormContainer}>
-            <Text style={styles.registerFormHeading}>Register</Text>
-            <View style={styles.nameInputContainer}>
-              <TextInput
-                style={[
-                  styles.nameInput,
-                  styles.inputCommon,
-                  {marginLeft: '10%'},
-                ]}
-                placeholder="First Name"
-                value={firstName}
-                onChangeText={firstname => {
-                  setFirstName(firstname);
-                }}
-              />
-              <TextInput
-                placeholder="Last Name"
-                style={[
-                  styles.nameInput,
-                  styles.inputCommon,
-                  {marginRight: '10%'},
-                ]}
-                value={lastName}
-                onChangeText={lastname => {
-                  setLastName(lastname);
-                }}
-              />
-            </View>
-            <TextInput
-              placeholder="Enter Mobile Number"
-              style={[styles.input, styles.inputCommon]}
-              keyboardType="numeric"
-              onChangeText={value => {
-                setMobileNumber(value);
-              }}
-              value={mobileNumber}
-            />
-            <TextInput
-              placeholder="Enter you email"
-              style={[styles.input, styles.inputCommon]}
-              autoCapitalize={'none'}
-              keyboardType="email-address"
-              onChangeText={mail => {
-                setEmail(mail);
-              }}
-              value={email}
-            />
-            <TextInput
-              style={[styles.input, styles.inputCommon]}
-              placeholder="Enter your password"
-              secureTextEntry={true}
-              autoCapitalize={'none'}
-              onChangeText={pass => {
-                setPassword(pass);
-              }}
-              value={password}
-            />
-            <TextInput
-              style={[styles.input, styles.inputCommon]}
-              placeholder="Confirm password"
-              secureTextEntry={true}
-              autoCapitalize={'none'}
-              onChangeText={confirmpass => {
-                setConfirmPassword(confirmpass);
-              }}
-              value={confirmPassword}
-            />
-            <DropDown
-              placeholder="Select Location"
-              dataArray={locationData}
-              selectedDataHandler={location => setLocation(location)}
-              isDisabled={false}
-              selectedValue={selectedLocation}
-            />
-            <DropDown
-              placeholder="Select Area"
-              dataArray={areaData}
-              isDisabled={isDisabled}
-              selectedDataHandler={area => setArea(area)}
-              selectedValue={selectedArea}
-            />
-            {/* navigation.navigate('VerifyOtp') */}
-            <CustomButton
-              btnTitle={'Sign Up'}
-              style={styles.registerBtn}
-              icon="arrow-forward"
-              onpress={async () => await handleOnSignUpPress()}
-            />
+              <View style={styles.registerFormContainer}>
+                <Text style={styles.registerFormHeading}>Register</Text>
+                <View style={styles.nameInputContainer}>
+                  <TextInput
+                    style={[
+                      styles.nameInput,
+                      styles.inputCommon,
+                      {marginLeft: '10%'},
+                    ]}
+                    placeholder="First Name"
+                    value={values.firstName}
+                    onChangeText={handleChange('firstName')}
+                  />
 
-            <View
-              style={{
-                flex: 0.1,
-                alignItems: 'flex-start',
-                justifyContent: 'center',
-                flexDirection: 'row',
-                gap: 5,
-              }}>
-              <Text style={{fontSize: 16}}>Already Registered?</Text>
-              <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-                <Text
+                  <TextInput
+                    placeholder="Last Name"
+                    style={[
+                      styles.nameInput,
+                      styles.inputCommon,
+                      {marginRight: '10%'},
+                    ]}
+                    value={values.lastName}
+                    onChangeText={handleChange('lastName')}
+                  />
+                </View>
+                {errors.firstName && touched.firstName ? (
+                  <Text style={styles.error}>{errors.firstName}</Text>
+                ) : (
+                  ''
+                )}
+                {errors.lastName && touched.lastName ? (
+                  <Text style={styles.error}>{errors.lastName}</Text>
+                ) : (
+                  ''
+                )}
+                <TextInput
+                  placeholder="Enter Mobile Number"
+                  style={[styles.input, styles.inputCommon]}
+                  keyboardType="numeric"
+                  value={values.mobileNumber}
+                  onChangeText={handleChange('mobileNumber')}
+                />
+                {errors.mobileNumber && touched.mobileNumber ? (
+                  <Text style={styles.error}>{errors.mobileNumber}</Text>
+                ) : (
+                  ''
+                )}
+                <TextInput
+                  placeholder="Enter you email"
+                  style={[styles.input, styles.inputCommon]}
+                  autoCapitalize={'none'}
+                  keyboardType="email-address"
+                  onChangeText={handleChange('email')}
+                  value={values.email}
+                />
+                {errors.email && touched.email ? (
+                  <Text style={styles.error}>{errors.email}</Text>
+                ) : (
+                  ''
+                )}
+                <TextInput
+                  style={[styles.input, styles.inputCommon]}
+                  placeholder="Enter your password"
+                  secureTextEntry={true}
+                  autoCapitalize={'none'}
+                  onChangeText={handleChange('password')}
+                  value={values.password}
+                />
+                {errors.password && touched.password ? (
+                  <Text style={styles.error}>{errors.password}</Text>
+                ) : (
+                  ''
+                )}
+                <TextInput
+                  style={[styles.input, styles.inputCommon]}
+                  placeholder="Confirm password"
+                  secureTextEntry={true}
+                  autoCapitalize={'none'}
+                  onChangeText={handleChange('confirmPassword')}
+                  value={values.confirmPassword}
+                />
+                {errors.confirmPassword && touched.confirmPassword ? (
+                  <Text style={styles.error}> {errors.confirmPassword}</Text>
+                ) : (
+                  ''
+                )}
+                <DropDown
+                  placeholder="Select Location"
+                  dataArray={locationData}
+                  selectedDataHandler={location => setLocation(location)}
+                  isDisabled={false}
+                  selectedValue={selectedLocation}
+                />
+                <DropDown
+                  placeholder="Select Area"
+                  dataArray={areaData}
+                  isDisabled={isDisabled}
+                  selectedDataHandler={area => setArea(area)}
+                  selectedValue={selectedArea}
+                />
+                {/* navigation.navigate('VerifyOtp') */}
+                <CustomButton
+                  btnTitle={'Sign Up'}
+                  style={styles.registerBtn}
+                  icon="arrow-forward"
+                  onpress={handleSubmit} //async () => await handleOnSignUpPress()
+                />
+
+                <View
                   style={{
-                    fontSize: 16,
-                    color: '#FA8C00',
+                    flex: 0.1,
+                    alignItems: 'flex-start',
+                    justifyContent: 'center',
+                    flexDirection: 'row',
+                    gap: 5,
                   }}>
-                  Login
-                </Text>
-              </TouchableOpacity>
+                  <Text style={{fontSize: 16}}>Already Registered?</Text>
+                  <TouchableOpacity
+                    onPress={() => navigation.navigate('Login')}>
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        color: '#FA8C00',
+                      }}>
+                      Login
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
             </View>
-          </View>
-        </View>
-      </TouchableWithoutFeedback>
-    </SafeAreaView>
+          </TouchableWithoutFeedback>
+        </SafeAreaView>
+      )}
+    </Formik>
   );
 }
 
@@ -284,5 +350,11 @@ const styles = StyleSheet.create({
   },
   nameInput: {
     width: '36%',
+  },
+  error: {
+    fontSize: 14,
+    color: 'red',
+    marginTop: 5,
+    textAlign: 'center',
   },
 });
