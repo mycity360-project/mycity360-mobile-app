@@ -306,7 +306,7 @@ export default function SignUp() {
 
                 <View
                   style={{
-                    flex: 0.1,
+                    flex: 0.4,
                     alignItems: 'flex-start',
                     justifyContent: 'center',
                     flexDirection: 'row',

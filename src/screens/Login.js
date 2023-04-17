@@ -46,16 +46,17 @@ export default function Login() {
       return;
     }
 
-    if (email.length === 10) {
-      if (!email.match(phoneRegex)) {
-        setEmailError(false);
-        setLoading(false);
-        setPhoneError(true);
-        return;
-      }
-    }
+    // if (email.length === 10) {
+    //   if (!email.match(phoneRegex)) {
+    //     setEmailError(false);
+    //     setLoading(false);
+    //     setPhoneError(true);
+    //     return;
+    //   }
+    // }
 
-    if (email.length !== 10 && !email.match(emailRegex)) {
+    // if (email.length !== 10 && !email.match(emailRegex)) {
+    if (!email.match(emailRegex)) {
       setPhoneError(false);
       setLoading(false);
       setEmailError(true);
@@ -96,7 +97,7 @@ export default function Login() {
               Login
             </Text>
             <TextInput
-              placeholder="Enter Mobile Number / Email"
+              placeholder="Enter Email"
               style={styles.input}
               autoCapitalize="none"
               onChangeText={mail => {

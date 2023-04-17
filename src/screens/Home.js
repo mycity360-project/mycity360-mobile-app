@@ -44,11 +44,14 @@ export default function Home({navigation}) {
         },
       });
       // console.log(categoriesRespData.results);
-      const categories = categoriesRespData.results.map(category => ({
-        id: category.id.toString(),
-        name: category.name,
-        icon: category.icon,
-      }));
+      const categories = categoriesRespData.results
+        .map(category => ({
+          id: category.id.toString(),
+          name: category.name,
+          icon: category.icon,
+          seq: category.sequence,
+        }))
+        .sort((a, b) => a.seq - b.seq);
       setCategoriesData(categories);
       setIsLoading(false);
     } catch (err) {
