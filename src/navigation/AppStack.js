@@ -8,6 +8,8 @@ import IncludeSomeDetails from '../screens/IncludeSomeDetails';
 import UploadAdPhotos from '../screens/UploadAdPhotos';
 import ServiceDescription from '../screens/ServiceDescription';
 import AdSearch from '../screens/AdSearch';
+import Location from '../screens/Location';
+
 const RootStack = createNativeStackNavigator();
 
 export default function AppStack() {
@@ -30,6 +32,7 @@ export default function AppStack() {
         component={ServiceDescription}
       />
       <RootStack.Screen name="AdSearch" component={AdSearch} />
+      <RootStack.Screen name="Location" component={Location} />
     </RootStack.Navigator>
   );
 }

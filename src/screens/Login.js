@@ -18,7 +18,9 @@ import {useNavigation} from '@react-navigation/native';
 
 export default function Login() {
   const {login} = useContext(AuthContext);
+
   const [email, setEmail] = useState(null);
+  const [phone, setPhone] = useState('');
   const [password, setPassword] = useState(null);
   const [isEmailError, setEmailError] = useState(false);
   const [isPhoneError, setPhoneError] = useState(false);
@@ -38,6 +40,12 @@ export default function Login() {
     var emailRegex =
       /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
 
+    if (password === '' || password.length < 8) {
+      setLoading(false);
+      setPasswordError(true);
+      return;
+    }
+
     if (email.length === 10) {
       if (!email.match(phoneRegex)) {
         setEmailError(false);
@@ -47,16 +55,10 @@ export default function Login() {
       }
     }
 
-    if (!email.match(emailRegex)) {
+    if (email.length !== 10 && !email.match(emailRegex)) {
       setPhoneError(false);
       setLoading(false);
       setEmailError(true);
-      return;
-    }
-
-    if (password === '' || password.length <= 8) {
-      setLoading(false);
-      setPasswordError(true);
       return;
     }
 
@@ -96,6 +98,7 @@ export default function Login() {
             <TextInput
               placeholder="Enter Mobile Number / Email"
               style={styles.input}
+              autoCapitalize="none"
               onChangeText={mail => {
                 setEmail(mail);
               }}
@@ -113,6 +116,7 @@ export default function Login() {
             <TextInput
               placeholder="Enter Password"
               style={styles.input}
+              autoCapitalize="none"
               secureTextEntry={true}
               onChangeText={value => {
                 setPassword(value);

@@ -40,7 +40,7 @@ export default function WhatAreYouOffering({navigation, route}) {
       ]}
       onPress={() =>
         navigation.navigate('SubCategory', {
-          categoryID: item.key,
+          categoryID: item.id,
           categoryName: item.name,
         })
       }>
@@ -87,8 +87,8 @@ export default function WhatAreYouOffering({navigation, route}) {
             justifyContent: 'space-between',
             marginBottom: 10,
           }}
-          initialNumToRender={5}
-          maxToRenderPerBatch={5}
+          initialNumToRender={10}
+          maxToRenderPerBatch={10}
         />
       </View>
     </View>

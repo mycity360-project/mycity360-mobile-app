@@ -28,7 +28,6 @@ export default function ProfileScreen() {
   const getInfo = async () => {
     setIsLoading(true);
     const userData = await AsyncStorage.getItem('userInfo');
-    console.log(userData, '25');
     const info = JSON.parse(userData);
     setUserInfo(info);
     setProfileImage({uri: info.profile_image});
@@ -37,8 +36,8 @@ export default function ProfileScreen() {
 
   useEffect(() => {
     getInfo();
+    console.log(userInfo, '39');
   }, []);
-  console.log(userInfo);
 
   const openCamera = () => {
     console.log('clicked 47');
@@ -57,6 +56,8 @@ export default function ProfileScreen() {
       } else {
         const source = {uri: response.assets[0].uri};
         setProfileImage(source);
+        setShowImagePicker(false);
+        // uploadImage(imageURI);
       }
     });
   };
@@ -78,8 +79,38 @@ export default function ProfileScreen() {
         // console.log(response.assets);
         const source = {uri: response.assets[0].uri};
         setProfileImage(source);
+        setShowImagePicker(false);
+        console.log(source);
+        uploadImage(source.uri);
       }
     });
+  };
+
+  const uploadImage = async path => {
+    try {
+      console.log('91');
+      const imageData = new FormData();
+      console.log('92');
+      imageData.append('file', {
+        uri: path,
+        name: `${userInfo.first_name}${userInfo.last_name}.jpg`.toLowerCase(),
+        type: 'image/jpg',
+      });
+      console.log('99');
+      const token = AsyncStorage.getItem('token');
+      const userid = userInfo.userid;
+      console.log(token, userid);
+      const url = `user/image/${userid}/`;
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      const resp = await http.post(url, imageData, config);
+      console.log(resp);
+    } catch (error) {
+      console.log(JSON.stringify(error), 'in error image upload');
+    }
   };
 
   return isLoading ? (

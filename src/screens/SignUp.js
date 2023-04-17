@@ -133,15 +133,15 @@ export default function SignUp() {
       .email('Please Enter Valid Email')
       .required('Please Enter Email Address'),
     password: Yup.string()
-      .min(8, ({min}) => `Password must be atleast ${min} characters`)
       .required('Please Enter Password')
+      .min(8, ({min}) => `Password must be atleast ${min} characters`)
       .matches(
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
         'Minimum 8 characters, at least 1 uppercase letter, 1 lowercase letter, 1 number and 1 special character',
       ),
     confirmPassword: Yup.string()
-      .oneOf([Yup.ref('password'), null], 'Passwords must match')
-      .required('Please Enter Confirm Password'),
+      .required('Please Enter Confirm Password')
+      .oneOf([Yup.ref('password'), null], 'Passwords must match'),
   });
 
   return isLoading ? (
@@ -168,7 +168,7 @@ export default function SignUp() {
           console.log('165');
           setShowLocationError(false);
           setShowAreaError(false);
-          handleOnSignUpPress();
+          handleOnSignUpPress;
         }
       }}
       validationSchema={signUpValidationSchema}>

@@ -102,7 +102,7 @@ export default function Home({navigation}) {
     getUserAds();
   }, []);
 
-  const ITEM_WIDTH = 80;
+  const ITEM_WIDTH = 85;
   const getItemLayout = (_, index) => ({
     length: ITEM_WIDTH,
     offset: ITEM_WIDTH * index,
@@ -122,7 +122,6 @@ export default function Home({navigation}) {
         styles.category,
         {
           width: ITEM_WIDTH,
-          flex: 1,
         },
       ]}
       onPress={() =>
@@ -130,12 +129,17 @@ export default function Home({navigation}) {
           categoryID: item.id,
         })
       }>
-      <View style={{flex: 1.2, alignItems: 'center', justifyContent: 'center'}}>
+      <View
+        style={{
+          flex: 1.2,
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
         <Image
           source={{
             uri: item.icon,
-            width: 45,
-            height: 45,
+            width: 50,
+            height: 50,
           }}
         />
       </View>
@@ -143,8 +147,9 @@ export default function Home({navigation}) {
       <View style={{flex: 0.8, alignItems: 'center', justifyContent: 'center'}}>
         <Text
           style={{
-            fontSize: 16,
+            fontSize: 14,
             color: '#111',
+            textAlign: 'center',
           }}>
           {item.name}
         </Text>
@@ -261,7 +266,7 @@ export default function Home({navigation}) {
                   padding: '1%',
                   justifyContent: 'flex-end',
                 }}
-                onPress={() => navigation.navigate('LocationModal')}>
+                onPress={() => navigation.navigate('Location')}>
                 <MaterialIcon name="location-pin" color={'#222'} size={20} />
                 <Text
                   style={{
@@ -305,12 +310,12 @@ export default function Home({navigation}) {
                 style={styles.searchInput}
                 onPress={() => navigation.navigate('AdSearch')}
                 activeOpacity={1}>
-                <MaterialIcon name="search" size={28} color={'#222'} />
+                <MaterialIcon name="search" size={24} color={'#222'} />
                 <Text>Search here</Text>
               </TouchableOpacity>
             </View>
           </View>
-          <View style={styles.categorySection}>
+          <View style={styles.categoryAndSellBtnSection}>
             {/* Sell Button to add item for sell */}
             <TouchableOpacity
               style={styles.sellBtn}
@@ -321,36 +326,38 @@ export default function Home({navigation}) {
               }}>
               <View
                 style={{
-                  flex: 1.2,
+                  flex: 1.1,
                   alignItems: 'center',
                   justifyContent: 'center',
                 }}>
                 <MaterialIcon
                   name="add-circle-outline"
                   color={'#FF8C00'}
-                  size={40}
+                  size={45}
                 />
               </View>
 
               <View
                 style={{
-                  flex: 0.8,
+                  flex: 0.9,
                   alignItems: 'center',
                   justifyContent: 'center',
                 }}>
-                <Text style={{fontSize: 16, color: '#111'}}>Sell</Text>
+                <Text style={{fontSize: 18, color: '#111'}}>Sell</Text>
               </View>
             </TouchableOpacity>
             {/* Category Horizontal List */}
-            <FlatList
-              horizontal={true}
-              data={categoriesData}
-              renderItem={renderItem}
-              showsHorizontalScrollIndicator={false}
-              getItemLayout={getItemLayout}
-              initialNumToRender={5}
-              maxToRenderPerBatch={5}
-            />
+            <View style={styles.categoryListSection}>
+              <FlatList
+                horizontal={true}
+                data={categoriesData}
+                renderItem={renderItem}
+                showsHorizontalScrollIndicator={false}
+                getItemLayout={getItemLayout}
+                initialNumToRender={5}
+                maxToRenderPerBatch={5}
+              />
+            </View>
           </View>
 
           <View style={styles.featuredAdsSection}>
@@ -409,22 +416,29 @@ const styles = StyleSheet.create({
   searchIcon: {
     marginRight: '40%',
   },
-  categorySection: {
-    flex: 0.5,
+  categoryAndSellBtnSection: {
+    flex: 0.8,
     flexDirection: 'row',
-    padding: 5,
     gap: 5,
+    marginTop: '1%',
+    borderColor: '#999',
+    borderTopWidth: 0.3,
+    borderBottomWidth: 0.3,
   },
   sellBtn: {
-    paddingLeft: 5,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: '-4%',
+    marginRight: '-2%',
+    borderColor: '#999',
+    borderRightWidth: 0.3,
+    padding: 5,
+  },
+  categoryListSection: {
+    padding: 5,
   },
   category: {
     alignItems: 'center',
     justifyContent: 'center',
   },
-  categoryImg: {width: 35, height: 35},
   featuredAdsSection: {flex: 4, padding: '1%'},
 });
