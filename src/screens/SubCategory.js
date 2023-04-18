@@ -19,9 +19,8 @@ export default function SubCategory({navigation, route}) {
   const getSubCategories = async () => {
     try {
       setIsLoading(true);
-      console.log(categoryID);
       const token = await AsyncStorage.getItem('token');
-      const categoriesRespData = await http.get(
+      const subCategoriesRespData = await http.get(
         `category/user/?category_id=${categoryID}`,
         {
           headers: {
@@ -29,13 +28,13 @@ export default function SubCategory({navigation, route}) {
           },
         },
       );
-      console.log(categoriesRespData.results);
-      const categories = categoriesRespData.results.map(category => ({
-        key: category.id.toString(),
+      // console.log(subCategoriesRespData.results);
+      const subCategories = subCategoriesRespData.results.map(category => ({
+        id: category.id.toString(),
         name: category.name,
       }));
-      console.log(categories);
-      setSubCategoryData(categories);
+
+      setSubCategoryData(subCategories);
       setIsLoading(false);
     } catch (err) {
       console.log(
@@ -66,7 +65,12 @@ export default function SubCategory({navigation, route}) {
           borderBottomWidth: 0.5,
           justifyContent: 'center',
         }}
-        onPress={() => navigation.navigate('IncludeSomeDetails')}>
+        onPress={() =>
+          navigation.navigate('IncludeSomeDetails', {
+            categoryID: categoryID,
+            subCategoryID: item.id,
+          })
+        }>
         <Text style={{fontSize: 16, color: '#222', marginLeft: 10}}>
           {item.name}
         </Text>

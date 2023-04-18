@@ -1,5 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {useContext, useState, useEffect} from 'react';
+import * as fs from 'react-native-fs';
 import {
   Animated,
   ImageBackground,
@@ -14,7 +15,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {ActivityIndicator} from 'react-native';
-import CustomButton from '../shared/components/CustomButton';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import Modal from 'react-native-modal';
 import {http} from '../shared/lib';
@@ -38,7 +38,7 @@ export default function ProfileScreen() {
   useEffect(() => {
     getInfo();
     console.log(userInfo, '39');
-  }, []);
+  }, [showImagePicker]);
 
   const openCamera = () => {
     console.log('clicked 47');
@@ -55,10 +55,12 @@ export default function ProfileScreen() {
       } else if (response.customButton) {
         console.log('User tapped custom button: ', response.customButton);
       } else {
-        const source = {uri: response.assets[0].uri};
-        setProfileImage(source);
+        const source = {
+          uri: response.assets[0].uri,
+          type: response.assets[0].type,
+        };
         setShowImagePicker(false);
-        // uploadImage(imageURI);
+        uploadImage(source);
       }
     });
   };
@@ -78,11 +80,12 @@ export default function ProfileScreen() {
         console.log('User tapped custom button: ', response.customButton);
       } else {
         // console.log(response.assets);
-        const source = {uri: response.assets[0].uri};
-        setProfileImage(source);
+        const source = {
+          uri: response.assets[0].uri,
+          type: response.assets[0].type,
+        };
+        uploadImage(source);
         setShowImagePicker(false);
-        console.log(source);
-        uploadImage(source.uri);
       }
     });
   };
@@ -92,23 +95,25 @@ export default function ProfileScreen() {
       console.log('91');
       const imageData = new FormData();
       console.log('92');
+
       imageData.append('file', {
-        uri: path,
-        name: `${userInfo.first_name}${userInfo.last_name}.jpg`.toLowerCase(),
-        type: 'image/jpg',
+        uri: path.uri,
+        name: 'anurag.jpg',
+        type: path.type,
       });
       console.log('99');
-      const token = AsyncStorage.getItem('token');
-      const userid = userInfo.userid;
-      console.log(token, userid);
+      const token = await AsyncStorage.getItem('token');
+      const userid = userInfo.id;
       const url = `user/image/${userid}/`;
       const config = {
         headers: {
-          Authorization: `Bearer ${token}`,
+          ' Authorization': `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data',
         },
       };
       const resp = await http.post(url, imageData, config);
-      console.log(resp);
+      console.log(resp, '115');
+      await AsyncStorage.setItem('userInfo', JSON.stringify(resp));
     } catch (error) {
       console.log(JSON.stringify(error), 'in error image upload');
     }

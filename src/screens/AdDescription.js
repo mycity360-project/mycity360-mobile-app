@@ -100,7 +100,7 @@ export default function AdDescription({route, navigation}) {
         <Text style={{fontSize: 16, fontWeight: 600, color: '#111'}}>
           Details
         </Text>
-        <View style={{fontSize: 14, marginLeft: '20%'}} />
+        <View style={{fontSize: 14, marginLeft: '20%'}}></View>
       </View>
 
       <View style={styles.adDescriptionSection}>

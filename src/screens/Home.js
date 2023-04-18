@@ -16,7 +16,7 @@ import {React, useEffect, useState} from 'react';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {http} from '../shared/lib';
-export default function Home({navigation}) {
+export default function Home({navigation, route}) {
   const [categoriesData, setCategoriesData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState('');
@@ -31,6 +31,7 @@ export default function Home({navigation}) {
     setSelectedLocation(location);
   };
 
+  useEffect(() => {}, [route]);
   useEffect(() => {
     getUserInfo();
   }, []);
@@ -44,14 +45,13 @@ export default function Home({navigation}) {
         },
       });
       // console.log(categoriesRespData.results);
-      const categories = categoriesRespData.results
-        .map(category => ({
-          id: category.id.toString(),
-          name: category.name,
-          icon: category.icon,
-          seq: category.sequence,
-        }))
-        .sort((a, b) => a.seq - b.seq);
+      const categories = categoriesRespData.results.map(category => ({
+        id: category.id.toString(),
+        name: category.name,
+        icon: category.icon,
+        seq: category.sequence,
+      }));
+
       setCategoriesData(categories);
       setIsLoading(false);
     } catch (err) {
@@ -78,7 +78,7 @@ export default function Home({navigation}) {
         },
       });
       // const respData = JSON.parse(userAdsRespData.results);
-      console.log(userAdsRespData.results[0], '77');
+      // console.log(userAdsRespData.results[0], '77');
       const ads = userAdsRespData.results.map(ad => ({
         id: ad.id.toString(),
         title: ad.name,
@@ -125,6 +125,7 @@ export default function Home({navigation}) {
         styles.category,
         {
           width: ITEM_WIDTH,
+          flex: 1,
         },
       ]}
       onPress={() =>
@@ -346,21 +347,24 @@ export default function Home({navigation}) {
                   alignItems: 'center',
                   justifyContent: 'center',
                 }}>
-                <Text style={{fontSize: 18, color: '#111'}}>Sell</Text>
+                <Text
+                  style={{fontSize: 16, color: '#111', marginBottom: '-10%'}}>
+                  Sell /
+                </Text>
+                <Text style={{fontSize: 16, color: '#111'}}>Post Ad</Text>
               </View>
             </TouchableOpacity>
             {/* Category Horizontal List */}
-            <View style={styles.categoryListSection}>
-              <FlatList
-                horizontal={true}
-                data={categoriesData}
-                renderItem={renderItem}
-                showsHorizontalScrollIndicator={false}
-                getItemLayout={getItemLayout}
-                initialNumToRender={5}
-                maxToRenderPerBatch={5}
-              />
-            </View>
+
+            <FlatList
+              horizontal={true}
+              data={categoriesData}
+              renderItem={renderItem}
+              showsHorizontalScrollIndicator={false}
+              getItemLayout={getItemLayout}
+              initialNumToRender={5}
+              maxToRenderPerBatch={5}
+            />
           </View>
 
           <View style={styles.featuredAdsSection}>
@@ -436,12 +440,10 @@ const styles = StyleSheet.create({
     borderRightWidth: 0.3,
     padding: 5,
   },
-  categoryListSection: {
-    padding: 5,
-  },
+
   category: {
     alignItems: 'center',
     justifyContent: 'center',
   },
-  featuredAdsSection: {flex: 4, padding: '1%'},
+  featuredAdsSection: {flex: 4, padding: '2%'},
 });

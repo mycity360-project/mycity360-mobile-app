@@ -21,6 +21,7 @@ export const AuthProvider = ({children}) => {
     AsyncStorage.setItem('tokenInfo', JSON.stringify(respData));
     AsyncStorage.setItem('token', token);
     AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
+    AsyncStorage.setItem('userID', JSON.stringify(userid));
   };
 
   const login = async (username, password) => {

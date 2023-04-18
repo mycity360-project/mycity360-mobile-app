@@ -7,6 +7,8 @@ const axiosInstance = axios.create({
   baseURL: `${BACKEND_URL}/${APP_PREFIX}`,
 });
 
+// axiosInstance.defaults.timeout = 300000;
+
 axiosInstance.interceptors.response.use(config => {
   if (
     config.status === HttpStatusCode.Ok ||

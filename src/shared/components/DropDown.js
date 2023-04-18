@@ -4,7 +4,7 @@ import {React, useState} from 'react';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 
 export default function DropDown(props) {
-  console.log(props);
+  // console.log(props);
   const {
     placeholder,
     dataArray,

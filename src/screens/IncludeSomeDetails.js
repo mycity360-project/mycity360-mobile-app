@@ -1,68 +1,59 @@
-/* eslint-disable react-native/no-inline-styles */
 import {
   StyleSheet,
   Text,
   View,
   TouchableOpacity,
   TextInput,
-  ActivityIndicator,
-  FlatList,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import CustomButton from '../shared/components/CustomButton';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {http} from '../shared/lib';
-export default function IncludeSomeDetails({navigation}) {
-  const [isLoading, setIsLoading] = useState(false);
-  const [questionData, setQuestionData] = useState([]);
-  const [answerData, setAnswerData] = useState([]);
+import {AD_DESC_MAX_LENGTH} from '../shared/constants/env';
 
-  const getQuestions = async () => {
-    try {
-      setIsLoading(true);
-      const token = await AsyncStorage.getItem('token');
-      const questionsRespData = await http.get('question/user/', {
-        headers: {
-          Authorization: `Bearer ${token}`,
+export default function IncludeSomeDetails({navigation, route}) {
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [descLength, setDescLength] = useState(Number(0));
+  const [price, setPrice] = useState('');
+  const [isTitleError, setIsTitleError] = useState(false);
+  const [isDescError, setIsDescError] = useState(false);
+  const [isPriceError, setIsPriceError] = useState(false);
+  const [isPriceZero, setIsPriceZero] = useState(false);
+  const errors = {
+    title: 'Title is Required',
+    description: 'Description is Required',
+    price: 'Price is Required',
+    priceZero: 'Price Cannot be 0',
+  };
+  const onNextHandler = () => {
+    if (title.length == Number(0)) {
+      setIsTitleError(true);
+      return;
+    } else if (description.length == Number(0)) {
+      setIsTitleError(false);
+      setIsDescError(true);
+      return;
+    } else if (price.length == Number(0)) {
+      setIsDescError(false);
+      setIsPriceError(true);
+      return;
+    } else if (!Number(price)) {
+      setIsPriceError(false);
+      setIsPriceZero(true);
+    } else {
+      setIsPriceZero(false);
+      navigation.navigate('QuestionsScreen', {
+        AdData: {
+          title: title,
+          description: description,
+          price: Number(price),
+          ...route.params,
         },
       });
-      console.log(questionsRespData.results, '29');
-      const questions = questionsRespData.results.map(question => ({
-        id: question.id.toString(),
-        question: question.question,
-      }));
-      console.log(questions);
-      setQuestionData(questions);
-      setIsLoading(false);
-    } catch (err) {
-      console.log(
-        'Something went wrong while fetching questions 40',
-        JSON.stringify(err),
-      );
-      setIsLoading(false);
     }
   };
 
-  useEffect(() => {
-    getQuestions();
-  }, []);
-
-  const renderQuestion = ({item, index}) => {
-    return (
-      <View>
-        <Text style={{color: '#222'}}>
-          {index + 1}. {item.question}
-        </Text>
-        <TextInput style={styles.inputField} />
-      </View>
-    );
-  };
-  return isLoading ? (
-    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-      <ActivityIndicator size={'large'} />
-    </View>
-  ) : (
+  return (
     <View style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity
@@ -75,13 +66,101 @@ export default function IncludeSomeDetails({navigation}) {
         <Text style={styles.headingText}>Include Some Details</Text>
       </View>
       <View style={styles.detailsFormSection}>
-        <FlatList data={questionData} renderItem={renderQuestion} />
+        <View style={{flex: 0.2}}>
+          <Text style={{fontSize: 16, fontWeight: 500, color: '#222'}}>
+            Title
+          </Text>
+          <TextInput
+            placeholder="Enter Title"
+            autoFocus={true}
+            value={title}
+            onChangeText={title => setTitle(title)}
+            style={{borderBottomWidth: 1, padding: 1, marginBottom: 20}}
+          />
+        </View>
+        {isTitleError ? <Text style={styles.error}>{errors.title}</Text> : ''}
+        <View style={{flex: 0.3, marginBottom: '8%'}}>
+          <Text
+            style={{
+              fontSize: 16,
+              fontWeight: 500,
+              color: '#222',
+            }}>
+            Description
+          </Text>
+          <TextInput
+            placeholder="Describe your product."
+            multiline={true}
+            maxLength={AD_DESC_MAX_LENGTH}
+            numberOfLines={5}
+            value={description}
+            onChangeText={desc => {
+              setDescription(desc);
+              setDescLength(desc.length);
+            }}
+            style={{
+              borderWidth: 0.5,
+              textAlignVertical: 'top',
+              marginTop: '1%',
+            }}
+          />
+        </View>
+        {isDescError ? (
+          <Text style={styles.error}>{errors.description}</Text>
+        ) : (
+          ''
+        )}
+
+        <View style={{flex: 0.1, flexDirection: 'row'}}>
+          {descLength == AD_DESC_MAX_LENGTH ? (
+            <Text style={{color: 'red'}}>
+              You have reached maximum input limit
+            </Text>
+          ) : (
+            ''
+          )}
+          <View
+            style={{
+              flex: 1,
+              alignItems: 'flex-end',
+            }}>
+            {AD_DESC_MAX_LENGTH - descLength <= 30 ? (
+              <Text style={{color: 'red'}}>
+                {descLength}/{AD_DESC_MAX_LENGTH}
+              </Text>
+            ) : (
+              <Text>
+                {descLength}/{AD_DESC_MAX_LENGTH}
+              </Text>
+            )}
+          </View>
+        </View>
+        <View style={{flex: 1}}>
+          <Text style={{fontSize: 16, fontWeight: 500, color: '#222'}}>
+            Price
+          </Text>
+          <TextInput
+            placeholder="Enter Price"
+            keyboardType="numeric"
+            value={price}
+            onChangeText={price => {
+              setPrice(price);
+            }}
+            style={{borderBottomWidth: 1, padding: 1}}
+          />
+          {isPriceError ? <Text style={styles.error}>{errors.price}</Text> : ''}
+          {isPriceZero ? (
+            <Text style={styles.error}>{errors.priceZero}</Text>
+          ) : (
+            ''
+          )}
+        </View>
       </View>
       <View
         style={{flex: 1.5, justifyContent: 'center', alignContent: 'center'}}>
         <CustomButton
           btnTitle="Next"
-          onpress={() => navigation.navigate('UploadAdPhotos')}
+          onpress={() => onNextHandler()}
           style={{width: '90%', marginHorizontal: '5%'}}
         />
       </View>
@@ -108,5 +187,11 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     padding: 1,
     marginBottom: 30,
+  },
+  error: {
+    fontSize: 14,
+    color: 'red',
+    marginTop: 5,
+    textAlign: 'center',
   },
 });
