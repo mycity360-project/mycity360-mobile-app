@@ -25,7 +25,7 @@ export default function QuestionsScreen({navigation, route}) {
       setIsLoading(true);
       const token = await AsyncStorage.getItem('token');
       const questionsRespData = await http.get(
-        `question/user/?${(category_id = AdData.subCategoryID)}`,
+        `question/user/?category_id=${AdData.subCategoryID}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

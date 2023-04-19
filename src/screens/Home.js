@@ -16,7 +16,8 @@ import {React, useEffect, useState} from 'react';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {http} from '../shared/lib';
-export default function Home({navigation, route}) {
+
+export default function Home({navigation}) {
   const [categoriesData, setCategoriesData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState('');
@@ -26,12 +27,11 @@ export default function Home({navigation, route}) {
   const getUserInfo = async () => {
     const info = await AsyncStorage.getItem('userInfo');
     setUserInfo(info);
-    const location = JSON.parse(info)?.area?.name;
+    const location = JSON.parse(info)?.localUserArea?.name;
     console.log(location);
     setSelectedLocation(location);
   };
 
-  useEffect(() => {}, [route]);
   useEffect(() => {
     getUserInfo();
   }, []);
@@ -88,6 +88,7 @@ export default function Home({navigation, route}) {
         isFeatured: ad.is_featured,
         price: ad.price,
         userID: ad.user?.id,
+        subCategoryID: ad.category.id,
       }));
 
       setUserAdsData(ads);
@@ -203,6 +204,7 @@ export default function Home({navigation, route}) {
             images: item.images,
             userID: item.userID,
             phone: item.phone,
+            categoryID: item.subCategoryID,
           },
         })
       }>

@@ -37,8 +37,7 @@ export default function ProfileScreen() {
 
   useEffect(() => {
     getInfo();
-    console.log(userInfo, '39');
-  }, [showImagePicker]);
+  }, []);
 
   const openCamera = () => {
     console.log('clicked 47');
@@ -92,16 +91,13 @@ export default function ProfileScreen() {
 
   const uploadImage = async path => {
     try {
-      console.log('91');
+      setIsLoading(true);
       const imageData = new FormData();
-      console.log('92');
-
       imageData.append('file', {
         uri: path.uri,
         name: 'anurag.jpg',
         type: path.type,
       });
-      console.log('99');
       const token = await AsyncStorage.getItem('token');
       const userid = userInfo.id;
       const url = `user/image/${userid}/`;
@@ -112,10 +108,15 @@ export default function ProfileScreen() {
         },
       };
       const resp = await http.post(url, imageData, config);
-      console.log(resp, '115');
+      const info = await AsyncStorage.getItem('userInfo');
+      let {localUserArea} = JSON.parse(info);
+      resp.localUserArea = localUserArea;
       await AsyncStorage.setItem('userInfo', JSON.stringify(resp));
+      setProfileImage({uri: resp.profile_image});
+
+      setIsLoading(false);
     } catch (error) {
-      console.log(JSON.stringify(error), 'in error image upload');
+      console.log(JSON.stringify(error), 'in error image upload 113');
     }
   };
 
@@ -193,36 +194,6 @@ export default function ProfileScreen() {
         </View>
       </View>
       <View style={styles.menuSection}>
-        <TouchableRipple onPress={() => {}}>
-          <View style={styles.menuItems}>
-            <Ionicons
-              name="heart-outline"
-              color={styles.menuItemIcon.color}
-              size={styles.menuItemIcon.size}
-            />
-            <Text style={styles.menuItemText}>Saved Ads</Text>
-          </View>
-        </TouchableRipple>
-        <TouchableRipple onPress={() => {}}>
-          <View style={styles.menuItems}>
-            <Ionicons
-              name="share-social-outline"
-              color={styles.menuItemIcon.color}
-              size={styles.menuItemIcon.size}
-            />
-            <Text style={styles.menuItemText}>Share</Text>
-          </View>
-        </TouchableRipple>
-        <TouchableRipple onPress={() => {}}>
-          <View style={styles.menuItems}>
-            <MaterialIcon
-              name="support-agent"
-              color={styles.menuItemIcon.color}
-              size={styles.menuItemIcon.size}
-            />
-            <Text style={styles.menuItemText}>Support</Text>
-          </View>
-        </TouchableRipple>
         <TouchableRipple
           onPress={() => {
             logout();
@@ -234,16 +205,6 @@ export default function ProfileScreen() {
               size={styles.menuItemIcon.size}
             />
             <Text style={styles.menuItemText}>Logout</Text>
-          </View>
-        </TouchableRipple>
-        <TouchableRipple onPress={() => {}}>
-          <View style={styles.menuItems}>
-            <Ionicons
-              name="settings-outline"
-              color={styles.menuItemIcon.color}
-              size={styles.menuItemIcon.size}
-            />
-            <Text style={styles.menuItemText}>Setting</Text>
           </View>
         </TouchableRipple>
       </View>

@@ -17,6 +17,7 @@ export const AuthProvider = ({children}) => {
       },
     });
     console.log(userInfo);
+    userInfo = {...userInfo, localUserArea: userInfo.area};
     setUserToken(token);
     AsyncStorage.setItem('tokenInfo', JSON.stringify(respData));
     AsyncStorage.setItem('token', token);

@@ -10,19 +10,55 @@ import {
   Linking,
   Platform,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
-
+import {http} from '../shared/lib';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const {width, height} = Dimensions.get('window');
 
 export default function AdDescription({route, navigation}) {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [questionData, setQuestionData] = useState([]);
+  const [answerData, setAnswerData] = useState([]);
   const adDetails = route.params.adDetails;
   const openDialer = contactNumber => {
     Platform.OS === 'ios'
       ? Linking.openURL(`telprompt:${contactNumber}`)
       : Linking.openURL(`tel:${contactNumber}`);
   };
+
+  const getAnswers = async () => {
+    try {
+      // setIsLoading(true);
+      const token = await AsyncStorage.getItem('token');
+      const answersRespData = await http.get(
+        `answer/?user_ad_id=${adDetails.userID}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+      // console.log(questionsRespData.results, '29');
+      const answers = answersRespData.results.map(answer => ({
+        question: answer.question.question,
+        answer: answer.answer,
+      }));
+      console.log(answers);
+      setAnswerData(answers);
+      // setIsLoading(false);
+    } catch (err) {
+      console.log(
+        'Something went wrong while fetching answers 84',
+        JSON.stringify(err),
+      );
+      // setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getAnswers();
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -80,7 +116,6 @@ export default function AdDescription({route, navigation}) {
         <View style={styles.adInfoSection}>
           <View style={styles.infoSectionTop}>
             <Text style={styles.priceText}>₹ {adDetails.price}</Text>
-            <MaterialIcon name="favorite-border" size={28} />
           </View>
 
           <Text numberOfLines={1} style={styles.infoSectionMiddle}>
@@ -96,18 +131,18 @@ export default function AdDescription({route, navigation}) {
         </View>
       </View>
 
-      <View style={styles.adDetailsSection}>
-        <Text style={{fontSize: 16, fontWeight: 600, color: '#111'}}>
-          Details
-        </Text>
-        <View style={{fontSize: 14, marginLeft: '20%'}}></View>
-      </View>
-
       <View style={styles.adDescriptionSection}>
         <Text style={{fontSize: 16, fontWeight: 600, color: '#111'}}>
           Description
         </Text>
         <Text>{adDetails.description}</Text>
+      </View>
+
+      <View style={styles.adQuesAnsSection}>
+        <Text style={{fontSize: 16, fontWeight: 600, color: '#111'}}>
+          Details
+        </Text>
+        <View style={{fontSize: 14, marginLeft: '20%'}}></View>
       </View>
 
       <View style={styles.otherDetailsSection}>
@@ -164,8 +199,8 @@ const styles = StyleSheet.create({
     fontWeight: 500,
     color: '#444',
   },
-  adDetailsSection: {flex: 1, padding: 5},
-  adDescriptionSection: {flex: 2, padding: 5},
+  adQuesAnsSection: {flex: 2, padding: 5},
+  adDescriptionSection: {flex: 1, padding: 5},
   otherDetailsSection: {
     flex: 0.2,
     flexDirection: 'row',

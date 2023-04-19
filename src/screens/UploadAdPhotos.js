@@ -258,7 +258,7 @@ export default function UploadAdPhotos({navigation, route}) {
         respArr.push(resp);
       }
       console.log(respArr);
-      navigation.navigate('Home', {});
+      navigation.popToTop();
     } catch (error) {
       console.log(JSON.stringify(error));
     }
