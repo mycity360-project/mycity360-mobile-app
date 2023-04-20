@@ -46,13 +46,11 @@ export default function Login() {
       return;
     }
 
-    if (email.length === 10) {
-      if (!email.match(phoneRegex)) {
-        setEmailError(false);
-        setLoading(false);
-        setPhoneError(true);
-        return;
-      }
+    if (email.length === 10 && !email.match(phoneRegex)) {
+      setEmailError(false);
+      setLoading(false);
+      setPhoneError(true);
+      return;
     }
 
     if (email.length !== 10 && !email.match(emailRegex)) {
@@ -64,7 +62,7 @@ export default function Login() {
 
     const response = await login(email, password);
     setLoading(false);
-    if (response.showVerifyOtpScreen) {
+    if (response && response.showVerifyOtpScreen) {
       navigation.navigate('VerifyOtp', {userid: response.userid});
     }
   };

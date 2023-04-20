@@ -2,6 +2,7 @@ import {React, createContext, useState, useEffect} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {http} from '../shared/lib';
 import {BACKEND_CLIENT_ID} from '../shared/constants/env';
+import {Alert} from 'react-native';
 
 export const AuthContext = createContext();
 
@@ -16,7 +17,7 @@ export const AuthProvider = ({children}) => {
         Authorization: `Bearer ${token}`,
       },
     });
-    console.log(userInfo);
+    // console.log(userInfo);
     userInfo = {...userInfo, localUserArea: userInfo.area};
     setUserToken(token);
     AsyncStorage.setItem('tokenInfo', JSON.stringify(respData));
@@ -39,6 +40,7 @@ export const AuthProvider = ({children}) => {
     };
 
     try {
+      console.log('inside login 43');
       let respData = await http.post(url, data, config);
       const token = respData.access_token;
       const userid = token ? respData.user_id : respData.id;
@@ -56,7 +58,13 @@ export const AuthProvider = ({children}) => {
       }
       return response;
     } catch (error) {
-      console.log(JSON.stringify(error), 'err');
+      setIsLoading(false);
+      console.log(error.response.status, '62');
+      if (error.response.status == 500) {
+        Alert.alert('ERROR', 'User not exist', [
+          {text: 'OK', onPress: () => console.log('ok on press')},
+        ]);
+      }
     }
   };
 
@@ -66,7 +74,7 @@ export const AuthProvider = ({children}) => {
     AsyncStorage.removeItem('token');
     AsyncStorage.removeItem('tokenInfo');
     AsyncStorage.removeItem('userInfo');
-
+    AsyncStorage.removeItem('userID');
     setIsLoading(false);
   };
 
@@ -83,7 +91,8 @@ export const AuthProvider = ({children}) => {
   const isLoggedIn = async () => {
     try {
       setIsLoading(true);
-      let token = await AsyncStorage.getItem('userToken');
+      let token = await AsyncStorage.getItem('token');
+      console.log(token, 'context 88');
       setUserToken(token);
       setIsLoading(false);
     } catch (e) {

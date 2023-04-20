@@ -16,8 +16,8 @@ axiosInstance.interceptors.response.use(config => {
   ) {
     return config.data;
   } else {
-    const message = `The Request is Failed with ${config.status} http status`;
-    throw new Error(message);
+    console.log(config, '19');
+    throw new Error(config);
   }
 });
 

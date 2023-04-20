@@ -14,13 +14,16 @@ import React, {useState, useEffect} from 'react';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import {http} from '../shared/lib';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Moment from 'moment';
 const {width, height} = Dimensions.get('window');
 
 export default function AdDescription({route, navigation}) {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [questionData, setQuestionData] = useState([]);
   const [answerData, setAnswerData] = useState([]);
   const adDetails = route.params.adDetails;
+  const {location, area} = adDetails;
+
+  console.log(adDetails, location, area, '28');
   const openDialer = contactNumber => {
     Platform.OS === 'ios'
       ? Linking.openURL(`telprompt:${contactNumber}`)
@@ -32,14 +35,14 @@ export default function AdDescription({route, navigation}) {
       // setIsLoading(true);
       const token = await AsyncStorage.getItem('token');
       const answersRespData = await http.get(
-        `answer/?user_ad_id=${adDetails.userID}`,
+        `answer/?user_ad_id=${adDetails.id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         },
       );
-      // console.log(questionsRespData.results, '29');
+      // console.log(answersRespData.results, '42');
       const answers = answersRespData.results.map(answer => ({
         question: answer.question.question,
         answer: answer.answer,
@@ -58,6 +61,7 @@ export default function AdDescription({route, navigation}) {
 
   useEffect(() => {
     getAnswers();
+    console.log(answerData, '61');
   }, []);
 
   return (
@@ -124,9 +128,13 @@ export default function AdDescription({route, navigation}) {
           <View style={styles.infoSectionBottom}>
             <View style={styles.locationSection}>
               <MaterialIcon name="location-pin" size={18} color={'#444'} />
-              {/* <Text style={styles.locationText}>{location}</Text> */}
+              <Text style={styles.locationText}>
+                {location === area ? location : `${area} , ${location}`}
+              </Text>
             </View>
-            <Text style={styles.dateAdded}>{adDetails.createdOn}</Text>
+            <Text style={styles.dateAdded}>
+              {Moment(adDetails.createdOn).format('DD MMM YYYY')}
+            </Text>
           </View>
         </View>
       </View>
@@ -135,19 +143,32 @@ export default function AdDescription({route, navigation}) {
         <Text style={{fontSize: 16, fontWeight: 600, color: '#111'}}>
           Description
         </Text>
-        <Text>{adDetails.description}</Text>
+        <Text style={{color: '#111'}}>{adDetails.description}</Text>
       </View>
 
       <View style={styles.adQuesAnsSection}>
         <Text style={{fontSize: 16, fontWeight: 600, color: '#111'}}>
           Details
         </Text>
-        <View style={{fontSize: 14, marginLeft: '20%'}}></View>
+        <View>
+          <FlatList
+            data={answerData}
+            renderItem={({item}) => {
+              return (
+                <View style={{flexDirection: 'row', gap: 4}}>
+                  <Text style={{color: '#222', fontWeight: 500, fontSize: 14}}>
+                    {item.question} -
+                  </Text>
+                  <Text style={{color: '#111'}}>{item.answer}</Text>
+                </View>
+              );
+            }}
+          />
+        </View>
       </View>
 
       <View style={styles.otherDetailsSection}>
-        <Text style={styles.otherDetailsText}>Ad ID: 323452</Text>
-        <Text style={styles.otherDetailsText}>Report Ad</Text>
+        <Text style={styles.otherDetailsText}>Ad ID: {adDetails.id}</Text>
       </View>
 
       <View style={styles.footer}>

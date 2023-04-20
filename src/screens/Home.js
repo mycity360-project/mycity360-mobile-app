@@ -78,9 +78,9 @@ export default function Home({navigation}) {
         },
       });
       // const respData = JSON.parse(userAdsRespData.results);
-      // console.log(userAdsRespData.results[0], '77');
+      console.log(userAdsRespData.results[0], '81');
       const ads = userAdsRespData.results.map(ad => ({
-        id: ad.id.toString(),
+        id: ad.id,
         title: ad.name,
         createdOn: ad.created_date,
         description: ad.description,
@@ -89,6 +89,8 @@ export default function Home({navigation}) {
         price: ad.price,
         userID: ad.user?.id,
         subCategoryID: ad.category.id,
+        locationName: ad.area?.location?.name,
+        areaName: ad.area?.name,
       }));
 
       setUserAdsData(ads);
@@ -199,7 +201,8 @@ export default function Home({navigation}) {
             title: item.name,
             price: item.price,
             description: item.description,
-            location: item.location,
+            location: item.locationName,
+            area: item.areaName,
             createdOn: item.createdOn,
             images: item.images,
             userID: item.userID,
