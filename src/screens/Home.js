@@ -11,30 +11,43 @@ import {
   TouchableOpacity,
   Pressable,
   ActivityIndicator,
+  Alert,
 } from 'react-native';
 import {React, useEffect, useState} from 'react';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {http} from '../shared/lib';
+import {useIsFocused} from '@react-navigation/native';
 
 export default function Home({navigation}) {
   const [categoriesData, setCategoriesData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState('');
-  // console.log(categoriesData);
   const [userInfo, setUserInfo] = useState([]);
-
+  const [userAdsData, setUserAdsData] = useState([]);
+  const isFocused = useIsFocused();
   const getUserInfo = async () => {
-    const info = await AsyncStorage.getItem('userInfo');
-    setUserInfo(info);
-    const location = JSON.parse(info)?.localUserArea?.name;
-    console.log(location);
-    setSelectedLocation(location);
+    try {
+      setIsLoading(true);
+      const info = await AsyncStorage.getItem('userInfo');
+      setUserInfo(info);
+      const location = JSON.parse(info)?.localUserArea?.name;
+      setSelectedLocation(location);
+      setIsLoading(false);
+    } catch (error) {
+      setIsLoading(false);
+      Alert.alert('ERROR', 'Something went wrong, we are working on it', [
+        {
+          text: 'OK',
+        },
+      ]);
+    }
   };
 
   useEffect(() => {
     getUserInfo();
   }, []);
+
   const getCategories = async () => {
     try {
       setIsLoading(true);
@@ -55,11 +68,16 @@ export default function Home({navigation}) {
       setCategoriesData(categories);
       setIsLoading(false);
     } catch (err) {
-      console.log(
-        'Something went wrong while fetching categories',
-        JSON.stringify(err),
-      );
       setIsLoading(false);
+      Alert.alert('ERROR', 'Something went wrong, Unable to Fetch Categories', [
+        {
+          text: 'OK',
+        },
+      ]);
+      // console.log(
+      //   'Something went wrong while fetching categories',
+      //   JSON.stringify(err),
+      // );
     }
   };
 
@@ -67,7 +85,6 @@ export default function Home({navigation}) {
     getCategories();
   }, []);
 
-  const [userAdsData, setUserAdsData] = useState([]);
   const getUserAds = async () => {
     try {
       setIsLoading(true);
@@ -78,7 +95,7 @@ export default function Home({navigation}) {
         },
       });
       // const respData = JSON.parse(userAdsRespData.results);
-      console.log(userAdsRespData.results[0], '81');
+      // console.log(userAdsRespData.results, '81');
       const ads = userAdsRespData.results.map(ad => ({
         id: ad.id,
         title: ad.name,
@@ -96,17 +113,22 @@ export default function Home({navigation}) {
       setUserAdsData(ads);
       setIsLoading(false);
     } catch (err) {
-      console.log(
-        'Something went wrong while fetching user ads 80 Home',
-        JSON.stringify(err),
-      );
       setIsLoading(false);
+      Alert.alert('ERROR', 'Something went wrong, Unable to Fetch Ads', [
+        {
+          text: 'OK',
+        },
+      ]);
+      // console.log(
+      //   'Something went wrong while fetching user ads 80 Home',
+      //   JSON.stringify(err),
+      // );
     }
   };
 
   useEffect(() => {
     getUserAds();
-  }, []);
+  }, [isFocused]);
 
   const ITEM_WIDTH = 85;
   const getItemLayout = (_, index) => ({
@@ -208,6 +230,8 @@ export default function Home({navigation}) {
             userID: item.userID,
             phone: item.phone,
             categoryID: item.subCategoryID,
+            showCallNowBtn: true,
+            showDeleteBtn: false,
           },
         })
       }>
@@ -221,7 +245,8 @@ export default function Home({navigation}) {
         }}>
         <Image
           source={{uri: item.images[0].image}}
-          style={{height: '90%', width: '80%', resizeMode: 'contain'}}
+          style={{height: '90%', width: '80%'}}
+          resizeMode="contain"
         />
 
         {item.isFeatured ? featuredTag() : ''}
@@ -252,7 +277,9 @@ export default function Home({navigation}) {
               fontWeight: 500,
               color: '#666',
             }}>
-            {item.location}
+            {item.locationName === item.areaName
+              ? item.locationName
+              : `${item.areaName} , ${item.locationName}`}
           </Text>
         </View>
       </View>

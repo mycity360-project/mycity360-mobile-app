@@ -3,7 +3,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {http} from '../shared/lib';
 import {BACKEND_CLIENT_ID} from '../shared/constants/env';
 import {Alert} from 'react-native';
-
 export const AuthContext = createContext();
 
 export const AuthProvider = ({children}) => {
@@ -40,30 +39,34 @@ export const AuthProvider = ({children}) => {
     };
 
     try {
-      console.log('inside login 43');
+      //console.log('inside login 43');
       let respData = await http.post(url, data, config);
       const token = respData.access_token;
       const userid = token ? respData.user_id : respData.id;
       const response = {};
-      console.log(respData, userid, 'resp from login & get user by id');
+      // console.log(respData, userid, 'resp from login & get user by id');
 
       if (token) {
         onTokenAvailable(respData, token, userid);
-        response.showVerifyOtpScreen = false;
         setIsLoading(false);
+        // response.showVerifyOtpScreen = false;
       } else {
         response.showVerifyOtpScreen = true;
         response.userid = userid;
         setIsLoading(false);
+        return response;
       }
-      return response;
     } catch (error) {
       setIsLoading(false);
       console.log(error.response.status, '62');
       if (error.response.status == 500) {
-        Alert.alert('ERROR', 'User not exist', [
-          {text: 'OK', onPress: () => console.log('ok on press')},
-        ]);
+        console.log(error.response.details, '64');
+        Alert.alert('ERROR', 'User not exist ', [{text: 'OK'}]);
+      } else if (error.response.status == 400) {
+        console.log(error.response.details, '67');
+        Alert.alert('ERROR', 'Check Your username OR password', [{text: 'OK'}]);
+      } else {
+        Alert.alert('ERROR', 'Something Went Wrong', [{text: 'OK'}]);
       }
     }
   };

@@ -7,16 +7,20 @@ const axiosInstance = axios.create({
   baseURL: `${BACKEND_URL}/${APP_PREFIX}`,
 });
 
-// axiosInstance.defaults.timeout = 300000;
-
 axiosInstance.interceptors.response.use(config => {
+  // console.log(config, 'axiosinastance 11');
   if (
-    config.status === HttpStatusCode.Ok ||
-    config.status === HttpStatusCode.Created
+    [
+      HttpStatusCode.Accepted,
+      HttpStatusCode.Created,
+      HttpStatusCode.NoContent,
+      HttpStatusCode.Ok,
+      HttpStatusCode.NonAuthoritativeInformation,
+    ].includes(config.status)
   ) {
-    return config.data;
+    // console.log('21 axios inside if');
+    return config?.data;
   } else {
-    console.log(config, '19');
     throw new Error(config);
   }
 });

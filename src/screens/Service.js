@@ -8,6 +8,7 @@ import {
   Image,
   TouchableOpacity,
   Pressable,
+  Alert,
 } from 'react-native';
 import {React, useState, useEffect} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -15,11 +16,13 @@ import {http} from '../shared/lib';
 
 export default function Home({navigation}) {
   const [servicesData, setServicesData] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const getServices = async () => {
     try {
+      setIsLoading(true);
       console.log('inside get services');
-      const token = await AsyncStorage.getItem('token');
+      // const token = await AsyncStorage.getItem('token');
       console.log(token);
       const servicesRespData = await http.get('service/user/', {
         headers: {
@@ -35,17 +38,26 @@ export default function Home({navigation}) {
         phone: service.phone,
       }));
       setServicesData(services);
+      setIsLoading(false);
     } catch (err) {
-      console.log(
-        'Something went wrong while fetching services',
-        JSON.stringify(err),
-      );
+      setIsLoading(false);
+      Alert.alert('ERROR', 'Something went wrong, we are working on it', [
+        {
+          text: 'OK',
+          onPress: () => navigation.goBack(),
+        },
+      ]);
+      // console.log(
+      //   'Something went wrong while fetching services',
+      //   JSON.stringify(err),
+      // );
     }
   };
 
   useEffect(() => {
     getServices();
   }, []);
+
   const numColumns = 3;
   const CARD_HEIGHT = 65;
   const getServiceCardLayout = (_, index) => ({
@@ -111,7 +123,11 @@ export default function Home({navigation}) {
     </Pressable>
   );
 
-  return (
+  return isLoading ? (
+    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+      <ActivityIndicator size={'large'} />
+    </View>
+  ) : (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <View style={styles.btnSection}>

@@ -9,6 +9,7 @@ import {
   Dimensions,
   Text,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 import React, {useState, useRef} from 'react';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
@@ -23,6 +24,7 @@ export default function UploadAdPhotos({navigation, route}) {
   let [images, setImages] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(Number(0));
   const [maxImageExceed, setMaxImageExceed] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [id, setId] = useState(1);
   const ref = useRef();
   const AdData = route.params.AdData;
@@ -89,15 +91,15 @@ export default function UploadAdPhotos({navigation, route}) {
         console.log('User tapped custom button: ', response.customButton);
       } else {
         const resp = response.assets[0];
-        console.log(resp, '86');
+
         const source = {
           id: id,
           uri: resp.uri,
           type: resp.type,
         };
-        console.log(source, '92');
 
         const updatedImages = images;
+
         if (updatedImages.length >= MAX_IMAGE_ALLOWED) {
           setMaxImageExceed(true);
         } else {
@@ -109,6 +111,7 @@ export default function UploadAdPhotos({navigation, route}) {
       }
     });
   };
+
   const openGallery = () => {
     const options = {
       storageOptions: {path: 'images', mediaType: 'photo'},
@@ -130,7 +133,6 @@ export default function UploadAdPhotos({navigation, route}) {
         const responseLength = response.assets.length;
         if (responseLength == 1) {
           setMaxImageExceed(false);
-          console.log('inside only 1');
           const resp = response.assets[0];
 
           const source = {
@@ -142,7 +144,6 @@ export default function UploadAdPhotos({navigation, route}) {
           updatedImages.push(source);
           setImages(updatedImages);
           setId(id + 1);
-          console.log('executed only 1');
         } else if (responseLength > 1 && responseLength <= MAX_IMAGE_ALLOWED) {
           setMaxImageExceed(false);
           let count = id;
@@ -164,18 +165,15 @@ export default function UploadAdPhotos({navigation, route}) {
 
   const uploadImage = async path => {
     try {
-      console.log('143');
       const imageData = new FormData();
-      console.log('145');
 
       imageData.append('file', {
         uri: path.uri,
         name: 'Ad.jpg',
         type: path.type,
       });
-      console.log(JSON.stringify(imageData), '152');
+
       const token = await AsyncStorage.getItem('token');
-      console.log('163');
 
       const url = 'image/';
       const config = {
@@ -184,12 +182,12 @@ export default function UploadAdPhotos({navigation, route}) {
           'Content-Type': 'multipart/form-data',
         },
       };
-      console.log('172');
+
       const resp = await http.post(url, imageData, config);
-      console.log(resp, '183');
+
       return resp;
     } catch (error) {
-      console.log(JSON.stringify(error), 'in error image upload');
+      throw new Error(error);
     }
   };
 
@@ -200,7 +198,7 @@ export default function UploadAdPhotos({navigation, route}) {
       const info = await AsyncStorage.getItem('userInfo');
       const userData = JSON.parse(info);
       const areaid = userData.area?.id;
-      // console.log(info, '2020anu');
+
       const data = {
         images: imagesResp,
         user: {
@@ -218,55 +216,24 @@ export default function UploadAdPhotos({navigation, route}) {
         tags: [],
         code: Math.floor(Math.random() * 1000000000 + 1),
       };
-      console.log(data, '220');
+
       const url = 'user-ad/';
+
       const config = {
         headers: {
           ' Authorization': `Bearer ${token}`,
         },
       };
-      // console.log('221');
+
       const resp = await http.post(url, data, config);
       return resp;
-    } catch (err) {
-      console.log(JSON.stringify(err));
-    }
-  };
-
-  const submitAdDataHandler = async () => {
-    try {
-      // const imagesPromise = images.map(item => uploadImage(item));
-      // const responseImages = await Promise.all(imagesPromise);
-
-      // images.forEach(image => await uploadImage());
-      let uploadedImgArr = [];
-      for (const image of images) {
-        let resp = await uploadImage(image);
-        uploadedImgArr.push(resp);
-      }
-
-      console.log(uploadedImgArr, '245');
-
-      const adCreatedData = await createAdHandler(uploadedImgArr);
-      console.log(adCreatedData, '253');
-
-      let answerArr = AdData.answers;
-      let respArr = [];
-      const userid = await AsyncStorage.getItem('userID');
-      for (const answer of answerArr) {
-        let resp = await uploadAnswer(answer, userid, adCreatedData.id);
-        respArr.push(resp);
-      }
-      console.log(respArr);
-      navigation.popToTop();
     } catch (error) {
-      console.log(JSON.stringify(error));
+      throw new Error(error);
     }
   };
 
   const uploadAnswer = async (answer, userid, adID) => {
     try {
-      console.log('inside answer upload 268');
       const token = await AsyncStorage.getItem('token');
       const data = {
         user: {
@@ -286,14 +253,61 @@ export default function UploadAdPhotos({navigation, route}) {
           Authorization: `Bearer ${token}`,
         },
       };
-      console.log(data, '286');
+
       const resp = await http.post(url, data, config);
       return resp;
     } catch (error) {
-      console.log(JSON.stringify(error));
+      throw new Error(error);
     }
   };
-  return (
+
+  const submitAdDataHandler = async () => {
+    try {
+      setIsLoading(true);
+      //upload image one by one
+      if (images.length == 0) {
+        setIsLoading(false);
+        Alert.alert('ERROR', 'Please Upload atleast 1 Image', [{text: 'OK'}]);
+        return;
+      }
+      let uploadedImgArr = [];
+      for (const image of images) {
+        let resp = await uploadImage(image);
+        uploadedImgArr.push(resp);
+      }
+
+      const adCreatedData = await createAdHandler(uploadedImgArr);
+
+      let answerArr = AdData.answers;
+      let respArr = [];
+      const userid = await AsyncStorage.getItem('userID');
+      for (const answer of answerArr) {
+        let resp = await uploadAnswer(answer, userid, adCreatedData.id);
+        respArr.push(resp);
+      }
+      setIsLoading(false);
+      navigation.popToTop();
+    } catch (error) {
+      setIsLoading(false);
+      Alert.alert(
+        'ERROR',
+        'Something went wrong, Ad not created. We are working on it, Please try after some time.',
+        [
+          {
+            text: 'OK',
+            onPress: () => navigation.popToTop(),
+          },
+        ],
+      );
+      // console.log(JSON.stringify(error));
+    }
+  };
+
+  return isLoading ? (
+    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+      <ActivityIndicator size={'large'} />
+    </View>
+  ) : (
     <SafeAreaView style={styles.container}>
       <View
         style={[
@@ -372,7 +386,9 @@ export default function UploadAdPhotos({navigation, route}) {
         </Text>
         {maxImageExceed
           ? Alert.alert(
+              'ERROR',
               `* Please Select upto ${MAX_IMAGE_ALLOWED} images only.`,
+              [{text: 'OK'}],
             )
           : ''}
 

@@ -2,6 +2,7 @@
 import React, {useContext, useState, useEffect} from 'react';
 import * as fs from 'react-native-fs';
 import {
+  Alert,
   Animated,
   ImageBackground,
   SafeAreaView,
@@ -27,12 +28,20 @@ export default function ProfileScreen() {
   const [profileImage, setProfileImage] = useState({});
 
   const getInfo = async () => {
-    setIsLoading(true);
-    const userData = await AsyncStorage.getItem('userInfo');
-    const info = JSON.parse(userData);
-    setUserInfo(info);
-    setProfileImage({uri: info.profile_image});
-    setIsLoading(false);
+    try {
+      setIsLoading(true);
+      const userData = await AsyncStorage.getItem('userInfo');
+      const info = JSON.parse(userData);
+      setUserInfo(info);
+      setProfileImage({uri: info.profile_image});
+      setIsLoading(false);
+    } catch (error) {
+      Alert.alert('ERROR', 'Something went wrong in loading Profile Image', [
+        {
+          text: 'OK',
+        },
+      ]);
+    }
   };
 
   useEffect(() => {
@@ -116,6 +125,12 @@ export default function ProfileScreen() {
 
       setIsLoading(false);
     } catch (error) {
+      setIsLoading(false);
+      Alert.alert('ERROR', 'Something went wrong, Profile Image not uploaded', [
+        {
+          text: 'OK',
+        },
+      ]);
       console.log(JSON.stringify(error), 'in error image upload 113');
     }
   };

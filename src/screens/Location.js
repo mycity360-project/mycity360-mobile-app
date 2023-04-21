@@ -4,6 +4,7 @@ import {
   View,
   ActivityIndicator,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 import React, {useState, useEffect} from 'react';
 import DropDown from '../shared/components/DropDown';
@@ -14,7 +15,7 @@ import CustomButton from '../shared/components/CustomButton';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Location({navigation}) {
-  const closeSellScreen = StackActions.pop(1);
+  const closeSellScreen = StackActions.pop(1); //close screen on click of close btn
   const [locationData, setLocationData] = useState([]);
   const [areaData, setAreaData] = useState([]);
   const [selectedLocation, setSelectedLocation] = useState('');
@@ -23,6 +24,7 @@ export default function Location({navigation}) {
   const [isDisabled, setIsDisabled] = useState(true);
   const [showLocationError, setShowLocationError] = useState(false);
   const [showAreaError, setShowAreaError] = useState(false);
+
   const getLocations = async () => {
     setIsLoading(true);
     try {
@@ -35,9 +37,15 @@ export default function Location({navigation}) {
 
       setLocationData(locations);
     } catch (error) {
-      console.log('Something went wrong while fetching locations 21 ', error);
+      setIsLoading(false);
+      Alert.alert('ERROR', 'Something went wrong, we are working on it', [
+        {
+          text: 'OK',
+          onPress: () => navigation.goBack(),
+        },
+      ]);
+      // console.log('Something went wrong while fetching locations 21 ', error);
     }
-    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -60,7 +68,14 @@ export default function Location({navigation}) {
       setIsDisabled(false);
       setIsLoading(false);
     } catch (error) {
-      console.log('Something went wrong while fetching area' + error);
+      setIsLoading(false);
+      Alert.alert('ERROR', 'Something went wrong, we are working on it', [
+        {
+          text: 'OK',
+          onPress: () => navigation.goBack(),
+        },
+      ]);
+      // console.log('Something went wrong while fetching area' + error);
     }
   };
 

@@ -25,7 +25,7 @@ export default function Login() {
   const [isEmailError, setEmailError] = useState(false);
   const [isPhoneError, setPhoneError] = useState(false);
   const [ispasswordError, setPasswordError] = useState(false);
-  const [Loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const navigation = useNavigation();
 
   const errors = {
@@ -35,39 +35,41 @@ export default function Login() {
   };
 
   const loginHandler = async () => {
-    setLoading(true);
+    setIsLoading(true);
     var phoneRegex = /^\d{10}$/;
     var emailRegex =
       /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
 
     if (password === '' || password.length < 8) {
-      setLoading(false);
+      setIsLoading(false);
       setPasswordError(true);
       return;
     }
 
     if (email.length === 10 && !email.match(phoneRegex)) {
       setEmailError(false);
-      setLoading(false);
+      setIsLoading(false);
       setPhoneError(true);
       return;
     }
 
     if (email.length !== 10 && !email.match(emailRegex)) {
       setPhoneError(false);
-      setLoading(false);
+      setIsLoading(false);
       setEmailError(true);
       return;
     }
 
     const response = await login(email, password);
-    setLoading(false);
     if (response && response.showVerifyOtpScreen) {
+      setIsLoading(false);
       navigation.navigate('VerifyOtp', {userid: response.userid});
     }
+    console.log('68');
+    setIsLoading(false);
   };
 
-  return Loading ? (
+  return isLoading ? (
     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
       <ActivityIndicator size={'large'} />
     </View>

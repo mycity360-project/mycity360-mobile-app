@@ -9,6 +9,7 @@ import {
   Keyboard,
   ActivityIndicator,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 import React, {useContext, useEffect, useState} from 'react';
 import CustomButton from '../shared/components/CustomButton';
@@ -20,6 +21,7 @@ import {AuthContext} from '../context/AuthContext';
 import * as Yup from 'yup';
 import {Formik} from 'formik';
 import {number} from 'yargs';
+
 export default function SignUp() {
   const navigation = useNavigation();
   const {login} = useContext(AuthContext);
@@ -91,7 +93,7 @@ export default function SignUp() {
 
   const handleOnSignUpPress = async () => {
     try {
-      console.log('handle 94');
+      setIsLoading(true);
       let data = {
         email: email,
         phone: mobileNumber,
@@ -108,16 +110,20 @@ export default function SignUp() {
       };
 
       const resp = await http.post('user/signup/', data, config);
-      // console.log(resp);
+
       const user_id = resp.id;
       if (user_id) {
+        setIsLoading(false);
         resp.is_phone_verified
           ? await login(email, password)
           : navigation.navigate('VerifyOtp', {userid: user_id});
       } else {
+        setIsLoading(false);
         throw new Error('Not able to get UserId Something went wrong');
       }
     } catch (error) {
+      setIsLoading(false);
+      Alert.alert('ERROR', 'Something went wrong');
       console.log(JSON.stringify(error));
     }
   };
@@ -196,6 +202,7 @@ export default function SignUp() {
                     ]}
                     placeholder="First Name"
                     value={values.firstName}
+                    onBlur={handleBlur('firstName')}
                     onChangeText={handleChange('firstName')}
                   />
 
@@ -207,6 +214,7 @@ export default function SignUp() {
                       {marginRight: '10%'},
                     ]}
                     value={values.lastName}
+                    onBlur={handleBlur('lastName')}
                     onChangeText={handleChange('lastName')}
                   />
                 </View>
@@ -225,6 +233,7 @@ export default function SignUp() {
                   style={[styles.input, styles.inputCommon]}
                   keyboardType="numeric"
                   value={values.mobileNumber}
+                  onBlur={handleBlur('mobileNumber')}
                   onChangeText={handleChange('mobileNumber')}
                 />
                 {errors.mobileNumber && touched.mobileNumber ? (
@@ -237,6 +246,7 @@ export default function SignUp() {
                   style={[styles.input, styles.inputCommon]}
                   autoCapitalize={'none'}
                   keyboardType="email-address"
+                  onBlur={handleBlur('email')}
                   onChangeText={handleChange('email')}
                   value={values.email}
                 />
@@ -250,6 +260,7 @@ export default function SignUp() {
                   placeholder="Enter your password"
                   secureTextEntry={true}
                   autoCapitalize={'none'}
+                  onBlur={handleBlur('password')}
                   onChangeText={handleChange('password')}
                   value={values.password}
                 />
@@ -263,6 +274,7 @@ export default function SignUp() {
                   placeholder="Confirm password"
                   secureTextEntry={true}
                   autoCapitalize={'none'}
+                  onBlur={handleBlur('confirmPassword')}
                   onChangeText={handleChange('confirmPassword')}
                   value={values.confirmPassword}
                 />

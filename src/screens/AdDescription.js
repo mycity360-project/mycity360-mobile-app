@@ -9,6 +9,7 @@ import {
   FlatList,
   Linking,
   Platform,
+  Alert,
 } from 'react-native';
 import React, {useState, useEffect} from 'react';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
@@ -28,6 +29,22 @@ export default function AdDescription({route, navigation}) {
     Platform.OS === 'ios'
       ? Linking.openURL(`telprompt:${contactNumber}`)
       : Linking.openURL(`tel:${contactNumber}`);
+  };
+
+  const deleteAdHandler = async () => {
+    try {
+      const url = `/user-ad/${adDetails.id}/`;
+      const token = await AsyncStorage.getItem('token');
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      await http.delete(url, config);
+      navigation.goBack();
+    } catch (error) {
+      // console.log(JSON.stringify(error), '45');
+    }
   };
 
   const getAnswers = async () => {
@@ -172,11 +189,29 @@ export default function AdDescription({route, navigation}) {
       </View>
 
       <View style={styles.footer}>
-        <TouchableOpacity
-          style={styles.makeOfferButton}
-          onPress={() => openDialer(adDetails.phone)}>
-          <Text style={styles.makeOfferButtonText}>Call Now</Text>
-        </TouchableOpacity>
+        {adDetails.showCallNowBtn ? (
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => openDialer(adDetails.phone)}>
+            <Text style={styles.buttonText}>Call Now</Text>
+          </TouchableOpacity>
+        ) : (
+          ''
+        )}
+        {adDetails.showDeleteBtn ? (
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => {
+              Alert.alert('Warning', 'Are you sure , you want to delete ?', [
+                {text: 'OK', onPress: () => deleteAdHandler()},
+                {text: 'Cancel'},
+              ]);
+            }}>
+            <Text style={styles.buttonText}>Delete Ad</Text>
+          </TouchableOpacity>
+        ) : (
+          ''
+        )}
       </View>
     </View>
   );
@@ -234,19 +269,20 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  makeOfferButton: {
+  button: {
     backgroundColor: '#FA8C00',
     width: '70%',
     height: '60%',
     justifyContent: 'center',
     borderRadius: 10,
   },
-  makeOfferButtonText: {
+  buttonText: {
     fontSize: 20,
     textAlign: 'center',
     color: '#111',
     fontWeight: 500,
   },
+
   wrapper: {width: width, height: height * 0.3},
 
   dotWrapper: {
