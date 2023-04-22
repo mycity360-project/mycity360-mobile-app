@@ -9,16 +9,34 @@ import {
   Image,
   Alert,
 } from 'react-native';
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {http} from '../shared/lib';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import {useIsFocused} from '@react-navigation/native';
 
-export default function YourAds({navigation}) {
+export default function YourAds({navigation, route}) {
   const [yourAdsData, setYourAdsData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
   const isFocused = useIsFocused();
+  const wasFocused = useRef(false);
+
+  useEffect(() => {
+    if (isFocused && !wasFocused.current) {
+      // Reload the screen when it comes into focus
+      getUserAds();
+      console.log('loaded! 29 yourads');
+    }
+    // Update the previous focus state
+    wasFocused.current = isFocused;
+  }, [isFocused]);
+
+  useEffect(() => {
+    if (route.params?.showAlert) {
+      setShowAlert(true);
+    }
+  }, [route.params?.showAlert]);
 
   const getUserAds = async () => {
     try {
@@ -55,18 +73,22 @@ export default function YourAds({navigation}) {
       setIsLoading(false);
     } catch (err) {
       setIsLoading(false);
-      Alert.alert('ERROR', 'Something went wrong, we are working on it', [
-        {
-          text: 'OK',
-          onPress: () => navigation.goBack(),
-        },
-      ]);
+      Alert.alert(
+        'ERROR',
+        'Something went wrong, we are working on it YourAds',
+        [
+          {
+            text: 'OK',
+            onPress: () => navigation.goBack(),
+          },
+        ],
+      );
     }
   };
 
-  useEffect(() => {
-    getUserAds();
-  }, [isFocused]);
+  // useEffect(() => {
+  //   getUserAds();
+  // }, []);
 
   const CARD_HEIGHT = 120;
   const getYourAdsCardLayout = (_, index) => ({
@@ -157,6 +179,18 @@ export default function YourAds({navigation}) {
           showsVerticalScrollIndicator={false}
         />
       </View>
+
+      {showAlert &&
+        Alert.alert(
+          `${route.params.alertHeading}`,
+          `${route.params.alertMsg}`,
+          [
+            {
+              text: `${route.params.btnText}`,
+              onPress: () => setShowAlert(false),
+            },
+          ],
+        )}
     </SafeAreaView>
   );
 }

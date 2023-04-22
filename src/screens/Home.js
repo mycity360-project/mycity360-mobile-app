@@ -13,7 +13,7 @@ import {
   ActivityIndicator,
   Alert,
 } from 'react-native';
-import {React, useEffect, useState} from 'react';
+import {React, useEffect, useState, useRef} from 'react';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {http} from '../shared/lib';
@@ -26,6 +26,18 @@ export default function Home({navigation}) {
   const [userInfo, setUserInfo] = useState([]);
   const [userAdsData, setUserAdsData] = useState([]);
   const isFocused = useIsFocused();
+  const wasFocused = useRef(false);
+
+  useEffect(() => {
+    if (isFocused && !wasFocused.current) {
+      // Reload the screen when it comes into focus
+      getUserAds();
+      console.log('loaded!35 Home');
+    }
+    // Update the previous focus state
+    wasFocused.current = isFocused;
+  }, [isFocused]);
+
   const getUserInfo = async () => {
     try {
       setIsLoading(true);
@@ -109,12 +121,15 @@ export default function Home({navigation}) {
         locationName: ad.area?.location?.name,
         areaName: ad.area?.name,
       }));
-
+      console.log('123');
+      // console.log(ads);
       setUserAdsData(ads);
       setIsLoading(false);
+      console.log('126');
     } catch (err) {
+      console.log('128');
       setIsLoading(false);
-      Alert.alert('ERROR', 'Something went wrong, Unable to Fetch Ads', [
+      Alert.alert('ERROR', 'Something went wrong, Unable to Fetch Ads Home', [
         {
           text: 'OK',
         },
@@ -125,10 +140,6 @@ export default function Home({navigation}) {
       // );
     }
   };
-
-  useEffect(() => {
-    getUserAds();
-  }, [isFocused]);
 
   const ITEM_WIDTH = 85;
   const getItemLayout = (_, index) => ({

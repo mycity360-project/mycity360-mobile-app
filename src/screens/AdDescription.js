@@ -10,6 +10,7 @@ import {
   Linking,
   Platform,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 import React, {useState, useEffect} from 'react';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
@@ -21,6 +22,7 @@ const {width, height} = Dimensions.get('window');
 export default function AdDescription({route, navigation}) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answerData, setAnswerData] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   const adDetails = route.params.adDetails;
   const {location, area} = adDetails;
 
@@ -33,6 +35,7 @@ export default function AdDescription({route, navigation}) {
 
   const deleteAdHandler = async () => {
     try {
+      setIsLoading(true);
       const url = `/user-ad/${adDetails.id}/`;
       const token = await AsyncStorage.getItem('token');
       const config = {
@@ -41,8 +44,16 @@ export default function AdDescription({route, navigation}) {
         },
       };
       await http.delete(url, config);
-      navigation.goBack();
+      setIsLoading(false);
+
+      navigation.navigate('YourAds', {
+        showAlert: true,
+        alertHeading: 'SUCCESS',
+        alertMsg: 'Ad Deleted Successfully.',
+        btnText: 'OK',
+      });
     } catch (error) {
+      Alert.alert('ERROR', 'Something Went Wrong', [{text: 'OK'}]);
       // console.log(JSON.stringify(error), '45');
     }
   };
@@ -81,7 +92,11 @@ export default function AdDescription({route, navigation}) {
     console.log(answerData, '61');
   }, []);
 
-  return (
+  return isLoading ? (
+    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+      <ActivityIndicator size={'large'} />
+    </View>
+  ) : (
     <View style={styles.container}>
       <View style={styles.adHeaderSection}>
         <View style={styles.adImgSection}>
