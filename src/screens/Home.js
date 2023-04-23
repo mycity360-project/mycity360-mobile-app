@@ -22,6 +22,7 @@ import {useIsFocused} from '@react-navigation/native';
 export default function Home({navigation}) {
   const [categoriesData, setCategoriesData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [flatlistLoading, setFlatlistLoading] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState('');
   const [userInfo, setUserInfo] = useState([]);
   const [userAdsData, setUserAdsData] = useState([]);
@@ -32,13 +33,18 @@ export default function Home({navigation}) {
   const wasFocused = useRef(false);
 
   useEffect(() => {
-    if (isFocused && !wasFocused.current) {
-      // Reload the screen when it comes into focus
-      getUserAds();
-      console.log('loaded!35 Home');
-    }
-    // Update the previous focus state
-    wasFocused.current = isFocused;
+    (async () => {
+      setIsLoading(true);
+      if (isFocused && !wasFocused.current) {
+        // Reload the screen when it comes into focus
+        await getUserAds();
+        setPage(page + 1);
+        console.log('loaded!35 Home');
+      }
+      // Update the previous focus state
+      wasFocused.current = isFocused;
+      setIsLoading(false);
+    })();
   }, [isFocused]);
 
   const getUserInfo = async () => {
@@ -100,9 +106,21 @@ export default function Home({navigation}) {
     getCategories();
   }, []);
 
+  const renderFooter = () => {
+    if (flatlistLoading) {
+      return (
+        <View style={{marginTop: 10}}>
+          <ActivityIndicator size="small" color="#0000ff" />
+        </View>
+      );
+    } else {
+      return null;
+    }
+  };
+
   const getUserAds = async () => {
     try {
-      setIsLoading(true);
+      console.log(page, '121');
       const token = await AsyncStorage.getItem('token');
       const userAdsRespData = await http.get(
         `/user-ad/?is_active=True&page=${page}`,
@@ -135,11 +153,10 @@ export default function Home({navigation}) {
       console.log(ads, ads.length, page, '132');
 
       setUserAdsData([...userAdsData, ...ads]);
-      setIsLoading(false);
+      page === 1 ? setIsLoading(false) : '';
       console.log('126');
     } catch (err) {
       console.log('128');
-      setIsLoading(false);
       Alert.alert('ERROR', 'Something went wrong, Unable to Fetch Ads Home', [
         {
           text: 'OK',
@@ -153,10 +170,14 @@ export default function Home({navigation}) {
   };
 
   const fetchNextPage = async () => {
+    setFlatlistLoading(true);
     if (page < maxPage) {
+      console.log('next if 171');
       setPage(page + 1);
     }
+    console.log('next 174');
     await getUserAds();
+    setFlatlistLoading(false);
   };
 
   const ITEM_WIDTH = 85;
@@ -451,8 +472,9 @@ export default function Home({navigation}) {
               initialNumToRender={15}
               maxToRenderPerBatch={15}
               showsVerticalScrollIndicator={false}
-              onEndReached={page < maxPage ? fetchNextPage : null}
-              onEndReachedThreshold={0.5}
+              onEndReached={page > 1 && page <= maxPage ? fetchNextPage : null}
+              onEndReachedThreshold={0.1}
+              ListFooterComponent={renderFooter}
             />
           </View>
         </View>
