@@ -13,6 +13,7 @@ import {
 import {React, useState, useEffect} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {http} from '../shared/lib';
+import {ActivityIndicator} from 'react-native-paper';
 
 export default function Home({navigation}) {
   const [servicesData, setServicesData] = useState([]);
@@ -22,7 +23,7 @@ export default function Home({navigation}) {
     try {
       setIsLoading(true);
       console.log('inside get services');
-      // const token = await AsyncStorage.getItem('token');
+      const token = await AsyncStorage.getItem('token');
       console.log(token);
       const servicesRespData = await http.get('service/user/', {
         headers: {
