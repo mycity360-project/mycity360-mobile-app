@@ -25,6 +25,9 @@ export default function Home({navigation}) {
   const [selectedLocation, setSelectedLocation] = useState('');
   const [userInfo, setUserInfo] = useState([]);
   const [userAdsData, setUserAdsData] = useState([]);
+  const [pageSize, setPageSize] = useState(10);
+  const [page, setPage] = useState(1);
+  const [maxPage, setMaxPage] = useState();
   const isFocused = useIsFocused();
   const wasFocused = useRef(false);
 
@@ -42,7 +45,7 @@ export default function Home({navigation}) {
     try {
       setIsLoading(true);
       const info = await AsyncStorage.getItem('userInfo');
-      setUserInfo(info);
+      setUserInfo(JSON.parse(info));
       const location = JSON.parse(info)?.localUserArea?.name;
       setSelectedLocation(location);
       setIsLoading(false);
@@ -101,29 +104,37 @@ export default function Home({navigation}) {
     try {
       setIsLoading(true);
       const token = await AsyncStorage.getItem('token');
-      const userAdsRespData = await http.get('/user-ad/?is_active=True', {
-        headers: {
-          Authorization: `Bearer ${token}`,
+      const userAdsRespData = await http.get(
+        `/user-ad/?is_active=True&page=${page}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
-      });
+      );
       // const respData = JSON.parse(userAdsRespData.results);
-      // console.log(userAdsRespData.results, '81');
-      const ads = userAdsRespData.results.map(ad => ({
-        id: ad.id,
-        title: ad.name,
-        createdOn: ad.created_date,
-        description: ad.description,
-        images: ad.images,
-        isFeatured: ad.is_featured,
-        price: ad.price,
-        userID: ad.user?.id,
-        subCategoryID: ad.category.id,
-        locationName: ad.area?.location?.name,
-        areaName: ad.area?.name,
-      }));
+      // console.log(userAdsRespData.count, '115 count');
+      setMaxPage(Math.ceil(userAdsRespData.count / pageSize));
+      const ads = userAdsRespData?.results?.map((ad, index) => {
+        return {
+          id: ad.id,
+          title: ad.name,
+          createdOn: ad.created_date,
+          description: ad.description,
+          images: ad.images,
+          isFeatured: ad.is_featured,
+          price: ad.price,
+          userID: ad.user?.id,
+          subCategoryID: ad.category.id,
+          locationName: ad.area?.location?.name,
+          areaName: ad.area?.name,
+          key: `${userAdsData.length + index}`,
+        };
+      });
       console.log('123');
-      // console.log(ads);
-      setUserAdsData(ads);
+      console.log(ads, ads.length, page, '132');
+
+      setUserAdsData([...userAdsData, ...ads]);
       setIsLoading(false);
       console.log('126');
     } catch (err) {
@@ -139,6 +150,13 @@ export default function Home({navigation}) {
       //   JSON.stringify(err),
       // );
     }
+  };
+
+  const fetchNextPage = async () => {
+    if (page < maxPage) {
+      setPage(page + 1);
+    }
+    await getUserAds();
   };
 
   const ITEM_WIDTH = 85;
@@ -167,6 +185,7 @@ export default function Home({navigation}) {
       onPress={() =>
         navigation.navigate('AdSearch', {
           categoryID: item.id,
+          areaID: userInfo.localUserArea.id,
         })
       }>
       <View
@@ -307,11 +326,16 @@ export default function Home({navigation}) {
         <View style={styles.innerContainer}>
           <View style={styles.header}>
             <View style={styles.locationSection}>
+              <Text
+                style={{
+                  color: '#222',
+                  fontWeight: 500,
+                }}>
+                Hi, {userInfo.first_name}
+              </Text>
               <TouchableOpacity
                 style={{
                   flexDirection: 'row',
-                  padding: '1%',
-                  justifyContent: 'flex-end',
                 }}
                 onPress={() => navigation.navigate('Location')}>
                 <MaterialIcon name="location-pin" color={'#222'} size={20} />
@@ -319,6 +343,7 @@ export default function Home({navigation}) {
                   style={{
                     color: '#222',
                     fontWeight: 500,
+                    textDecorationLine: 'underline',
                   }}>
                   {selectedLocation}
                 </Text>
@@ -355,7 +380,11 @@ export default function Home({navigation}) {
             <View style={styles.searchBarSection}>
               <TouchableOpacity
                 style={styles.searchInput}
-                onPress={() => navigation.navigate('AdSearch')}
+                onPress={() =>
+                  navigation.navigate('AdSearch', {
+                    areaID: userInfo?.localUserArea?.id,
+                  })
+                }
                 activeOpacity={1}>
                 <MaterialIcon name="search" size={24} color={'#222'} />
                 <Text>Search here</Text>
@@ -422,6 +451,8 @@ export default function Home({navigation}) {
               initialNumToRender={15}
               maxToRenderPerBatch={15}
               showsVerticalScrollIndicator={false}
+              onEndReached={page < maxPage ? fetchNextPage : null}
+              onEndReachedThreshold={0.5}
             />
           </View>
         </View>
@@ -438,16 +469,21 @@ const styles = StyleSheet.create({
   header: {
     flex: 1,
   },
-
-  locationSection: {flex: 0.5},
+  locationSection: {
+    flex: 0.7,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: '2%',
+  },
   btnSection: {
-    flex: 1,
+    flex: 1.15,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
   searchBarSection: {
-    flex: 1,
+    flex: 1.15,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',

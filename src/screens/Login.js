@@ -61,7 +61,7 @@ export default function Login() {
     }
 
     const response = await login(email, password);
-    if (response && response.showVerifyOtpScreen) {
+    if (response?.showVerifyOtpScreen) {
       setIsLoading(false);
       navigation.navigate('VerifyOtp', {userid: response.userid});
     }
@@ -118,6 +118,7 @@ export default function Login() {
               style={styles.input}
               autoCapitalize="none"
               secureTextEntry={true}
+              returnKeyType="send"
               onChangeText={value => {
                 setPassword(value);
               }}

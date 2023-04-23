@@ -15,7 +15,7 @@ import {StackActions} from '@react-navigation/native';
 export default function WhatAreYouOffering({navigation, route}) {
   const {categoriesData} = route.params;
   const closeSellScreen = StackActions.pop(1); // close screen on press of close btn
-  console.log(categoriesData);
+
   const CARD_HEIGHT = 100;
   const getCategoryCardLayout = (_, index) => ({
     length: CARD_HEIGHT,

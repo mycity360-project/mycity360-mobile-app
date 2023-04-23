@@ -43,11 +43,12 @@ export default function YourAds({navigation, route}) {
       setIsLoading(true);
       const token = await AsyncStorage.getItem('token');
       const userData = await AsyncStorage.getItem('userInfo');
+      const [page, setPage] = useState(1);
 
       // console.log(JSON.parse(userData).id, '12 line');
 
-      const userAdsRespData = await http.get(
-        `/user-ad/?user_id=${JSON.parse(userData).id}`,
+      const yourAdsRespData = await http.get(
+        `/user-ad/?user_id=${JSON.parse(userData).id}&page=${page}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -55,7 +56,7 @@ export default function YourAds({navigation, route}) {
         },
       );
       // console.log(userAdsRespData.results, '21');
-      const ads = userAdsRespData.results.map(ad => ({
+      const ads = yourAdsRespData.results.map((ad, index) => ({
         id: ad.id,
         title: ad.name,
         createdOn: ad.created_date,
@@ -67,9 +68,10 @@ export default function YourAds({navigation, route}) {
         subCategoryID: ad.category.id,
         locationName: ad.area?.location?.name,
         areaName: ad.area?.name,
+        key: `${yourAdsData.length + index}`,
       }));
-      console.log(ads);
-      setYourAdsData(ads);
+      // console.log(ads);
+      setYourAdsData([...yourAdsData, ...ads]);
       setIsLoading(false);
     } catch (err) {
       setIsLoading(false);
@@ -86,9 +88,11 @@ export default function YourAds({navigation, route}) {
     }
   };
 
-  // useEffect(() => {
-  //   getUserAds();
-  // }, []);
+  const fetchNextPage = async () => {
+    setPage(page + 1);
+    // Call your API to fetch the data for the next page
+    await getUserAds();
+  };
 
   const CARD_HEIGHT = 120;
   const getYourAdsCardLayout = (_, index) => ({
@@ -177,6 +181,8 @@ export default function YourAds({navigation, route}) {
           initialNumToRender={15}
           maxToRenderPerBatch={10}
           showsVerticalScrollIndicator={false}
+          onEndReached={fetchNextPage}
+          onEndReachedThreshold={0.1}
         />
       </View>
 
