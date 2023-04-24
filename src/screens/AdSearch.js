@@ -24,6 +24,7 @@ export default function AdSearch({navigation, route}) {
   const [pageSize, setPageSize] = useState(10);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+  const [isChangeText, setIsChangeText] = useState(false);
 
   const renderFooter = () => {
     if (!hasMore) {
@@ -50,27 +51,26 @@ export default function AdSearch({navigation, route}) {
   };
 
   useEffect(() => {
-    setFlatlistLoading(true);
     (async () => {
-      console.log(adsData, '55');
+      setFlatlistLoading(true);
       await getUserAds();
       setFlatlistLoading(false);
     })();
-  }, [page]);
+  }, [page, isChangeText]);
 
   const getUserAds = async () => {
     try {
-      console.log('get ads', searchText, '64');
+      console.log('get ads', adsData, '64');
       const token = await AsyncStorage.getItem('token');
       let url = `/user-ad/?is_active=True&area_id=${areaID}&page=${page}`;
       if (categoryID !== '' && categoryID !== undefined) {
         url = url.concat(`&category_id=${categoryID}`);
       }
-      // if (searchText !== '') {
-      url = url.concat(`&search=${searchText}`);
-      // }
+      if (searchText !== '') {
+        url = url.concat(`&search=${searchText}`);
+      }
 
-      console.log(url, '38');
+      console.log(url, 'Line 66');
       const adsRespData = await http.get(url, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -98,8 +98,7 @@ export default function AdSearch({navigation, route}) {
       console.log(ads, '97');
 
       setAdsData([...adsData, ...ads]);
-
-      console.log(adsData, '101');
+      // console.log(adsData, '101');
     } catch (err) {
       console.log('53 eror adsearch');
       Alert.alert(
@@ -116,9 +115,8 @@ export default function AdSearch({navigation, route}) {
 
   const searchHandler = async () => {
     setAdsData([]);
-    console.log(adsData, '118');
     setPage(1);
-    await getUserAds();
+    setIsChangeText(true);
   };
   const CARD_HEIGHT = 100;
   const getAdsCardLayout = (_, index) => ({
@@ -202,7 +200,10 @@ export default function AdSearch({navigation, route}) {
             placeholder="Find Mobile, Cars ....."
             style={styles.inputBox}
             value={searchText}
-            onChangeText={search => setSearchText(search)}
+            onChangeText={search => {
+              setIsChangeText(false);
+              setSearchText(search);
+            }}
           />
           <TouchableOpacity
             style={styles.searchBtn}

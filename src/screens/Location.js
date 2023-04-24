@@ -37,7 +37,6 @@ export default function Location({navigation}) {
 
       setLocationData(locations);
     } catch (error) {
-      setIsLoading(false);
       Alert.alert('ERROR', 'Something went wrong, we are working on it', [
         {
           text: 'OK',
@@ -45,6 +44,8 @@ export default function Location({navigation}) {
         },
       ]);
       // console.log('Something went wrong while fetching locations 21 ', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -90,11 +91,11 @@ export default function Location({navigation}) {
   };
 
   const updateLocationHandler = async () => {
-    if (selectedLocation == '') {
+    if (selectedLocation === '') {
       setShowLocationError(true);
       return;
     }
-    if (selectedArea == '') {
+    if (selectedArea === '') {
       setShowAreaError(true);
       return;
     }
