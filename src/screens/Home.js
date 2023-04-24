@@ -13,7 +13,7 @@ import {
   ActivityIndicator,
   Alert,
 } from 'react-native';
-import {React, useEffect, useState, useRef} from 'react';
+import {React, useEffect, useState, useRef, memo} from 'react';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {http} from '../shared/lib';
@@ -28,9 +28,19 @@ export default function Home({navigation}) {
   const [userAdsData, setUserAdsData] = useState([]);
   const [pageSize, setPageSize] = useState(10);
   const [page, setPage] = useState(1);
-  const [maxPage, setMaxPage] = useState();
   const isFocused = useIsFocused();
   const wasFocused = useRef(false);
+  const [hasMore, setHasMore] = useState(true);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      // Clear the state before navigating
+      setPage(1);
+      setUserAdsData([]);
+    });
+    // Return the unsubscribe function to avoid memory leaks
+    return unsubscribe;
+  }, [navigation]);
 
   useEffect(() => {
     (async () => {
@@ -38,7 +48,6 @@ export default function Home({navigation}) {
       if (isFocused && !wasFocused.current) {
         // Reload the screen when it comes into focus
         await getUserAds();
-        setPage(page + 1);
         console.log('loaded!35 Home');
       }
       // Update the previous focus state
@@ -107,6 +116,13 @@ export default function Home({navigation}) {
   }, []);
 
   const renderFooter = () => {
+    if (!hasMore) {
+      return (
+        <Text style={{fontSize: 14, color: '#222', textAlign: 'center'}}>
+          No More Ads to Show
+        </Text>
+      );
+    }
     if (flatlistLoading) {
       return (
         <View style={{marginTop: 10}}>
@@ -132,7 +148,7 @@ export default function Home({navigation}) {
       );
       // const respData = JSON.parse(userAdsRespData.results);
       // console.log(userAdsRespData.count, '115 count');
-      setMaxPage(Math.ceil(userAdsRespData.count / pageSize));
+      setHasMore(page <= Math.ceil(userAdsRespData.count) / pageSize);
       const ads = userAdsRespData?.results?.map((ad, index) => {
         return {
           id: ad.id,
@@ -149,14 +165,15 @@ export default function Home({navigation}) {
           key: `${userAdsData.length + index}`,
         };
       });
-      console.log('123');
-      console.log(ads, ads.length, page, '132');
+      console.log('152');
+      console.log(ads, ads.length, page, '153');
 
       setUserAdsData([...userAdsData, ...ads]);
-      page === 1 ? setIsLoading(false) : '';
-      console.log('126');
+
+      console.log('155');
     } catch (err) {
-      console.log('128');
+      setIsLoading(false);
+      console.log('157');
       Alert.alert('ERROR', 'Something went wrong, Unable to Fetch Ads Home', [
         {
           text: 'OK',
@@ -169,16 +186,21 @@ export default function Home({navigation}) {
     }
   };
 
-  const fetchNextPage = async () => {
-    setFlatlistLoading(true);
-    if (page < maxPage) {
-      console.log('next if 171');
+  const handleLoadMore = () => {
+    if (!flatlistLoading && hasMore) {
       setPage(page + 1);
     }
-    console.log('next 174');
-    await getUserAds();
-    setFlatlistLoading(false);
   };
+
+  useEffect(() => {
+    if (page > 1) {
+      setFlatlistLoading(true);
+      (async () => {
+        await getUserAds();
+        setFlatlistLoading(false);
+      })();
+    }
+  }, [page]);
 
   const ITEM_WIDTH = 85;
   const getItemLayout = (_, index) => ({
@@ -255,87 +277,89 @@ export default function Home({navigation}) {
     );
   };
 
-  const renderAds = ({item}) => (
-    <Pressable
-      style={{
-        // backgroundColor: item.bgcolor,
-        height: CARD_HEIGHT,
-        padding: '2%',
-        width: '49%',
-        marginBottom: '1%',
-        borderWidth: 2,
-        borderColor: '#CCC',
-        borderRadius: 5,
-      }}
-      onPress={() =>
-        navigation.navigate('AdDescription', {
-          adDetails: {
-            id: item.id,
-            title: item.name,
-            price: item.price,
-            description: item.description,
-            location: item.locationName,
-            area: item.areaName,
-            createdOn: item.createdOn,
-            images: item.images,
-            userID: item.userID,
-            phone: item.phone,
-            categoryID: item.subCategoryID,
-            showCallNowBtn: true,
-            showDeleteBtn: false,
-          },
-        })
-      }>
-      <View
-        pointerEvents="box-only"
+  const Item = memo(({item}) => {
+    return (
+      <Pressable
         style={{
-          flex: 1.5,
-          alignItems: 'center',
-          justifyContent: 'center',
-          // backgroundColor: '#664489',
-        }}>
-        <Image
-          source={{uri: item.images[0].image}}
-          style={{height: '90%', width: '80%'}}
-          resizeMode="contain"
-        />
+          // backgroundColor: item.bgcolor,
+          height: CARD_HEIGHT,
+          padding: '2%',
+          width: '49%',
+          marginBottom: '1%',
+          borderWidth: 2,
+          borderColor: '#CCC',
+          borderRadius: 5,
+        }}
+        onPress={() =>
+          navigation.navigate('AdDescription', {
+            adDetails: {
+              id: item.id,
+              title: item.name,
+              price: item.price,
+              description: item.description,
+              location: item.locationName,
+              area: item.areaName,
+              createdOn: item.createdOn,
+              images: item.images,
+              userID: item.userID,
+              phone: item.phone,
+              categoryID: item.subCategoryID,
+              showCallNowBtn: true,
+              showDeleteBtn: false,
+            },
+          })
+        }>
+        <View
+          pointerEvents="box-only"
+          style={{
+            flex: 1.5,
+            alignItems: 'center',
+            justifyContent: 'center',
+            // backgroundColor: '#664489',
+          }}>
+          <Image
+            source={{uri: item.images[0].image}}
+            style={{height: '90%', width: '80%'}}
+            resizeMode="contain"
+          />
 
-        {item.isFeatured ? featuredTag() : ''}
-      </View>
-      <View
-        style={{
-          flex: 1,
-          // backgroundColor: '#ccc',
-          justifyContent: 'space-between',
-        }}>
-        <View>
-          <Text style={{fontSize: 14, fontWeight: 600, color: '#111'}}>
-            ₹ {item.price}
-          </Text>
-          <Text
-            numberOfLines={2}
-            style={{fontSize: 14, width: '90%', color: '#000'}}>
-            {item.title}
-          </Text>
+          {item.isFeatured ? featuredTag() : ''}
         </View>
+        <View
+          style={{
+            flex: 1,
+            // backgroundColor: '#ccc',
+            justifyContent: 'space-between',
+          }}>
+          <View>
+            <Text style={{fontSize: 14, fontWeight: 600, color: '#111'}}>
+              ₹ {item.price}
+            </Text>
+            <Text
+              numberOfLines={2}
+              style={{fontSize: 14, width: '90%', color: '#000'}}>
+              {item.title}
+            </Text>
+          </View>
 
-        <View style={{flexDirection: 'row', marginBottom: 5}}>
-          <MaterialIcon name="location-pin" size={16} color={'#666'} />
-          <Text
-            style={{
-              fontSize: 12,
-              textAlign: 'left',
-              fontWeight: 500,
-              color: '#666',
-            }}>
-            {item.locationName === item.areaName
-              ? item.locationName
-              : `${item.areaName} , ${item.locationName}`}
-          </Text>
+          <View style={{flexDirection: 'row', marginBottom: 5}}>
+            <MaterialIcon name="location-pin" size={16} color={'#666'} />
+            <Text
+              style={{
+                fontSize: 12,
+                textAlign: 'left',
+                fontWeight: 500,
+                color: '#666',
+              }}>
+              {item.locationName === item.areaName
+                ? item.locationName
+                : `${item.areaName} , ${item.locationName}`}
+            </Text>
+          </View>
         </View>
-      </View>
-    </Pressable>
-  );
+      </Pressable>
+    );
+  });
 
   return isLoading ? (
     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
@@ -463,17 +487,17 @@ export default function Home({navigation}) {
           <View style={styles.featuredAdsSection}>
             <FlatList
               data={userAdsData}
-              renderItem={renderAds}
+              renderItem={({item}) => <Item item={item} />}
               getItemLayout={getAdCardLayout}
               numColumns={2}
               columnWrapperStyle={{
                 justifyContent: 'space-between',
               }}
-              initialNumToRender={15}
-              maxToRenderPerBatch={15}
+              initialNumToRender={8}
+              maxToRenderPerBatch={8}
               showsVerticalScrollIndicator={false}
-              onEndReached={page > 1 && page <= maxPage ? fetchNextPage : null}
-              onEndReachedThreshold={0.1}
+              onEndReached={handleLoadMore}
+              onEndReachedThreshold={0.5}
               ListFooterComponent={renderFooter}
             />
           </View>

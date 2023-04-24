@@ -43,7 +43,6 @@ export default function YourAds({navigation, route}) {
       setIsLoading(true);
       const token = await AsyncStorage.getItem('token');
       const userData = await AsyncStorage.getItem('userInfo');
-      const [page, setPage] = useState(1);
 
       // console.log(JSON.parse(userData).id, '12 line');
 
@@ -86,12 +85,6 @@ export default function YourAds({navigation, route}) {
         ],
       );
     }
-  };
-
-  const fetchNextPage = async () => {
-    setPage(page + 1);
-    // Call your API to fetch the data for the next page
-    await getUserAds();
   };
 
   const CARD_HEIGHT = 120;
@@ -181,8 +174,6 @@ export default function YourAds({navigation, route}) {
           initialNumToRender={15}
           maxToRenderPerBatch={10}
           showsVerticalScrollIndicator={false}
-          onEndReached={fetchNextPage}
-          onEndReachedThreshold={0.1}
         />
       </View>
 

@@ -18,51 +18,90 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 export default function AdSearch({navigation, route}) {
   const [isLoading, setIsLoading] = useState(false);
   const [adsData, setAdsData] = useState([]);
-  const [autoFocus, setAutoFocus] = useState(true);
   const [searchText, setSearchText] = useState('');
   const {categoryID, areaID} = route.params;
-  console.log(categoryID, areaID, '19');
+  const [flatlistLoading, setFlatlistLoading] = useState(false);
+  const [pageSize, setPageSize] = useState(10);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+
+  const renderFooter = () => {
+    if (!hasMore) {
+      return (
+        <Text style={{fontSize: 14, color: '#222', textAlign: 'center'}}>
+          No More Ads to Show
+        </Text>
+      );
+    }
+    if (flatlistLoading) {
+      return (
+        <View style={{marginTop: 10}}>
+          <ActivityIndicator size="small" color="#0000ff" />
+        </View>
+      );
+    } else {
+      return null;
+    }
+  };
+  const handleLoadMore = () => {
+    if (!flatlistLoading && hasMore) {
+      setPage(page + 1);
+    }
+  };
+
+  useEffect(() => {
+    setFlatlistLoading(true);
+    (async () => {
+      console.log(adsData, '55');
+      await getUserAds();
+      setFlatlistLoading(false);
+    })();
+  }, [page]);
 
   const getUserAds = async () => {
     try {
-      // console.log(searchText, '20');
-      setIsLoading(true);
+      console.log('get ads', searchText, '64');
       const token = await AsyncStorage.getItem('token');
-      let url = `/user-ad/?is_active=True&area_id=${areaID}`;
+      let url = `/user-ad/?is_active=True&area_id=${areaID}&page=${page}`;
       if (categoryID !== '' && categoryID !== undefined) {
         url = url.concat(`&category_id=${categoryID}`);
       }
-      if (searchText !== '') {
-        url = url.concat(`&search=${searchText}`);
-      }
+      // if (searchText !== '') {
+      url = url.concat(`&search=${searchText}`);
+      // }
+
       console.log(url, '38');
       const adsRespData = await http.get(url, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
+      setHasMore(page <= Math.ceil(adsRespData.count) / pageSize);
 
-      const ads = adsRespData?.results?.map(ad => ({
-        id: ad.id,
-        title: ad.name,
-        createdOn: ad.created_date,
-        description: ad.description,
-        images: ad.images,
-        isFeatured: ad.is_featured,
-        price: ad.price,
-        userID: ad.user?.id,
-        subCategoryID: ad.category.id,
-        locationName: ad.area?.location?.name,
-        areaName: ad.area?.name,
-      }));
+      const ads = adsRespData?.results?.map((ad, index) => {
+        return {
+          id: ad.id,
+          title: ad.name,
+          createdOn: ad.created_date,
+          description: ad.description,
+          images: ad.images,
+          isFeatured: ad.is_featured,
+          price: ad.price,
+          userID: ad.user?.id,
+          subCategoryID: ad.category.id,
+          locationName: ad.area?.location?.name,
+          areaName: ad.area?.name,
+          key: `${adsData.length + index}`,
+        };
+      });
 
-      console.log(ads, '59');
-      setAdsData(ads);
-      setIsLoading(false);
-      console.log('51');
+      console.log(ads, '97');
+
+      setAdsData([...adsData, ...ads]);
+
+      console.log(adsData, '101');
     } catch (err) {
       console.log('53 eror adsearch');
-      setIsLoading(false);
       Alert.alert(
         'ERROR',
         'Something went wrong, Unable to Fetch Ads AdSearch',
@@ -74,15 +113,14 @@ export default function AdSearch({navigation, route}) {
       );
     }
   };
-  useEffect(() => {
-    getUserAds();
-  }, []);
 
-  const searchHandler = () => {
-    getUserAds();
-    setAutoFocus(false);
+  const searchHandler = async () => {
+    setAdsData([]);
+    console.log(adsData, '118');
+    setPage(1);
+    await getUserAds();
   };
-  const CARD_HEIGHT = 120;
+  const CARD_HEIGHT = 100;
   const getAdsCardLayout = (_, index) => ({
     length: CARD_HEIGHT,
     offset: CARD_HEIGHT * index,
@@ -163,13 +201,12 @@ export default function AdSearch({navigation, route}) {
             returnKeyType="search"
             placeholder="Find Mobile, Cars ....."
             style={styles.inputBox}
-            autoFocus={autoFocus}
             value={searchText}
             onChangeText={search => setSearchText(search)}
           />
           <TouchableOpacity
             style={styles.searchBtn}
-            onPress={() => searchHandler()}>
+            onPress={async () => await searchHandler()}>
             <MaterialIcon name="search" size={26} color={'#FFF'} />
           </TouchableOpacity>
         </View>
@@ -179,9 +216,12 @@ export default function AdSearch({navigation, route}) {
           data={adsData}
           renderItem={renderAds}
           getItemLayout={getAdsCardLayout}
-          initialNumToRender={15}
+          initialNumToRender={10}
           maxToRenderPerBatch={10}
           showsVerticalScrollIndicator={false}
+          onEndReached={handleLoadMore}
+          onEndReachedThreshold={0.1}
+          ListFooterComponent={renderFooter}
         />
       </View>
     </SafeAreaView>
