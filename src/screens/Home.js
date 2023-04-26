@@ -1,4 +1,3 @@
-/* eslint-disable react-native/no-inline-styles */
 import {
   StyleSheet,
   Text,
@@ -27,7 +26,7 @@ export default function Home({navigation}) {
   const [isCategoryLoding, setIsCategoryLoding] = useState(false);
   const [flatlistLoading, setFlatlistLoading] = useState(false);
   const [userAdsData, setUserAdsData] = useState([]);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize] = useState(10);
   const [page, setPage] = useState(1);
   const isFocused = useIsFocused();
   const wasFocused = useRef(false);
@@ -52,7 +51,6 @@ export default function Home({navigation}) {
       if (isFocused && !wasFocused.current) {
         // Reload the screen when it comes into focus
         await getUserAds();
-        console.log('loaded!35 Home');
       }
       // Update the previous focus state
       wasFocused.current = isFocused;
@@ -69,7 +67,6 @@ export default function Home({navigation}) {
           Authorization: `Bearer ${token}`,
         },
       });
-      // console.log(categoriesRespData.results);
       const categories = categoriesRespData.results.map(category => ({
         id: category.id.toString(),
         name: category.name,
@@ -131,8 +128,6 @@ export default function Home({navigation}) {
           },
         },
       );
-      // const respData = JSON.parse(userAdsRespData.results);
-      // console.log(userAdsRespData.count, '115 count');
       setHasMore(page <= Math.ceil(userAdsRespData.count) / pageSize);
       const ads = userAdsRespData?.results?.map((ad, index) => {
         return {
@@ -150,21 +145,14 @@ export default function Home({navigation}) {
           key: `${userAdsData.length + index}`,
         };
       });
-      console.log('152');
-      console.log(ads, ads.length, page, '153');
 
       setUserAdsData([...userAdsData, ...ads]);
     } catch (err) {
-      console.log('157');
       Alert.alert('ERROR', 'Something went wrong, Unable to Fetch Ads Home', [
         {
           text: 'OK',
         },
       ]);
-      // console.log(
-      //   'Something went wrong while fetching user ads 80 Home',
-      //   JSON.stringify(err),
-      // );
     } finally {
       setFlatlistLoading(false);
     }
