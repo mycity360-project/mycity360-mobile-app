@@ -1,16 +1,16 @@
 import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import CustomNavigation from './customNavigation';
+import CustomNavigation from './CustomNavigation';
 import AdDescription from '../screens/AdDescription';
 import WhatAreYouOffering from '../screens/WhatAreYouOffering';
 import SubCategory from '../screens/SubCategory';
 import IncludeSomeDetails from '../screens/IncludeSomeDetails';
 import UploadAdPhotos from '../screens/UploadAdPhotos';
 import ServiceDescription from '../screens/ServiceDescription';
-import AdSearch from '../screens/AdSearch';
+import CategorySearch from '../screens/CategorySearch';
+import TextSearch from '../screens/TextSearch';
 import Location from '../screens/Location';
 import QuestionsScreen from '../screens/QuestionsScreen';
-
 const RootStack = createNativeStackNavigator();
 
 export default function AppStack() {
@@ -32,7 +32,8 @@ export default function AppStack() {
         name="ServiceDescription"
         component={ServiceDescription}
       />
-      <RootStack.Screen name="AdSearch" component={AdSearch} />
+      <RootStack.Screen name="CategorySearch" component={CategorySearch} />
+      <RootStack.Screen name="TextSearch" component={TextSearch} />
       <RootStack.Screen name="Location" component={Location} />
       <RootStack.Screen name="QuestionsScreen" component={QuestionsScreen} />
     </RootStack.Navigator>

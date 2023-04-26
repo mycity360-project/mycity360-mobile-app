@@ -15,22 +15,31 @@ import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import {http} from '../shared/lib';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function AdSearch({navigation, route}) {
+export default function TextSearch({navigation, route}) {
   const [isLoading, setIsLoading] = useState(false);
   const [adsData, setAdsData] = useState([]);
-  const [searchText, setSearchText] = useState('');
+  const [searchText, setSearchText] = useState(route.params?.text || '');
   const {categoryID, areaID} = route.params;
   const [flatlistLoading, setFlatlistLoading] = useState(false);
   const [pageSize, setPageSize] = useState(10);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
-  const [isChangeText, setIsChangeText] = useState(false);
 
   const renderFooter = () => {
+    console.log(hasMore, page, '29 textsearch');
     if (!hasMore) {
       return (
         <Text style={{fontSize: 14, color: '#222', textAlign: 'center'}}>
           No More Ads to Show
+        </Text>
+      );
+    }
+    console.log(hasMore, page, '37 textsearch');
+    if (page === 1 && !hasMore) {
+      console.log('39');
+      return (
+        <Text style={{fontSize: 14, color: '#222', textAlign: 'center'}}>
+          No Ads Found
         </Text>
       );
     }
@@ -45,9 +54,7 @@ export default function AdSearch({navigation, route}) {
     }
   };
   const handleLoadMore = () => {
-    if (!flatlistLoading && hasMore) {
-      setPage(page + 1);
-    }
+    setPage(page + 1);
   };
 
   useEffect(() => {
@@ -56,7 +63,17 @@ export default function AdSearch({navigation, route}) {
       await getUserAds();
       setFlatlistLoading(false);
     })();
-  }, [page, isChangeText]);
+  }, [page]);
+
+  const searchBtnHandler = async () => {
+    try {
+      setIsLoading(true);
+      await getUserAds();
+      setIsLoading(false);
+    } catch (error) {
+      console.log(JSON.stringify(error), '71');
+    }
+  };
 
   const getUserAds = async () => {
     try {
@@ -69,7 +86,6 @@ export default function AdSearch({navigation, route}) {
       if (searchText !== '') {
         url = url.concat(`&search=${searchText}`);
       }
-
       console.log(url, 'Line 66');
       const adsRespData = await http.get(url, {
         headers: {
@@ -95,15 +111,18 @@ export default function AdSearch({navigation, route}) {
         };
       });
 
-      console.log(ads, '97');
-
-      setAdsData([...adsData, ...ads]);
-      // console.log(adsData, '101');
+      console.log(ads, '94');
+      if (page === 1) {
+        setAdsData(ads);
+      } else {
+        setAdsData([...adsData, ...ads]);
+      }
+      // console.log(adsData, '100');
     } catch (err) {
-      console.log('53 eror adsearch');
+      console.log('102 eror CategorySearch');
       Alert.alert(
         'ERROR',
-        'Something went wrong, Unable to Fetch Ads AdSearch',
+        'Something went wrong, Unable to Fetch Ads CategorySearch',
         [
           {
             text: 'OK',
@@ -113,11 +132,6 @@ export default function AdSearch({navigation, route}) {
     }
   };
 
-  const searchHandler = async () => {
-    setAdsData([]);
-    setPage(1);
-    setIsChangeText(true);
-  };
   const CARD_HEIGHT = 100;
   const getAdsCardLayout = (_, index) => ({
     length: CARD_HEIGHT,
@@ -201,13 +215,12 @@ export default function AdSearch({navigation, route}) {
             style={styles.inputBox}
             value={searchText}
             onChangeText={search => {
-              setIsChangeText(false);
               setSearchText(search);
             }}
           />
           <TouchableOpacity
             style={styles.searchBtn}
-            onPress={async () => await searchHandler()}>
+            onPress={async () => await searchBtnHandler()}>
             <MaterialIcon name="search" size={26} color={'#FFF'} />
           </TouchableOpacity>
         </View>
@@ -220,7 +233,7 @@ export default function AdSearch({navigation, route}) {
           initialNumToRender={10}
           maxToRenderPerBatch={10}
           showsVerticalScrollIndicator={false}
-          onEndReached={handleLoadMore}
+          onEndReached={!flatlistLoading && hasMore ? handleLoadMore : null}
           onEndReachedThreshold={0.1}
           ListFooterComponent={renderFooter}
         />

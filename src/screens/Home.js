@@ -12,6 +12,7 @@ import {
   Pressable,
   ActivityIndicator,
   Alert,
+  TextInput,
 } from 'react-native';
 import {React, useEffect, useState, useRef, memo} from 'react';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
@@ -31,6 +32,7 @@ export default function Home({navigation}) {
   const isFocused = useIsFocused();
   const wasFocused = useRef(false);
   const [hasMore, setHasMore] = useState(true);
+  const [searchText, setSearchText] = useState('');
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
@@ -45,6 +47,7 @@ export default function Home({navigation}) {
   useEffect(() => {
     (async () => {
       setIsLoading(true);
+      setSearchText('');
       if (isFocused && !wasFocused.current) {
         // Reload the screen when it comes into focus
         await getUserAds();
@@ -123,6 +126,13 @@ export default function Home({navigation}) {
         </Text>
       );
     }
+    if (page === 1 && !hasMore) {
+      return (
+        <Text style={{fontSize: 14, color: '#222', textAlign: 'center'}}>
+          No Ads Found
+        </Text>
+      );
+    }
     if (flatlistLoading) {
       return (
         <View style={{marginTop: 10}}>
@@ -187,9 +197,7 @@ export default function Home({navigation}) {
   };
 
   const handleLoadMore = () => {
-    if (!flatlistLoading && hasMore) {
-      setPage(page + 1);
-    }
+    setPage(page + 1);
   };
 
   useEffect(() => {
@@ -226,7 +234,7 @@ export default function Home({navigation}) {
         },
       ]}
       onPress={() =>
-        navigation.navigate('AdSearch', {
+        navigation.navigate('CategorySearch', {
           categoryID: item.id,
           areaID: userInfo.localUserArea.id,
         })
@@ -423,16 +431,24 @@ export default function Home({navigation}) {
               </TouchableOpacity>
             </View>
             <View style={styles.searchBarSection}>
+              <TextInput
+                returnKeyType="search"
+                placeholder="Find Mobile, Cars ....."
+                style={styles.inputBox}
+                value={searchText}
+                onChangeText={search => {
+                  setSearchText(search);
+                }}
+              />
               <TouchableOpacity
-                style={styles.searchInput}
+                style={styles.searchBtn}
                 onPress={() =>
-                  navigation.navigate('AdSearch', {
-                    areaID: userInfo?.localUserArea?.id,
+                  navigation.navigate('TextSearch', {
+                    areaID: userInfo.localUserArea.id,
+                    text: searchText,
                   })
-                }
-                activeOpacity={1}>
-                <MaterialIcon name="search" size={24} color={'#222'} />
-                <Text>Search here</Text>
+                }>
+                <MaterialIcon name="search" size={26} color={'#FFF'} />
               </TouchableOpacity>
             </View>
           </View>
@@ -496,7 +512,7 @@ export default function Home({navigation}) {
               initialNumToRender={8}
               maxToRenderPerBatch={8}
               showsVerticalScrollIndicator={false}
-              onEndReached={handleLoadMore}
+              onEndReached={!flatlistLoading && hasMore ? handleLoadMore : null}
               onEndReachedThreshold={0.5}
               ListFooterComponent={renderFooter}
             />
@@ -531,22 +547,24 @@ const styles = StyleSheet.create({
   searchBarSection: {
     flex: 1.15,
     flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  searchInput: {
-    flexDirection: 'row',
-    gap: 5,
     width: '85%',
-    backgroundColor: '#EFEFEF',
-    height: '85%',
-    borderRadius: 20,
-    padding: 10,
-    elevation: 5, //Android Only
-    shadowRadius: 5, // IOS Only
+    marginHorizontal: '7.5%',
+    borderColor: '#FA8C00',
+    borderWidth: 1,
+    borderRadius: 11,
   },
-  searchIcon: {
-    marginRight: '40%',
+  inputBox: {
+    width: '80%',
+    height: '100%',
+  },
+  searchBtn: {
+    width: '20%',
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#FA8C00',
+    borderTopRightRadius: 10,
+    borderBottomRightRadius: 10,
   },
   categoryAndSellBtnSection: {
     flex: 0.8,
