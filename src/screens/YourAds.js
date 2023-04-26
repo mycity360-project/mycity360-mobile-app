@@ -47,7 +47,7 @@ export default function YourAds({navigation, route}) {
       // console.log(JSON.parse(userData).id, '12 line');
 
       const yourAdsRespData = await http.get(
-        `/user-ad/?user_id=${JSON.parse(userData).id}&page=${page}`,
+        `/user-ad/?user_id=${JSON.parse(userData).id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -55,7 +55,7 @@ export default function YourAds({navigation, route}) {
         },
       );
       // console.log(userAdsRespData.results, '21');
-      const ads = yourAdsRespData.results.map((ad, index) => ({
+      const ads = yourAdsRespData.results?.map((ad, index) => ({
         id: ad.id,
         title: ad.name,
         createdOn: ad.created_date,

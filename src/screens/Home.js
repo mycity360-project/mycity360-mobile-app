@@ -35,10 +35,11 @@ export default function Home({navigation}) {
   const [searchText, setSearchText] = useState('');
 
   useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', () => {
+    const unsubscribe = navigation.addListener('focus', async () => {
       // Clear the state before navigating
       setPage(1);
       setUserAdsData([]);
+      await getUserInfo();
     });
     // Return the unsubscribe function to avoid memory leaks
     return unsubscribe;
@@ -65,6 +66,7 @@ export default function Home({navigation}) {
       const info = await AsyncStorage.getItem('userInfo');
       setUserInfo(JSON.parse(info));
       const location = JSON.parse(info)?.localUserArea?.name;
+      console.log(location, 'Added location');
       setSelectedLocation(location);
       setIsLoading(false);
     } catch (error) {
@@ -146,7 +148,7 @@ export default function Home({navigation}) {
 
   const getUserAds = async () => {
     try {
-      console.log(page, '121');
+      setFlatlistLoading(true);
       const token = await AsyncStorage.getItem('token');
       const userAdsRespData = await http.get(
         `/user-ad/?is_active=True&page=${page}`,
@@ -179,10 +181,7 @@ export default function Home({navigation}) {
       console.log(ads, ads.length, page, '153');
 
       setUserAdsData([...userAdsData, ...ads]);
-
-      console.log('155');
     } catch (err) {
-      setIsLoading(false);
       console.log('157');
       Alert.alert('ERROR', 'Something went wrong, Unable to Fetch Ads Home', [
         {
@@ -193,6 +192,8 @@ export default function Home({navigation}) {
       //   'Something went wrong while fetching user ads 80 Home',
       //   JSON.stringify(err),
       // );
+    } finally {
+      setFlatlistLoading(false);
     }
   };
 

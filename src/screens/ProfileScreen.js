@@ -1,9 +1,7 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {useContext, useState, useEffect} from 'react';
-import * as fs from 'react-native-fs';
 import {
   Alert,
-  Animated,
   ImageBackground,
   SafeAreaView,
   StyleSheet,
@@ -14,11 +12,11 @@ import {Title, TouchableRipple, Text, Caption} from 'react-native-paper';
 import {AuthContext} from '../context/AuthContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import {ActivityIndicator} from 'react-native';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import Modal from 'react-native-modal';
 import {http} from '../shared/lib';
+import {v4 as uuidv4} from 'uuid';
 
 export default function ProfileScreen() {
   const {logout} = useContext(AuthContext);
@@ -104,7 +102,7 @@ export default function ProfileScreen() {
       const imageData = new FormData();
       imageData.append('file', {
         uri: path.uri,
-        name: 'anurag.jpg',
+        name: uuidv4(),
         type: path.type,
       });
       const token = await AsyncStorage.getItem('token');
