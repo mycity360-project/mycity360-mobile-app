@@ -6,13 +6,14 @@ import {
   TouchableOpacity,
   Alert,
 } from 'react-native';
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import DropDown from '../shared/components/DropDown';
 import {http} from '../shared/lib';
 import {StackActions} from '@react-navigation/native';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import CustomButton from '../shared/components/CustomButton';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {AuthContext} from '../context/AuthContext';
 
 export default function Location({navigation}) {
   const closeSellScreen = StackActions.pop(1); //close screen on click of close btn
@@ -24,6 +25,7 @@ export default function Location({navigation}) {
   const [isDisabled, setIsDisabled] = useState(true);
   const [showLocationError, setShowLocationError] = useState(false);
   const [showAreaError, setShowAreaError] = useState(false);
+  const {userInfo, setUserInfo} = useContext(AuthContext);
 
   const getLocations = async () => {
     setIsLoading(true);
@@ -101,12 +103,16 @@ export default function Location({navigation}) {
     }
 
     const info = await AsyncStorage.getItem('userInfo');
-    let userInfo = JSON.parse(info);
-    userInfo = {
-      ...userInfo,
+    let user = JSON.parse(info);
+    user = {
+      ...user,
       localUserArea: {id: selectedArea.key, name: selectedArea.value},
     };
-    await AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
+    await AsyncStorage.setItem('userInfo', JSON.stringify(user));
+    setUserInfo({
+      ...user,
+      localUserArea: {id: selectedArea.key, name: selectedArea.value},
+    });
     navigation.popToTop();
   };
   return isLoading ? (

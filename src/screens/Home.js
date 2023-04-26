@@ -14,18 +14,17 @@ import {
   Alert,
   TextInput,
 } from 'react-native';
-import {React, useEffect, useState, useRef, memo} from 'react';
+import {React, useEffect, useState, useRef, memo, useContext} from 'react';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {http} from '../shared/lib';
 import {useIsFocused} from '@react-navigation/native';
+import {AuthContext} from '../context/AuthContext';
 
 export default function Home({navigation}) {
   const [categoriesData, setCategoriesData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [flatlistLoading, setFlatlistLoading] = useState(false);
-  const [selectedLocation, setSelectedLocation] = useState('');
-  const [userInfo, setUserInfo] = useState([]);
   const [userAdsData, setUserAdsData] = useState([]);
   const [pageSize, setPageSize] = useState(10);
   const [page, setPage] = useState(1);
@@ -33,13 +32,13 @@ export default function Home({navigation}) {
   const wasFocused = useRef(false);
   const [hasMore, setHasMore] = useState(true);
   const [searchText, setSearchText] = useState('');
+  const {userInfo} = useContext(AuthContext);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', async () => {
       // Clear the state before navigating
       setPage(1);
       setUserAdsData([]);
-      await getUserInfo();
     });
     // Return the unsubscribe function to avoid memory leaks
     return unsubscribe;
@@ -59,29 +58,6 @@ export default function Home({navigation}) {
       setIsLoading(false);
     })();
   }, [isFocused]);
-
-  const getUserInfo = async () => {
-    try {
-      setIsLoading(true);
-      const info = await AsyncStorage.getItem('userInfo');
-      setUserInfo(JSON.parse(info));
-      const location = JSON.parse(info)?.localUserArea?.name;
-      console.log(location, 'Added location');
-      setSelectedLocation(location);
-      setIsLoading(false);
-    } catch (error) {
-      setIsLoading(false);
-      Alert.alert('ERROR', 'Something went wrong, we are working on it', [
-        {
-          text: 'OK',
-        },
-      ]);
-    }
-  };
-
-  useEffect(() => {
-    getUserInfo();
-  }, []);
 
   const getCategories = async () => {
     try {
@@ -109,10 +85,6 @@ export default function Home({navigation}) {
           text: 'OK',
         },
       ]);
-      // console.log(
-      //   'Something went wrong while fetching categories',
-      //   JSON.stringify(err),
-      // );
     }
   };
 
@@ -151,7 +123,7 @@ export default function Home({navigation}) {
       setFlatlistLoading(true);
       const token = await AsyncStorage.getItem('token');
       const userAdsRespData = await http.get(
-        `/user-ad/?is_active=True&page=${page}`,
+        `/user-ad/?is_active=True&page=${page}&area_id=${userInfo.localUserArea.id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -399,7 +371,7 @@ export default function Home({navigation}) {
                     fontWeight: 500,
                     textDecorationLine: 'underline',
                   }}>
-                  {selectedLocation}
+                  {userInfo.localUserArea.name}
                 </Text>
               </TouchableOpacity>
             </View>

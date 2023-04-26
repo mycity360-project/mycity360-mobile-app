@@ -8,21 +8,23 @@ export const AuthContext = createContext();
 export const AuthProvider = ({children}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [userToken, setUserToken] = useState('');
+  const [userInfo, setUserInfo] = useState(null);
 
   const onTokenAvailable = async (respData, token, userid) => {
-    let userInfo = await http.get(`user/${userid}/`, {
+    let user = await http.get(`user/${userid}/`, {
       headers: {
         clientid: BACKEND_CLIENT_ID,
         Authorization: `Bearer ${token}`,
       },
     });
     // console.log(userInfo);
-    userInfo = {...userInfo, localUserArea: userInfo.area};
+    user = {...user, localUserArea: userInfo.area};
     setUserToken(token);
     AsyncStorage.setItem('tokenInfo', JSON.stringify(respData));
     AsyncStorage.setItem('token', token);
     AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
     AsyncStorage.setItem('userID', JSON.stringify(userid));
+    setUserInfo(user);
   };
 
   const login = async (username, password) => {
@@ -74,6 +76,7 @@ export const AuthProvider = ({children}) => {
   const logout = async () => {
     setIsLoading(true);
     setUserToken(null);
+    setUserInfo(null);
     AsyncStorage.removeItem('token');
     AsyncStorage.removeItem('tokenInfo');
     AsyncStorage.removeItem('userInfo');
@@ -95,7 +98,9 @@ export const AuthProvider = ({children}) => {
     try {
       setIsLoading(true);
       let token = await AsyncStorage.getItem('token');
+      let user = await AsyncStorage.getItem('userInfo');
       console.log(token, 'context 88');
+      setUserInfo(JSON.parse(user));
       setUserToken(token);
       setIsLoading(false);
     } catch (e) {
@@ -113,6 +118,8 @@ export const AuthProvider = ({children}) => {
         isLoading,
         userToken,
         isVerified,
+        userInfo,
+        setUserInfo,
       }}>
       {children}
     </AuthContext.Provider>
