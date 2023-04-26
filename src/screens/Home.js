@@ -24,6 +24,7 @@ import {AuthContext} from '../context/AuthContext';
 export default function Home({navigation}) {
   const [categoriesData, setCategoriesData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isCategoryLoding, setIsCategoryLoding] = useState(false);
   const [flatlistLoading, setFlatlistLoading] = useState(false);
   const [userAdsData, setUserAdsData] = useState([]);
   const [pageSize, setPageSize] = useState(10);
@@ -61,7 +62,7 @@ export default function Home({navigation}) {
 
   const getCategories = async () => {
     try {
-      setIsLoading(true);
+      setIsCategoryLoding(true);
       const token = await AsyncStorage.getItem('token');
       const categoriesRespData = await http.get('category/user/', {
         headers: {
@@ -77,14 +78,14 @@ export default function Home({navigation}) {
       }));
 
       setCategoriesData(categories);
-      setIsLoading(false);
     } catch (err) {
-      setIsLoading(false);
       Alert.alert('ERROR', 'Something went wrong, Unable to Fetch Categories', [
         {
           text: 'OK',
         },
       ]);
+    } finally {
+      setIsCategoryLoding(false);
     }
   };
 
@@ -425,53 +426,59 @@ export default function Home({navigation}) {
               </TouchableOpacity>
             </View>
           </View>
-          <View style={styles.categoryAndSellBtnSection}>
-            {/* Sell Button to add item for sell */}
-            <TouchableOpacity
-              style={styles.sellBtn}
-              onPress={() => {
-                navigation.navigate('WhatAreYouOffering', {
-                  categoriesData: categoriesData,
-                });
-              }}>
-              <View
-                style={{
-                  flex: 1.1,
-                  alignItems: 'center',
-                  justifyContent: 'center',
+          {isCategoryLoding ? (
+            <View style={{marginTop: 10}}>
+              <ActivityIndicator size="small" color="#0000ff" />
+            </View>
+          ) : (
+            <View style={styles.categoryAndSellBtnSection}>
+              {/* Sell Button to add item for sell */}
+              <TouchableOpacity
+                style={styles.sellBtn}
+                onPress={() => {
+                  navigation.navigate('WhatAreYouOffering', {
+                    categoriesData: categoriesData,
+                  });
                 }}>
-                <MaterialIcon
-                  name="add-circle-outline"
-                  color={'#FF8C00'}
-                  size={45}
-                />
-              </View>
+                <View
+                  style={{
+                    flex: 1.1,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}>
+                  <MaterialIcon
+                    name="add-circle-outline"
+                    color={'#FF8C00'}
+                    size={45}
+                  />
+                </View>
 
-              <View
-                style={{
-                  flex: 0.9,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}>
-                <Text
-                  style={{fontSize: 16, color: '#111', marginBottom: '-10%'}}>
-                  Sell /
-                </Text>
-                <Text style={{fontSize: 16, color: '#111'}}>Post Ad</Text>
-              </View>
-            </TouchableOpacity>
-            {/* Category Horizontal List */}
+                <View
+                  style={{
+                    flex: 0.9,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}>
+                  <Text
+                    style={{fontSize: 16, color: '#111', marginBottom: '-10%'}}>
+                    Sell /
+                  </Text>
+                  <Text style={{fontSize: 16, color: '#111'}}>Post Ad</Text>
+                </View>
+              </TouchableOpacity>
+              {/* Category Horizontal List */}
 
-            <FlatList
-              horizontal={true}
-              data={categoriesData}
-              renderItem={renderItem}
-              showsHorizontalScrollIndicator={false}
-              getItemLayout={getItemLayout}
-              initialNumToRender={5}
-              maxToRenderPerBatch={5}
-            />
-          </View>
+              <FlatList
+                horizontal={true}
+                data={categoriesData}
+                renderItem={renderItem}
+                showsHorizontalScrollIndicator={false}
+                getItemLayout={getItemLayout}
+                initialNumToRender={5}
+                maxToRenderPerBatch={5}
+              />
+            </View>
+          )}
 
           <View style={styles.featuredAdsSection}>
             <FlatList
