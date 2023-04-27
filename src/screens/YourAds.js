@@ -21,15 +21,35 @@ export default function YourAds({navigation, route}) {
   const [showAlert, setShowAlert] = useState(false);
   const isFocused = useIsFocused();
   const wasFocused = useRef(false);
+  const [flatlistLoading, setFlatlistLoading] = useState(false);
+  const [pageSize, setPageSize] = useState(10);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [showNoAdsFoundMsg, setShowNoAdsFoundMsg] = useState(false);
 
   useEffect(() => {
-    if (isFocused && !wasFocused.current) {
-      // Reload the screen when it comes into focus
-      getUserAds();
-      console.log('loaded! 29 yourads');
-    }
-    // Update the previous focus state
-    wasFocused.current = isFocused;
+    const unsubscribe = navigation.addListener('focus', async () => {
+      // Clear the state on coming back after navigating
+      setPage(1);
+      setYourAdsData([]);
+    });
+    // Return the unsubscribe function to avoid memory leaks
+    return unsubscribe;
+  }, [navigation]);
+
+  useEffect(() => {
+    setFlatlistLoading(true);
+    (async () => {
+      setPage(1);
+      setYourAdsData([]);
+      if (isFocused && !wasFocused.current) {
+        // Reload the screen when it comes into focus
+        await getUserAds();
+      }
+      // Update the previous focus state
+      wasFocused.current = isFocused;
+      setFlatlistLoading(false);
+    })();
   }, [isFocused]);
 
   useEffect(() => {
@@ -40,7 +60,6 @@ export default function YourAds({navigation, route}) {
 
   const getUserAds = async () => {
     try {
-      setIsLoading(true);
       const token = await AsyncStorage.getItem('token');
       const userData = await AsyncStorage.getItem('userInfo');
 
@@ -54,7 +73,9 @@ export default function YourAds({navigation, route}) {
           },
         },
       );
-      // console.log(userAdsRespData.results, '21');
+      setHasMore(page <= Math.ceil(yourAdsRespData.count) / pageSize);
+      setShowNoAdsFoundMsg(Math.ceil(yourAdsRespData.count) ? false : true);
+      // console.log(page <= Math.ceil(yourAdsRespData.count) / pageSize, '61');
       const ads = yourAdsRespData.results?.map((ad, index) => ({
         id: ad.id,
         title: ad.name,
@@ -71,9 +92,7 @@ export default function YourAds({navigation, route}) {
       }));
       // console.log(ads);
       setYourAdsData([...yourAdsData, ...ads]);
-      setIsLoading(false);
     } catch (err) {
-      setIsLoading(false);
       Alert.alert(
         'ERROR',
         'Something went wrong, we are working on it YourAds',
@@ -87,7 +106,48 @@ export default function YourAds({navigation, route}) {
     }
   };
 
-  const CARD_HEIGHT = 120;
+  const renderFooter = () => {
+    if (showNoAdsFoundMsg) {
+      return (
+        <Text style={{fontSize: 14, color: '#222', textAlign: 'center'}}>
+          No Ads Found.
+        </Text>
+      );
+    }
+    if (!showNoAdsFoundMsg && !hasMore) {
+      return (
+        <Text style={{fontSize: 14, color: '#222', textAlign: 'center'}}>
+          No More Ads to Show
+        </Text>
+      );
+    }
+    console.log(flatlistLoading, '120');
+    if (flatlistLoading) {
+      return (
+        <View style={{marginTop: 10}}>
+          <ActivityIndicator size="small" color="#0000ff" />
+        </View>
+      );
+    } else {
+      return null;
+    }
+  };
+
+  const handleLoadMore = () => {
+    setPage(page + 1);
+  };
+
+  useEffect(() => {
+    if (page > 1) {
+      setFlatlistLoading(true);
+      (async () => {
+        await getUserAds();
+        setFlatlistLoading(false);
+      })();
+    }
+  }, [page]);
+
+  const CARD_HEIGHT = 100;
   const getYourAdsCardLayout = (_, index) => ({
     length: CARD_HEIGHT,
     offset: CARD_HEIGHT * index,
@@ -171,9 +231,12 @@ export default function YourAds({navigation, route}) {
           data={yourAdsData}
           renderItem={renderYourAds}
           getItemLayout={getYourAdsCardLayout}
-          initialNumToRender={15}
+          initialNumToRender={10}
           maxToRenderPerBatch={10}
           showsVerticalScrollIndicator={false}
+          onEndReached={!flatlistLoading && hasMore ? handleLoadMore : null}
+          onEndReachedThreshold={0.1}
+          ListFooterComponent={renderFooter}
         />
       </View>
 

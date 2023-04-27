@@ -1,6 +1,5 @@
 import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import CustomNavigation from './customNavigation';
 import AdDescription from '../screens/AdDescription';
 import WhatAreYouOffering from '../screens/WhatAreYouOffering';
 import SubCategory from '../screens/SubCategory';
@@ -11,6 +10,7 @@ import CategorySearch from '../screens/CategorySearch';
 import TextSearch from '../screens/TextSearch';
 import Location from '../screens/Location';
 import QuestionsScreen from '../screens/QuestionsScreen';
+import CustomNavigation from '../navigation/CustomNavigation';
 const RootStack = createNativeStackNavigator();
 
 export default function AppStack() {

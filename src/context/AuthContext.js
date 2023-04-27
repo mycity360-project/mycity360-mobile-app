@@ -18,13 +18,13 @@ export const AuthProvider = ({children}) => {
       },
     });
     // console.log(userInfo);
-    user = {...user, localUserArea: userInfo.area};
+    user = {...user, localUserArea: user.area};
     setUserToken(token);
+    setUserInfo(user);
     AsyncStorage.setItem('tokenInfo', JSON.stringify(respData));
     AsyncStorage.setItem('token', token);
-    AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
+    AsyncStorage.setItem('userInfo', JSON.stringify(user));
     AsyncStorage.setItem('userID', JSON.stringify(userid));
-    setUserInfo(user);
   };
 
   const login = async (username, password) => {
@@ -49,7 +49,7 @@ export const AuthProvider = ({children}) => {
       // console.log(respData, userid, 'resp from login & get user by id');
 
       if (token) {
-        onTokenAvailable(respData, token, userid);
+        await onTokenAvailable(respData, token, userid);
         setIsLoading(false);
         // response.showVerifyOtpScreen = false;
       } else {

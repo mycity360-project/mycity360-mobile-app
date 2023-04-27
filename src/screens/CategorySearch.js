@@ -24,19 +24,32 @@ export default function CategorySearch({navigation, route}) {
   const [pageSize, setPageSize] = useState(10);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+  const [showNoAdsFoundMsg, setShowNoAdsFoundMsg] = useState(false);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', async () => {
+      // Clear the state on coming back after navigating
+      console.log('32');
+      setPage(1);
+      setAdsData([]);
+      getUserAds();
+    });
+    // Return the unsubscribe function to avoid memory leaks
+    return unsubscribe;
+  }, [navigation]);
 
   const renderFooter = () => {
-    if (!hasMore) {
-      return (
-        <Text style={{fontSize: 14, color: '#222', textAlign: 'center'}}>
-          No More Ads to Show
-        </Text>
-      );
-    }
-    if (page === 1 && !hasMore) {
+    if (showNoAdsFoundMsg) {
       return (
         <Text style={{fontSize: 14, color: '#222', textAlign: 'center'}}>
           No Ads Found
+        </Text>
+      );
+    }
+    if (!showNoAdsFoundMsg && !hasMore) {
+      return (
+        <Text style={{fontSize: 14, color: '#222', textAlign: 'center'}}>
+          No More Ads to Show
         </Text>
       );
     }
@@ -78,6 +91,7 @@ export default function CategorySearch({navigation, route}) {
         },
       });
       setHasMore(page <= Math.ceil(adsRespData.count) / pageSize);
+      setShowNoAdsFoundMsg(Math.ceil(adsRespData.count) ? false : true);
 
       const ads = adsRespData?.results?.map((ad, index) => {
         return {
@@ -97,11 +111,7 @@ export default function CategorySearch({navigation, route}) {
       });
 
       console.log(ads, '94');
-      if (page === 1) {
-        setAdsData(ads);
-      } else {
-        setAdsData([...adsData, ...ads]);
-      }
+      setAdsData([...adsData, ...ads]);
       // console.log(adsData, '100');
     } catch (err) {
       console.log('102 eror CategorySearch');

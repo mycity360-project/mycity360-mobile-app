@@ -24,18 +24,10 @@ export default function TextSearch({navigation, route}) {
   const [pageSize, setPageSize] = useState(10);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+  const [showNoAdsFoundMsg, setShowNoAdsFoundMsg] = useState(false);
 
   const renderFooter = () => {
-    console.log(hasMore, page, '29 textsearch');
-    if (!hasMore) {
-      return (
-        <Text style={{fontSize: 14, color: '#222', textAlign: 'center'}}>
-          No More Ads to Show
-        </Text>
-      );
-    }
-    console.log(hasMore, page, '37 textsearch');
-    if (page === 1 && !hasMore) {
+    if (showNoAdsFoundMsg) {
       console.log('39');
       return (
         <Text style={{fontSize: 14, color: '#222', textAlign: 'center'}}>
@@ -43,6 +35,14 @@ export default function TextSearch({navigation, route}) {
         </Text>
       );
     }
+    if (!showNoAdsFoundMsg && !hasMore) {
+      return (
+        <Text style={{fontSize: 14, color: '#222', textAlign: 'center'}}>
+          No More Ads to Show
+        </Text>
+      );
+    }
+
     if (flatlistLoading) {
       return (
         <View style={{marginTop: 10}}>
@@ -67,9 +67,9 @@ export default function TextSearch({navigation, route}) {
 
   const searchBtnHandler = async () => {
     try {
-      setIsLoading(true);
+      setFlatlistLoading(true);
       await getUserAds();
-      setIsLoading(false);
+      setFlatlistLoading(false);
     } catch (error) {
       console.log(JSON.stringify(error), '71');
     }
@@ -77,7 +77,6 @@ export default function TextSearch({navigation, route}) {
 
   const getUserAds = async () => {
     try {
-      console.log('get ads', adsData, '64');
       const token = await AsyncStorage.getItem('token');
       let url = `/user-ad/?is_active=True&area_id=${areaID}&page=${page}`;
       if (categoryID !== '' && categoryID !== undefined) {
@@ -86,14 +85,13 @@ export default function TextSearch({navigation, route}) {
       if (searchText !== '') {
         url = url.concat(`&search=${searchText}`);
       }
-      console.log(url, 'Line 66');
       const adsRespData = await http.get(url, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
       setHasMore(page <= Math.ceil(adsRespData.count) / pageSize);
-
+      setShowNoAdsFoundMsg(Math.ceil(adsRespData.count) ? false : true);
       const ads = adsRespData?.results?.map((ad, index) => {
         return {
           id: ad.id,
@@ -110,19 +108,12 @@ export default function TextSearch({navigation, route}) {
           key: `${adsData.length + index}`,
         };
       });
-
-      console.log(ads, '94');
-      if (page === 1) {
-        setAdsData(ads);
-      } else {
-        setAdsData([...adsData, ...ads]);
-      }
-      // console.log(adsData, '100');
+      if (page === 1) setAdsData(ads);
+      else setAdsData([...adsData, ...ads]);
     } catch (err) {
-      console.log('102 eror CategorySearch');
       Alert.alert(
         'ERROR',
-        'Something went wrong, Unable to Fetch Ads CategorySearch',
+        'Something went wrong, Unable to Fetch Ads TextSearch 125',
         [
           {
             text: 'OK',

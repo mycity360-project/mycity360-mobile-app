@@ -33,10 +33,11 @@ export default function Home({navigation}) {
   const [hasMore, setHasMore] = useState(true);
   const [searchText, setSearchText] = useState('');
   const {userInfo} = useContext(AuthContext);
-
+  const [showNoAdsFoundMsg, setShowNoAdsFoundMsg] = useState(false);
+  console.log(userInfo, '37');
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', async () => {
-      // Clear the state before navigating
+      // Clear the state on coming back after navigating
       setPage(1);
       setUserAdsData([]);
     });
@@ -45,8 +46,8 @@ export default function Home({navigation}) {
   }, [navigation]);
 
   useEffect(() => {
+    setFlatlistLoading(true);
     (async () => {
-      setIsLoading(true);
       setSearchText('');
       if (isFocused && !wasFocused.current) {
         // Reload the screen when it comes into focus
@@ -54,7 +55,7 @@ export default function Home({navigation}) {
       }
       // Update the previous focus state
       wasFocused.current = isFocused;
-      setIsLoading(false);
+      setFlatlistLoading(false);
     })();
   }, [isFocused]);
 
@@ -91,17 +92,17 @@ export default function Home({navigation}) {
   }, []);
 
   const renderFooter = () => {
-    if (!hasMore) {
-      return (
-        <Text style={{fontSize: 14, color: '#222', textAlign: 'center'}}>
-          No More Ads to Show
-        </Text>
-      );
-    }
-    if (page === 1 && !hasMore) {
+    if (showNoAdsFoundMsg) {
       return (
         <Text style={{fontSize: 14, color: '#222', textAlign: 'center'}}>
           No Ads Found
+        </Text>
+      );
+    }
+    if (!showNoAdsFoundMsg && !hasMore) {
+      return (
+        <Text style={{fontSize: 14, color: '#222', textAlign: 'center'}}>
+          No More Ads to Show
         </Text>
       );
     }
@@ -118,7 +119,6 @@ export default function Home({navigation}) {
 
   const getUserAds = async () => {
     try {
-      setFlatlistLoading(true);
       const token = await AsyncStorage.getItem('token');
       const userAdsRespData = await http.get(
         `/user-ad/?is_active=True&page=${page}&area_id=${userInfo.localUserArea.id}`,
@@ -129,6 +129,7 @@ export default function Home({navigation}) {
         },
       );
       setHasMore(page <= Math.ceil(userAdsRespData.count) / pageSize);
+      setShowNoAdsFoundMsg(Math.ceil(userAdsRespData.count) ? false : true);
       const ads = userAdsRespData?.results?.map((ad, index) => {
         return {
           id: ad.id,
@@ -179,7 +180,7 @@ export default function Home({navigation}) {
     index,
   });
 
-  const CARD_HEIGHT = 250;
+  const CARD_HEIGHT = 200;
   const getAdCardLayout = (_, index) => ({
     length: CARD_HEIGHT,
     offset: CARD_HEIGHT * index,
@@ -414,59 +415,64 @@ export default function Home({navigation}) {
               </TouchableOpacity>
             </View>
           </View>
-          {isCategoryLoding ? (
-            <View style={{marginTop: 10}}>
-              <ActivityIndicator size="small" color="#0000ff" />
-            </View>
-          ) : (
-            <View style={styles.categoryAndSellBtnSection}>
-              {/* Sell Button to add item for sell */}
-              <TouchableOpacity
-                style={styles.sellBtn}
-                onPress={() => {
-                  navigation.navigate('WhatAreYouOffering', {
-                    categoriesData: categoriesData,
-                  });
+          <View style={styles.categoryAndSellBtnSection}>
+            {/* Sell Button to add item for sell */}
+            <TouchableOpacity
+              style={styles.sellBtn}
+              onPress={() => {
+                navigation.navigate('WhatAreYouOffering', {
+                  categoriesData: categoriesData,
+                });
+              }}>
+              <View
+                style={{
+                  flex: 1.1,
+                  alignItems: 'center',
+                  justifyContent: 'center',
                 }}>
-                <View
-                  style={{
-                    flex: 1.1,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}>
-                  <MaterialIcon
-                    name="add-circle-outline"
-                    color={'#FF8C00'}
-                    size={45}
-                  />
-                </View>
+                <MaterialIcon
+                  name="add-circle-outline"
+                  color={'#FF8C00'}
+                  size={45}
+                />
+              </View>
 
-                <View
-                  style={{
-                    flex: 0.9,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}>
-                  <Text
-                    style={{fontSize: 16, color: '#111', marginBottom: '-10%'}}>
-                    Sell /
-                  </Text>
-                  <Text style={{fontSize: 16, color: '#111'}}>Post Ad</Text>
-                </View>
-              </TouchableOpacity>
-              {/* Category Horizontal List */}
-
-              <FlatList
-                horizontal={true}
-                data={categoriesData}
-                renderItem={renderItem}
-                showsHorizontalScrollIndicator={false}
-                getItemLayout={getItemLayout}
-                initialNumToRender={5}
-                maxToRenderPerBatch={5}
-              />
-            </View>
-          )}
+              <View
+                style={{
+                  flex: 0.9,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                <Text
+                  style={{fontSize: 16, color: '#111', marginBottom: '-10%'}}>
+                  Sell /
+                </Text>
+                <Text style={{fontSize: 16, color: '#111'}}>Post Ad</Text>
+              </View>
+            </TouchableOpacity>
+            {/* Category Horizontal List */}
+            {isCategoryLoding ? (
+              <View
+                style={[
+                  styles.categoryListSection,
+                  {justifyContent: 'center', alignItems: 'center'},
+                ]}>
+                <ActivityIndicator size="small" color="#0000ff" />
+              </View>
+            ) : (
+              <View style={styles.categoryListSection}>
+                <FlatList
+                  horizontal={true}
+                  data={categoriesData}
+                  renderItem={renderItem}
+                  showsHorizontalScrollIndicator={true}
+                  getItemLayout={getItemLayout}
+                  initialNumToRender={5}
+                  maxToRenderPerBatch={5}
+                />
+              </View>
+            )}
+          </View>
 
           <View style={styles.featuredAdsSection}>
             <FlatList
@@ -544,12 +550,16 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0.3,
   },
   sellBtn: {
+    flex: 0.2,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: '-2%',
     borderColor: '#999',
     borderRightWidth: 0.3,
     padding: 5,
+  },
+  categoryListSection: {
+    flex: 0.8,
   },
 
   category: {

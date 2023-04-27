@@ -102,7 +102,7 @@ export default function ProfileScreen() {
       const imageData = new FormData();
       imageData.append('file', {
         uri: path.uri,
-        name: uuidv4(),
+        name: userInfo.first_name,
         type: path.type,
       });
       const token = await AsyncStorage.getItem('token');

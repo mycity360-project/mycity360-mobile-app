@@ -1,5 +1,5 @@
 module.exports = {
-  BACKEND_URL: 'http://68.178.169.59/',
+  BACKEND_URL: 'http://68.178.169.59',
   BACKEND_CLIENT_ID: 'IwVuiUsLcQmZ9eTpzf6RYgPCUDxWjdmDPTWMCMRH',
   APP_TITLE: 'MyCity360',
   MAX_IMAGE_ALLOWED: 6,
