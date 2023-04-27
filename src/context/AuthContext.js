@@ -2,25 +2,28 @@ import {React, createContext, useState, useEffect} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {http} from '../shared/lib';
 import {BACKEND_CLIENT_ID} from '../shared/constants/env';
-
+import {Alert} from 'react-native';
 export const AuthContext = createContext();
 
 export const AuthProvider = ({children}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [userToken, setUserToken] = useState('');
+  const [userInfo, setUserInfo] = useState(null);
 
   const onTokenAvailable = async (respData, token, userid) => {
-    let userInfo = await http.get(`user/${userid}/`, {
+    let user = await http.get(`user/${userid}/`, {
       headers: {
         clientid: BACKEND_CLIENT_ID,
         Authorization: `Bearer ${token}`,
       },
     });
-    console.log(userInfo);
+    user = {...user, localUserArea: user.area};
     setUserToken(token);
+    setUserInfo(user);
     AsyncStorage.setItem('tokenInfo', JSON.stringify(respData));
     AsyncStorage.setItem('token', token);
-    AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
+    AsyncStorage.setItem('userInfo', JSON.stringify(user));
+    AsyncStorage.setItem('userID', JSON.stringify(userid));
   };
 
   const login = async (username, password) => {
@@ -41,51 +44,59 @@ export const AuthProvider = ({children}) => {
       const token = respData.access_token;
       const userid = token ? respData.user_id : respData.id;
       const response = {};
-      console.log(respData, userid, 'resp from login & get user by id');
 
       if (token) {
-        onTokenAvailable(respData, token, userid);
-        response.showVerifyOtpScreen = false;
+        await onTokenAvailable(respData, token, userid);
         setIsLoading(false);
+        // response.showVerifyOtpScreen = false;
       } else {
         response.showVerifyOtpScreen = true;
         response.userid = userid;
         setIsLoading(false);
+        return response;
       }
-      return response;
     } catch (error) {
-      console.log(JSON.stringify(error), 'err');
+      setIsLoading(false);
+      if (error.response.status === 500) {
+        Alert.alert('ERROR', 'User not exist ', [{text: 'OK'}]);
+      } else if (error.response.status === 400) {
+        Alert.alert('ERROR', 'Check Your username OR password', [{text: 'OK'}]);
+      } else {
+        Alert.alert('ERROR', 'Something Went Wrong', [{text: 'OK'}]);
+      }
     }
   };
 
   const logout = async () => {
     setIsLoading(true);
     setUserToken(null);
+    setUserInfo(null);
     AsyncStorage.removeItem('token');
     AsyncStorage.removeItem('tokenInfo');
     AsyncStorage.removeItem('userInfo');
-
+    AsyncStorage.removeItem('userID');
     setIsLoading(false);
   };
 
   const isVerified = async respData => {
     try {
       setIsLoading(true);
-      console.log(respData);
       onTokenAvailable(respData, respData.access_token, respData.user_id);
       setIsLoading(false);
     } catch (e) {
-      console.log(`isVerified error ${e}`);
+      // Alert.alert('Error', 'Something Went Wrong', [{text: 'OK'}]);
     }
   };
   const isLoggedIn = async () => {
     try {
       setIsLoading(true);
-      let token = await AsyncStorage.getItem('userToken');
+      let token = await AsyncStorage.getItem('token');
+      let user = await AsyncStorage.getItem('userInfo');
+      setUserInfo(JSON.parse(user));
       setUserToken(token);
       setIsLoading(false);
     } catch (e) {
-      console.log(`isLoogedIn error ${e}`);
+      // Alert.alert('ERROR', 'User is not logged In', [{text: 'OK'}]);
     }
   };
   useEffect(() => {
@@ -99,6 +110,8 @@ export const AuthProvider = ({children}) => {
         isLoading,
         userToken,
         isVerified,
+        userInfo,
+        setUserInfo,
       }}>
       {children}
     </AuthContext.Provider>

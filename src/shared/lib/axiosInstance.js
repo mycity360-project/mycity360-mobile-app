@@ -9,13 +9,17 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.response.use(config => {
   if (
-    config.status === HttpStatusCode.Ok ||
-    config.status === HttpStatusCode.Created
+    [
+      HttpStatusCode.Accepted,
+      HttpStatusCode.Created,
+      HttpStatusCode.NoContent,
+      HttpStatusCode.Ok,
+      HttpStatusCode.NonAuthoritativeInformation,
+    ].includes(config.status)
   ) {
-    return config.data;
+    return config?.data;
   } else {
-    const message = `The Request is Failed with ${config.status} http status`;
-    throw new Error(message);
+    throw new Error(config);
   }
 });
 

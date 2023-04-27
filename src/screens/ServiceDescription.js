@@ -23,10 +23,10 @@ export default function ServiceDescription({route, navigation}) {
     <View style={styles.container}>
       <View style={styles.headerSection}>
         <View style={styles.imgSection}>
-          <Image
+          {/* <Image
             source={require('../assets/images/mobile.png')}
             style={{height: '90%', resizeMode: 'contain'}}
-          />
+          /> */}
         </View>
         <View style={styles.infoSection}>
           <View style={styles.infoSectionTop}>

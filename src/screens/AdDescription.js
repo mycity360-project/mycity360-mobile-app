@@ -1,48 +1,163 @@
 /* eslint-disable react-native/no-inline-styles */
-import {Image, StyleSheet, Text, View, TouchableOpacity} from 'react-native';
-import React from 'react';
+import {
+  Image,
+  StyleSheet,
+  Text,
+  View,
+  Dimensions,
+  TouchableOpacity,
+  FlatList,
+  Linking,
+  Platform,
+  Alert,
+  ActivityIndicator,
+} from 'react-native';
+import React, {useState, useEffect} from 'react';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
+import {http} from '../shared/lib';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import Moment from 'moment';
+const {width, height} = Dimensions.get('window');
 
 export default function AdDescription({route, navigation}) {
-  // Data from API call for specific ad, for now using dummy data
-  // const data=[];
-  const {title, price, location} = route.params;
-  return (
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [answerData, setAnswerData] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const adDetails = route.params.adDetails;
+  const {location, area} = adDetails;
+
+  const openDialer = contactNumber => {
+    Platform.OS === 'ios'
+      ? Linking.openURL(`telprompt:${contactNumber}`)
+      : Linking.openURL(`tel:${contactNumber}`);
+  };
+
+  const deleteAdHandler = async () => {
+    try {
+      setIsLoading(true);
+      const url = `/user-ad/${adDetails.id}/`;
+      const token = await AsyncStorage.getItem('token');
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      await http.delete(url, config);
+      setIsLoading(false);
+
+      navigation.navigate('YourAds', {
+        showAlert: true,
+        alertHeading: 'SUCCESS',
+        alertMsg: 'Ad Deleted Successfully.',
+        btnText: 'OK',
+      });
+    } catch (error) {
+      Alert.alert('ERROR', 'Something Went Wrong', [{text: 'OK'}]);
+    }
+  };
+
+  const getAnswers = async () => {
+    try {
+      // setIsLoading(true);
+      const token = await AsyncStorage.getItem('token');
+      const answersRespData = await http.get(
+        `answer/?user_ad_id=${adDetails.id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+      const answers = answersRespData.results.map(answer => ({
+        question: answer.question.question,
+        answer: answer.answer,
+      }));
+      setAnswerData(answers);
+      // setIsLoading(false);
+    } catch (err) {
+      // setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getAnswers();
+  }, []);
+
+  return isLoading ? (
+    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+      <ActivityIndicator size={'large'} />
+    </View>
+  ) : (
     <View style={styles.container}>
       <View style={styles.adHeaderSection}>
         <View style={styles.adImgSection}>
-          <Image
-            source={require('../assets/images/mobile.png')}
-            style={{height: '90%', resizeMode: 'contain'}}
+          <FlatList
+            data={adDetails.images}
+            keyExtractor={item => item.id}
+            onScroll={event => {
+              const x = event.nativeEvent.contentOffset.x;
+              setCurrentIndex((x / width).toFixed(0));
+            }}
+            horizontal={true}
+            showsHorizontalScrollIndicator={false}
+            pagingEnabled={true}
+            renderItem={({item, index}) => {
+              return (
+                <Image
+                  source={{uri: item.image}}
+                  resizeMode="contain"
+                  style={styles.wrapper}
+                />
+              );
+            }}
           />
+
+          <View style={styles.dotWrapper}>
+            {adDetails.images.map((e, index) => {
+              return (
+                <View
+                  key={index}
+                  style={[
+                    styles.dotCommon,
+                    parseInt(currentIndex) === index
+                      ? styles.dotActive
+                      : styles.dotNotActive,
+                  ]}
+                />
+              );
+            })}
+          </View>
+          <TouchableOpacity
+            style={{
+              position: 'absolute',
+              top: 10,
+              left: 15,
+            }}
+            onPress={() => {
+              navigation.goBack();
+            }}>
+            <MaterialIcon name="arrow-back" size={24} color={'#222'} />
+          </TouchableOpacity>
         </View>
         <View style={styles.adInfoSection}>
           <View style={styles.infoSectionTop}>
-            <Text style={styles.priceText}>₹ {price}</Text>
-            <MaterialIcon name="favorite-border" size={28} />
+            <Text style={styles.priceText}>₹ {adDetails.price}</Text>
           </View>
 
           <Text numberOfLines={1} style={styles.infoSectionMiddle}>
-            {title}
+            {adDetails.title}
           </Text>
           <View style={styles.infoSectionBottom}>
             <View style={styles.locationSection}>
               <MaterialIcon name="location-pin" size={18} color={'#444'} />
-              <Text style={styles.locationText}>{location}</Text>
+              <Text style={styles.locationText}>
+                {location === area ? location : `${area} , ${location}`}
+              </Text>
             </View>
-            <Text style={styles.dateAdded}>25 March 2023</Text>
+            <Text style={styles.dateAdded}>
+              {Moment(adDetails.createdOn).format('DD MMM YYYY')}
+            </Text>
           </View>
-        </View>
-      </View>
-
-      <View style={styles.adDetailsSection}>
-        <Text style={{fontSize: 16, fontWeight: 600, color: '#111'}}>
-          Details
-        </Text>
-        <View style={{fontSize: 14, marginLeft: '20%'}}>
-          <Text>Brand: Mi</Text>
-          <Text>RAM: 8 GB</Text>
-          <Text>Memory : 64 GB</Text>
         </View>
       </View>
 
@@ -50,18 +165,58 @@ export default function AdDescription({route, navigation}) {
         <Text style={{fontSize: 16, fontWeight: 600, color: '#111'}}>
           Description
         </Text>
-        <Text>Will display user entered description here</Text>
+        <Text style={{color: '#111'}}>{adDetails.description}</Text>
+      </View>
+
+      <View style={styles.adQuesAnsSection}>
+        <Text style={{fontSize: 16, fontWeight: 600, color: '#111'}}>
+          Details
+        </Text>
+        <View>
+          <FlatList
+            data={answerData}
+            renderItem={({item}) => {
+              return (
+                <View style={{flexDirection: 'row', gap: 4}}>
+                  <Text style={{color: '#222', fontWeight: 500, fontSize: 14}}>
+                    {item.question} -
+                  </Text>
+                  <Text style={{color: '#111'}}>{item.answer}</Text>
+                </View>
+              );
+            }}
+          />
+        </View>
       </View>
 
       <View style={styles.otherDetailsSection}>
-        <Text style={styles.otherDetailsText}>Ad ID: 323452</Text>
-        <Text style={styles.otherDetailsText}>Report Ad</Text>
+        <Text style={styles.otherDetailsText}>Ad ID: {adDetails.id}</Text>
       </View>
 
       <View style={styles.footer}>
-        <TouchableOpacity style={styles.makeOfferButton}>
-          <Text style={styles.makeOfferButtonText}>Make Offer</Text>
-        </TouchableOpacity>
+        {adDetails.showCallNowBtn ? (
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => openDialer(adDetails.phone)}>
+            <Text style={styles.buttonText}>Call Now</Text>
+          </TouchableOpacity>
+        ) : (
+          ''
+        )}
+        {adDetails.showDeleteBtn ? (
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => {
+              Alert.alert('Warning', 'Are you sure , you want to delete ?', [
+                {text: 'OK', onPress: () => deleteAdHandler()},
+                {text: 'Cancel'},
+              ]);
+            }}>
+            <Text style={styles.buttonText}>Delete Ad</Text>
+          </TouchableOpacity>
+        ) : (
+          ''
+        )}
       </View>
     </View>
   );
@@ -69,7 +224,7 @@ export default function AdDescription({route, navigation}) {
 
 const styles = StyleSheet.create({
   container: {flex: 1},
-  adHeaderSection: {flex: 4},
+  adHeaderSection: {flex: 4, paddingTop: 5},
   adImgSection: {
     flex: 3,
     alignItems: 'center',
@@ -105,8 +260,8 @@ const styles = StyleSheet.create({
     fontWeight: 500,
     color: '#444',
   },
-  adDetailsSection: {flex: 1, padding: 5},
-  adDescriptionSection: {flex: 2, padding: 5},
+  adQuesAnsSection: {flex: 2, padding: 5},
+  adDescriptionSection: {flex: 1, padding: 5},
   otherDetailsSection: {
     flex: 0.2,
     flexDirection: 'row',
@@ -119,17 +274,33 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  makeOfferButton: {
+  button: {
     backgroundColor: '#FA8C00',
     width: '70%',
     height: '60%',
     justifyContent: 'center',
     borderRadius: 10,
   },
-  makeOfferButtonText: {
+  buttonText: {
     fontSize: 20,
     textAlign: 'center',
     color: '#111',
     fontWeight: 500,
+  },
+
+  wrapper: {width: width, height: height * 0.3},
+
+  dotWrapper: {
+    flexDirection: 'row',
+    position: 'absolute',
+    alignSelf: 'center',
+    bottom: 10,
+  },
+  dotCommon: {width: 12, height: 12, borderRadius: 6, marginLeft: 5},
+  dotActive: {
+    backgroundColor: '#FA8C00',
+  },
+  dotNotActive: {
+    backgroundColor: '#fff',
   },
 });

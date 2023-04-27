@@ -1,24 +1,48 @@
-/* eslint-disable react-native/no-inline-styles */
-import {StyleSheet, Text, View, TouchableOpacity, FlatList} from 'react-native';
-import React from 'react';
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  FlatList,
+  SafeAreaView,
+  ActivityIndicator,
+} from 'react-native';
+import React, {useState, useEffect} from 'react';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
-// import useNavigation from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {http} from '../shared/lib';
+export default function SubCategory({navigation, route}) {
+  const [isLoading, setIsLoading] = useState(false);
+  const [subcategoryData, setSubCategoryData] = useState([]);
+  const {categoryID, categoryName} = route.params;
 
-export default function SubCategory({navigation: {goBack}, navigation}) {
-  const data = [
-    {
-      name: 'Mobile Phones',
-      onPress: () => navigation.navigate('IncludeSomeDetails'),
-    },
-    {
-      name: 'Accessories',
-      //onPress: () => navigation.navigate('includeSomeDetails'),
-    },
-    {
-      name: 'Tablets',
-      //onPress: () => navigation.navigate('includeSomeDetails'),
-    },
-  ];
+  const getSubCategories = async () => {
+    try {
+      setIsLoading(true);
+      const token = await AsyncStorage.getItem('token');
+      const subCategoriesRespData = await http.get(
+        `category/user/?category_id=${categoryID}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+      const subCategories = subCategoriesRespData.results.map(category => ({
+        id: category.id.toString(),
+        name: category.name,
+      }));
+
+      setSubCategoryData(subCategories);
+      setIsLoading(false);
+    } catch (err) {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getSubCategories();
+  }, []);
 
   const CARD_HEIGHT = 50;
   const getSubCategoryCardLayout = (_, index) => ({
@@ -36,35 +60,44 @@ export default function SubCategory({navigation: {goBack}, navigation}) {
           borderBottomWidth: 0.5,
           justifyContent: 'center',
         }}
-        onPress={item.onPress}>
+        onPress={() =>
+          navigation.navigate('IncludeSomeDetails', {
+            categoryID: categoryID,
+            subCategoryID: item.id,
+          })
+        }>
         <Text style={{fontSize: 16, color: '#222', marginLeft: 10}}>
           {item.name}
         </Text>
       </TouchableOpacity>
     );
   };
-  return (
-    <View style={styles.container}>
+  return isLoading ? (
+    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+      <ActivityIndicator size={'large'} />
+    </View>
+  ) : (
+    <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity
           onPress={() => {
-            goBack();
+            navigation.goBack();
           }}>
           <MaterialIcon name="arrow-back" color={'#333'} size={28} />
         </TouchableOpacity>
 
-        <Text style={styles.headingText}>Mobiles</Text>
+        <Text style={styles.headingText}>{categoryName}</Text>
       </View>
       <View style={styles.subCategorySection}>
         <FlatList
-          data={data}
+          data={subcategoryData}
           renderItem={renderSubCategory}
           getItemLayout={getSubCategoryCardLayout}
           initialNumToRender={5}
           maxToRenderPerBatch={5}
         />
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 

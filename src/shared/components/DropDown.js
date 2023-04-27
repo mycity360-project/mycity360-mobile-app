@@ -4,7 +4,6 @@ import {React, useState} from 'react';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 
 export default function DropDown(props) {
-  console.log(props);
   const {
     placeholder,
     dataArray,
@@ -42,7 +41,6 @@ export default function DropDown(props) {
                   style={styles.itemList}
                   onPress={() => {
                     setSelected(item.value);
-                    console.log(selected, placeholder);
                     selectedDataHandler(item);
                     setIsClicked(false);
                   }}>

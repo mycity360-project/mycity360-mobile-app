@@ -7,7 +7,6 @@ import {ActivityIndicator, View} from 'react-native';
 
 export default function AppNav() {
   const {isLoading, userToken = null} = useContext(AuthContext);
-  console.log(userToken, 'This is token');
 
   if (isLoading) {
     return (

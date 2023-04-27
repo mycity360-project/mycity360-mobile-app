@@ -1,4 +1,3 @@
-/* eslint-disable react-native/no-inline-styles */
 import {
   StyleSheet,
   Text,
@@ -11,99 +10,76 @@ import {
   TouchableOpacity,
   Pressable,
   ActivityIndicator,
+  Alert,
+  TextInput,
 } from 'react-native';
-import {React, useCallback, useEffect, useState} from 'react';
+import {React, useEffect, useState, useRef, memo, useContext} from 'react';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {http} from '../shared/lib';
+import {useIsFocused} from '@react-navigation/native';
+import {AuthContext} from '../context/AuthContext';
+
 export default function Home({navigation}) {
   const [categoriesData, setCategoriesData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  let adData = [
-    {
-      key: '1',
-      title:
-        'Mobile for resale , used only for 6 months in warranty and in good condition',
-      price: '8000',
-      location: 'Nipania, Indore',
-      image: require('../assets/images/mobile.png'),
-      bgcolor: '#979',
-      isFeatured: true,
-    },
-    {
-      key: '2',
-      title: 'Mobile for resale',
-      price: '8000',
-      location: 'Nipania, Indore',
-      image: require('../assets/images/mobile.png'),
-      bgcolor: '#989',
-    },
-    {
-      key: '3',
-      title: 'Mobile for resale',
-      price: '8000',
-      location: 'Nipania, Indore',
-      image: require('../assets/images/mobile.png'),
-      bgcolor: '#888',
-    },
-    {
-      key: '4',
-      title: 'Mobile for resale',
-      price: '8000',
-      location: 'Nipania, Indore',
-      image: require('../assets/images/mobile.png'),
-      bgcolor: '#777',
-      isFeatured: true,
-    },
-    {
-      key: '5',
-      title: 'Mobile for resale',
-      price: '8000',
-      location: 'Nipania, Indore',
-      image: require('../assets/images/mobile.png'),
-      bgcolor: '#666',
-    },
-    {
-      key: '6',
-      title: 'Mobile for resale',
-      price: '8000',
-      location: 'Nipania, Indore',
-      image: require('../assets/images/mobile.png'),
-      bgcolor: '#666',
-    },
-    {
-      key: '7',
-      title: 'Mobile for resale ',
-      price: 8000,
-      location: 'Nipania, Indore',
-      image: require('../assets/images/mobile.png'),
-      bgcolor: '#666',
-    },
-  ];
+  const [isCategoryLoding, setIsCategoryLoding] = useState(false);
+  const [flatlistLoading, setFlatlistLoading] = useState(false);
+  const [userAdsData, setUserAdsData] = useState([]);
+  const [pageSize] = useState(10);
+  const [page, setPage] = useState(1);
+  const isFocused = useIsFocused();
+  const wasFocused = useRef(false);
+  const [hasMore, setHasMore] = useState(true);
+  const [searchText, setSearchText] = useState('');
+  const {userInfo} = useContext(AuthContext);
+  const [showNoAdsFoundMsg, setShowNoAdsFoundMsg] = useState(false);
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', async () => {
+      // Clear the state on coming back after navigating
+      setPage(1);
+      setUserAdsData([]);
+      // setFlatlistLoading(false);
+    });
+    // Return the unsubscribe function to avoid memory leaks
+    return unsubscribe;
+  }, [navigation]);
+
+  useEffect(() => {
+    setSearchText('');
+    if (isFocused && !wasFocused.current) {
+      // Reload the screen when it comes into focus
+      getUserAds();
+    }
+    // Update the previous focus state
+    wasFocused.current = isFocused;
+  }, [isFocused]);
 
   const getCategories = async () => {
     try {
-      setIsLoading(true);
+      setIsCategoryLoding(true);
       const token = await AsyncStorage.getItem('token');
       const categoriesRespData = await http.get('category/user/', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      // console.log(categoriesRespData.results);
       const categories = categoriesRespData.results.map(category => ({
-        key: category.id.toString(),
-        title: category.name,
+        id: category.id.toString(),
+        name: category.name,
         icon: category.icon,
+        seq: category.sequence,
       }));
+
       setCategoriesData(categories);
-      setIsLoading(false);
     } catch (err) {
-      console.log(
-        'Something went wrong while fetching categories',
-        JSON.stringify(err),
-      );
-      setIsLoading(false);
+      Alert.alert('ERROR', 'Something went wrong, Unable to Fetch Categories', [
+        {
+          text: 'OK',
+        },
+      ]);
+    } finally {
+      setIsCategoryLoding(false);
     }
   };
 
@@ -111,14 +87,99 @@ export default function Home({navigation}) {
     getCategories();
   }, []);
 
-  const ITEM_WIDTH = 80;
+  const renderFooter = () => {
+    if (flatlistLoading) {
+      return (
+        <View style={{marginTop: 10}}>
+          <ActivityIndicator size="small" color="#0000ff" />
+        </View>
+      );
+    }
+
+    if (showNoAdsFoundMsg) {
+      return (
+        <Text style={{fontSize: 14, color: '#222', textAlign: 'center'}}>
+          No Ads Found
+        </Text>
+      );
+    } else {
+      if (!hasMore) {
+        return (
+          <Text style={{fontSize: 14, color: '#222', textAlign: 'center'}}>
+            No More Ads to Show
+          </Text>
+        );
+      } else {
+        return null;
+      }
+    }
+  };
+
+  const getUserAds = async () => {
+    try {
+      setFlatlistLoading(true);
+      const token = await AsyncStorage.getItem('token');
+      const userAdsRespData = await http.get(
+        `/user-ad/?is_active=True&page=${page}&area_id=${userInfo.localUserArea.id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+      setHasMore(page <= Math.ceil(userAdsRespData.count) / pageSize);
+      setShowNoAdsFoundMsg(Math.ceil(userAdsRespData.count) ? false : true);
+      const ads = userAdsRespData?.results?.map((ad, index) => {
+        return {
+          id: ad.id,
+          title: ad.name,
+          createdOn: ad.created_date,
+          description: ad.description,
+          images: ad.images,
+          isFeatured: ad.is_featured,
+          price: ad.price,
+          userID: ad.user?.id,
+          subCategoryID: ad.category.id,
+          locationName: ad.area?.location?.name,
+          areaName: ad.area?.name,
+          key: `${userAdsData.length + index}`,
+        };
+      });
+
+      setUserAdsData([...userAdsData, ...ads]);
+    } catch (err) {
+      Alert.alert('ERROR', 'Something went wrong, Unable to Fetch Ads Home', [
+        {
+          text: 'OK',
+        },
+      ]);
+    } finally {
+      setFlatlistLoading(false);
+    }
+  };
+
+  const handleLoadMore = () => {
+    setPage(page + 1);
+  };
+
+  useEffect(() => {
+    if (page > 1) {
+      setFlatlistLoading(true);
+      (async () => {
+        await getUserAds();
+        setFlatlistLoading(false);
+      })();
+    }
+  }, [page]);
+
+  const ITEM_WIDTH = 85;
   const getItemLayout = (_, index) => ({
     length: ITEM_WIDTH,
     offset: ITEM_WIDTH * index,
     index,
   });
 
-  const CARD_HEIGHT = 250;
+  const CARD_HEIGHT = 200;
   const getAdCardLayout = (_, index) => ({
     length: CARD_HEIGHT,
     offset: CARD_HEIGHT * index,
@@ -134,13 +195,23 @@ export default function Home({navigation}) {
           flex: 1,
         },
       ]}
-      onPress={item.onpress}>
-      <View style={{flex: 1.2, alignItems: 'center', justifyContent: 'center'}}>
+      onPress={() =>
+        navigation.navigate('CategorySearch', {
+          categoryID: item.id,
+          areaID: userInfo.localUserArea.id,
+        })
+      }>
+      <View
+        style={{
+          flex: 1.2,
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
         <Image
           source={{
             uri: item.icon,
-            width: 45,
-            height: 45,
+            width: 50,
+            height: 50,
           }}
         />
       </View>
@@ -148,10 +219,11 @@ export default function Home({navigation}) {
       <View style={{flex: 0.8, alignItems: 'center', justifyContent: 'center'}}>
         <Text
           style={{
-            fontSize: 16,
+            fontSize: 14,
             color: '#111',
+            textAlign: 'center',
           }}>
-          {item.title}
+          {item.name}
         </Text>
       </View>
     </TouchableOpacity>
@@ -175,8 +247,8 @@ export default function Home({navigation}) {
     );
   };
 
-  const renderAds = useCallback(
-    ({item}) => (
+  const Item = memo(({item}) => {
+    return (
       <Pressable
         style={{
           // backgroundColor: item.bgcolor,
@@ -190,10 +262,21 @@ export default function Home({navigation}) {
         }}
         onPress={() =>
           navigation.navigate('AdDescription', {
-            key: item.key,
-            title: item.title,
-            price: item.price,
-            location: item.location,
+            adDetails: {
+              id: item.id,
+              title: item.name,
+              price: item.price,
+              description: item.description,
+              location: item.locationName,
+              area: item.areaName,
+              createdOn: item.createdOn,
+              images: item.images,
+              userID: item.userID,
+              phone: item.phone,
+              categoryID: item.subCategoryID,
+              showCallNowBtn: true,
+              showDeleteBtn: false,
+            },
           })
         }>
         <View
@@ -205,9 +288,11 @@ export default function Home({navigation}) {
             // backgroundColor: '#664489',
           }}>
           <Image
-            source={item.image}
-            style={{height: '90%', resizeMode: 'contain'}}
+            source={{uri: item.images[0].image}}
+            style={{height: '90%', width: '80%'}}
+            resizeMode="contain"
           />
+
           {item.isFeatured ? featuredTag() : ''}
         </View>
         <View
@@ -236,14 +321,15 @@ export default function Home({navigation}) {
                 fontWeight: 500,
                 color: '#666',
               }}>
-              {item.location}
+              {item.locationName === item.areaName
+                ? item.locationName
+                : `${item.areaName} , ${item.locationName}`}
             </Text>
           </View>
         </View>
       </Pressable>
-    ),
-    [navigation],
-  );
+    );
+  });
 
   return isLoading ? (
     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
@@ -254,6 +340,30 @@ export default function Home({navigation}) {
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.innerContainer}>
           <View style={styles.header}>
+            <View style={styles.locationSection}>
+              <Text
+                style={{
+                  color: '#222',
+                  fontWeight: 500,
+                }}>
+                Hi, {userInfo.first_name}
+              </Text>
+              <TouchableOpacity
+                style={{
+                  flexDirection: 'row',
+                }}
+                onPress={() => navigation.navigate('Location')}>
+                <MaterialIcon name="location-pin" color={'#222'} size={20} />
+                <Text
+                  style={{
+                    color: '#222',
+                    fontWeight: 500,
+                    textDecorationLine: 'underline',
+                  }}>
+                  {userInfo.localUserArea.name}
+                </Text>
+              </TouchableOpacity>
+            </View>
             <View style={styles.btnSection}>
               <TouchableOpacity
                 onPress={() => navigation.navigate('Home')}
@@ -283,66 +393,101 @@ export default function Home({navigation}) {
               </TouchableOpacity>
             </View>
             <View style={styles.searchBarSection}>
+              <TextInput
+                returnKeyType="search"
+                placeholder="Find Mobile, Cars ....."
+                style={styles.inputBox}
+                value={searchText}
+                onChangeText={search => {
+                  setSearchText(search);
+                }}
+              />
               <TouchableOpacity
-                style={styles.searchInput}
-                onPress={() => navigation.navigate('AdSearch')}
-                activeOpacity={1}>
-                <MaterialIcon name="search" size={28} color={'#222'} />
-                <Text>Search here</Text>
+                style={styles.searchBtn}
+                onPress={() =>
+                  navigation.navigate('TextSearch', {
+                    areaID: userInfo.localUserArea.id,
+                    text: searchText,
+                  })
+                }>
+                <MaterialIcon name="search" size={26} color={'#FFF'} />
               </TouchableOpacity>
             </View>
           </View>
-          <View style={styles.categorySection}>
+          <View style={styles.categoryAndSellBtnSection}>
             {/* Sell Button to add item for sell */}
             <TouchableOpacity
               style={styles.sellBtn}
-              onPress={() => navigation.navigate('WhatAreYouOffering')}>
+              onPress={() => {
+                navigation.navigate('WhatAreYouOffering', {
+                  categoriesData: categoriesData,
+                });
+              }}>
               <View
                 style={{
-                  flex: 1,
+                  flex: 1.1,
                   alignItems: 'center',
                   justifyContent: 'center',
                 }}>
                 <MaterialIcon
                   name="add-circle-outline"
                   color={'#FF8C00'}
-                  size={35}
+                  size={45}
                 />
               </View>
 
               <View
                 style={{
-                  flex: 1,
+                  flex: 0.9,
                   alignItems: 'center',
                   justifyContent: 'center',
                 }}>
-                <Text style={{fontSize: 16, color: '#111'}}>Sell</Text>
+                <Text
+                  style={{fontSize: 16, color: '#111', marginBottom: '-10%'}}>
+                  Sell /
+                </Text>
+                <Text style={{fontSize: 16, color: '#111'}}>Post Ad</Text>
               </View>
             </TouchableOpacity>
             {/* Category Horizontal List */}
-            <FlatList
-              horizontal={true}
-              data={categoriesData}
-              renderItem={renderItem}
-              showsHorizontalScrollIndicator={false}
-              getItemLayout={getItemLayout}
-              initialNumToRender={5}
-              maxToRenderPerBatch={5}
-            />
+            {isCategoryLoding ? (
+              <View
+                style={[
+                  styles.categoryListSection,
+                  {justifyContent: 'center', alignItems: 'center'},
+                ]}>
+                <ActivityIndicator size="small" color="#0000ff" />
+              </View>
+            ) : (
+              <View style={styles.categoryListSection}>
+                <FlatList
+                  horizontal={true}
+                  data={categoriesData}
+                  renderItem={renderItem}
+                  showsHorizontalScrollIndicator={true}
+                  getItemLayout={getItemLayout}
+                  initialNumToRender={5}
+                  maxToRenderPerBatch={5}
+                />
+              </View>
+            )}
           </View>
 
           <View style={styles.featuredAdsSection}>
             <FlatList
-              data={adData}
-              renderItem={renderAds}
+              data={userAdsData}
+              renderItem={({item}) => <Item item={item} />}
               getItemLayout={getAdCardLayout}
               numColumns={2}
               columnWrapperStyle={{
                 justifyContent: 'space-between',
               }}
-              initialNumToRender={15}
-              maxToRenderPerBatch={15}
+              initialNumToRender={8}
+              maxToRenderPerBatch={8}
               showsVerticalScrollIndicator={false}
+              onEndReached={!flatlistLoading && hasMore ? handleLoadMore : null}
+              onEndReachedThreshold={0.5}
+              ListFooterComponent={renderFooter}
             />
           </View>
         </View>
@@ -357,49 +502,68 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    flex: 0.6,
+    flex: 1,
+  },
+  locationSection: {
+    flex: 0.7,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: '2%',
   },
   btnSection: {
-    flex: 1,
+    flex: 1.15,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
   searchBarSection: {
-    flex: 1,
+    flex: 1.15,
     flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  searchInput: {
-    flexDirection: 'row',
-    gap: 5,
     width: '85%',
-    backgroundColor: '#EFEFEF',
-    height: '85%',
-    borderRadius: 20,
-    padding: 10,
-    elevation: 5, //Android Only
-    shadowRadius: 5, // IOS Only
+    marginHorizontal: '7.5%',
+    borderColor: '#FA8C00',
+    borderWidth: 1,
+    borderRadius: 11,
   },
-  searchIcon: {
-    marginRight: '40%',
+  inputBox: {
+    width: '80%',
+    height: '100%',
   },
-  categorySection: {
-    flex: 0.4,
+  searchBtn: {
+    width: '20%',
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#FA8C00',
+    borderTopRightRadius: 10,
+    borderBottomRightRadius: 10,
+  },
+  categoryAndSellBtnSection: {
+    flex: 0.8,
     flexDirection: 'row',
-    padding: 5,
     gap: 5,
+    marginTop: '1%',
+    borderColor: '#999',
+    borderTopWidth: 0.3,
+    borderBottomWidth: 0.3,
   },
   sellBtn: {
-    paddingHorizontal: 5,
+    flex: 0.2,
     alignItems: 'center',
     justifyContent: 'center',
+    marginRight: '-2%',
+    borderColor: '#999',
+    borderRightWidth: 0.3,
+    padding: 5,
   },
+  categoryListSection: {
+    flex: 0.8,
+  },
+
   category: {
     alignItems: 'center',
     justifyContent: 'center',
   },
-  categoryImg: {width: 35, height: 35},
-  featuredAdsSection: {flex: 3, padding: '1%'},
+  featuredAdsSection: {flex: 4, padding: '2%'},
 });
