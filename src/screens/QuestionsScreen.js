@@ -15,7 +15,6 @@ import {http} from '../shared/lib';
 
 export default function QuestionsScreen({navigation, route}) {
   const AdData = route.params.AdData;
-  // console.log(AdData, '18');
   const [isLoading, setIsLoading] = useState(false);
   const [questionData, setQuestionData] = useState([]);
   const [answerData, setAnswerData] = useState({});
@@ -32,19 +31,13 @@ export default function QuestionsScreen({navigation, route}) {
           },
         },
       );
-      // console.log(questionsRespData.results, '29');
       const questions = questionsRespData.results.map(question => ({
         id: question.id.toString(),
         question: question.question,
       }));
-      console.log(questions);
       setQuestionData(questions);
       setIsLoading(false);
     } catch (err) {
-      console.log(
-        'Something went wrong while fetching questions 40',
-        JSON.stringify(err),
-      );
       setIsLoading(false);
     }
   };

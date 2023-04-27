@@ -22,15 +22,12 @@ export default function Home({navigation}) {
   const getServices = async () => {
     try {
       setIsLoading(true);
-      console.log('inside get services');
       const token = await AsyncStorage.getItem('token');
-      console.log(token);
       const servicesRespData = await http.get('service/user/', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      // console.log(servicesRespData);
       const services = servicesRespData.map(service => ({
         key: service.id.toString(),
         title: service.name,
@@ -48,10 +45,6 @@ export default function Home({navigation}) {
           onPress: () => navigation.goBack(),
         },
       ]);
-      // console.log(
-      //   'Something went wrong while fetching services',
-      //   JSON.stringify(err),
-      // );
     }
   };
 
@@ -73,7 +66,6 @@ export default function Home({navigation}) {
       services.push({key: `blank-${numberOfItemsLastRow}`, empty: true});
       numberOfItemsLastRow++;
     }
-    console.log(services);
     return services;
   };
 

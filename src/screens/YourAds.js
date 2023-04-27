@@ -17,15 +17,14 @@ import {useIsFocused} from '@react-navigation/native';
 
 export default function YourAds({navigation, route}) {
   const [yourAdsData, setYourAdsData] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const isFocused = useIsFocused();
   const wasFocused = useRef(false);
   const [flatlistLoading, setFlatlistLoading] = useState(false);
-  const [pageSize, setPageSize] = useState(10);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [showNoAdsFoundMsg, setShowNoAdsFoundMsg] = useState(false);
+  const pageSize = 10;
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', async () => {
@@ -38,18 +37,14 @@ export default function YourAds({navigation, route}) {
   }, [navigation]);
 
   useEffect(() => {
-    setFlatlistLoading(true);
-    (async () => {
-      setPage(1);
-      setYourAdsData([]);
-      if (isFocused && !wasFocused.current) {
-        // Reload the screen when it comes into focus
-        await getUserAds();
-      }
-      // Update the previous focus state
-      wasFocused.current = isFocused;
-      setFlatlistLoading(false);
-    })();
+    setPage(1);
+    setYourAdsData([]);
+    if (isFocused && !wasFocused.current) {
+      // Reload the screen when it comes into focus
+      getUserAds();
+    }
+    // Update the previous focus state
+    wasFocused.current = isFocused;
   }, [isFocused]);
 
   useEffect(() => {
@@ -60,10 +55,9 @@ export default function YourAds({navigation, route}) {
 
   const getUserAds = async () => {
     try {
+      setFlatlistLoading(true);
       const token = await AsyncStorage.getItem('token');
       const userData = await AsyncStorage.getItem('userInfo');
-
-      // console.log(JSON.parse(userData).id, '12 line');
 
       const yourAdsRespData = await http.get(
         `/user-ad/?user_id=${JSON.parse(userData).id}`,
@@ -75,7 +69,6 @@ export default function YourAds({navigation, route}) {
       );
       setHasMore(page <= Math.ceil(yourAdsRespData.count) / pageSize);
       setShowNoAdsFoundMsg(Math.ceil(yourAdsRespData.count) ? false : true);
-      // console.log(page <= Math.ceil(yourAdsRespData.count) / pageSize, '61');
       const ads = yourAdsRespData.results?.map((ad, index) => ({
         id: ad.id,
         title: ad.name,
@@ -90,7 +83,6 @@ export default function YourAds({navigation, route}) {
         areaName: ad.area?.name,
         key: `${yourAdsData.length + index}`,
       }));
-      // console.log(ads);
       setYourAdsData([...yourAdsData, ...ads]);
     } catch (err) {
       Alert.alert(
@@ -103,33 +95,36 @@ export default function YourAds({navigation, route}) {
           },
         ],
       );
+    } finally {
+      setFlatlistLoading(false);
     }
   };
 
   const renderFooter = () => {
-    if (showNoAdsFoundMsg) {
-      return (
-        <Text style={{fontSize: 14, color: '#222', textAlign: 'center'}}>
-          No Ads Found.
-        </Text>
-      );
-    }
-    if (!showNoAdsFoundMsg && !hasMore) {
-      return (
-        <Text style={{fontSize: 14, color: '#222', textAlign: 'center'}}>
-          No More Ads to Show
-        </Text>
-      );
-    }
-    console.log(flatlistLoading, '120');
     if (flatlistLoading) {
       return (
         <View style={{marginTop: 10}}>
           <ActivityIndicator size="small" color="#0000ff" />
         </View>
       );
+    }
+
+    if (showNoAdsFoundMsg) {
+      return (
+        <Text style={{fontSize: 14, color: '#222', textAlign: 'center'}}>
+          No Ads Found.
+        </Text>
+      );
     } else {
-      return null;
+      if (!hasMore) {
+        return (
+          <Text style={{fontSize: 14, color: '#222', textAlign: 'center'}}>
+            No More Ads to Show
+          </Text>
+        );
+      } else {
+        return null;
+      }
     }
   };
 
@@ -210,11 +205,7 @@ export default function YourAds({navigation, route}) {
       </TouchableOpacity>
     );
   };
-  return isLoading ? (
-    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-      <ActivityIndicator size={'large'} />
-    </View>
-  ) : (
+  return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity

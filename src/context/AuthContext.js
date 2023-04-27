@@ -17,7 +17,6 @@ export const AuthProvider = ({children}) => {
         Authorization: `Bearer ${token}`,
       },
     });
-    // console.log(userInfo);
     user = {...user, localUserArea: user.area};
     setUserToken(token);
     setUserInfo(user);
@@ -41,12 +40,10 @@ export const AuthProvider = ({children}) => {
     };
 
     try {
-      //console.log('inside login 43');
       let respData = await http.post(url, data, config);
       const token = respData.access_token;
       const userid = token ? respData.user_id : respData.id;
       const response = {};
-      // console.log(respData, userid, 'resp from login & get user by id');
 
       if (token) {
         await onTokenAvailable(respData, token, userid);
@@ -60,12 +57,9 @@ export const AuthProvider = ({children}) => {
       }
     } catch (error) {
       setIsLoading(false);
-      console.log(error.response.status, '62');
-      if (error.response.status == 500) {
-        console.log(error.response.details, '64');
+      if (error.response.status === 500) {
         Alert.alert('ERROR', 'User not exist ', [{text: 'OK'}]);
-      } else if (error.response.status == 400) {
-        console.log(error.response.details, '67');
+      } else if (error.response.status === 400) {
         Alert.alert('ERROR', 'Check Your username OR password', [{text: 'OK'}]);
       } else {
         Alert.alert('ERROR', 'Something Went Wrong', [{text: 'OK'}]);
@@ -87,11 +81,10 @@ export const AuthProvider = ({children}) => {
   const isVerified = async respData => {
     try {
       setIsLoading(true);
-      console.log(respData);
       onTokenAvailable(respData, respData.access_token, respData.user_id);
       setIsLoading(false);
     } catch (e) {
-      console.log(`isVerified error ${e}`);
+      // Alert.alert('Error', 'Something Went Wrong', [{text: 'OK'}]);
     }
   };
   const isLoggedIn = async () => {
@@ -99,12 +92,11 @@ export const AuthProvider = ({children}) => {
       setIsLoading(true);
       let token = await AsyncStorage.getItem('token');
       let user = await AsyncStorage.getItem('userInfo');
-      console.log(token, 'context 88');
       setUserInfo(JSON.parse(user));
       setUserToken(token);
       setIsLoading(false);
     } catch (e) {
-      console.log(`isLoogedIn error ${e}`);
+      // Alert.alert('ERROR', 'User is not logged In', [{text: 'OK'}]);
     }
   };
   useEffect(() => {

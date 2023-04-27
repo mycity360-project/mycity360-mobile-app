@@ -49,11 +49,8 @@ export default function SignUp() {
         key: location.id.toString(),
         value: location.name,
       }));
-      console.log(selectedLocation);
       setLocationData(locations);
-    } catch (error) {
-      console.log('Something went wrong while fetching locations' + error);
-    }
+    } catch (error) {}
     setIsLoading(false);
   };
 
@@ -76,9 +73,7 @@ export default function SignUp() {
       setAreaData(areas);
       setIsDisabled(false);
       setIsLoading(false);
-    } catch (error) {
-      console.log('Something went wrong while fetching area' + error);
-    }
+    } catch (error) {}
   };
 
   const setLocation = async location => {
@@ -124,7 +119,6 @@ export default function SignUp() {
     } catch (error) {
       setIsLoading(false);
       Alert.alert('ERROR', 'Something went wrong');
-      console.log(JSON.stringify(error));
     }
   };
 
@@ -170,7 +164,6 @@ export default function SignUp() {
         } else if (selectedArea == '') {
           setShowAreaError(true);
         } else {
-          console.log('165');
           setShowLocationError(false);
           setShowAreaError(false);
           handleOnSignUpPress();

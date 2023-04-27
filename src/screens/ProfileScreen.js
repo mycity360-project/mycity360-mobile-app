@@ -47,7 +47,6 @@ export default function ProfileScreen() {
   }, []);
 
   const openCamera = () => {
-    console.log('clicked 47');
     const options = {
       storageOptions: {path: 'images', mediaType: 'photo'},
       saveToPhotos: true,
@@ -85,7 +84,6 @@ export default function ProfileScreen() {
       } else if (response.customButton) {
         console.log('User tapped custom button: ', response.customButton);
       } else {
-        // console.log(response.assets);
         const source = {
           uri: response.assets[0].uri,
           type: response.assets[0].type,
@@ -129,7 +127,6 @@ export default function ProfileScreen() {
           text: 'OK',
         },
       ]);
-      console.log(JSON.stringify(error), 'in error image upload 113');
     }
   };
 
@@ -170,7 +167,7 @@ export default function ProfileScreen() {
             </TouchableOpacity>
           </ImageBackground>
 
-          <View style={{marginLeft: '4%', flex: 1}}>
+          <View style={{marginLeft: '5%', flex: 1, marginVertical: '5%'}}>
             <Title style={styles.title}>
               {userInfo.first_name + ' ' + userInfo.last_name}
             </Title>
@@ -276,7 +273,11 @@ const styles = StyleSheet.create({
     flex: 0.5,
     paddingHorizontal: 20,
   },
-  userInfoHeader: {flex: 1, flexDirection: 'row', marginTop: '5%'},
+  userInfoHeader: {
+    flex: 1,
+    flexDirection: 'row',
+    marginVertical: '5%',
+  },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
@@ -285,14 +286,14 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '500',
   },
-  userInfoBody: {flex: 1},
+  userInfoBody: {flex: 1, marginTop: '5%'},
   row: {
     flexDirection: 'row',
-    marginBottom: 10,
+    padding: '1%',
   },
   rowIcon: {color: '#222', size: 20},
   rowText: {color: '#222', marginLeft: 10},
-  menuSection: {flex: 1},
+  menuSection: {flex: 1, margin: '4%'},
   menuItems: {
     flexDirection: 'row',
     paddingVertical: 15,

@@ -28,7 +28,6 @@ export default function TextSearch({navigation, route}) {
 
   const renderFooter = () => {
     if (showNoAdsFoundMsg) {
-      console.log('39');
       return (
         <Text style={{fontSize: 14, color: '#222', textAlign: 'center'}}>
           No Ads Found
@@ -70,9 +69,7 @@ export default function TextSearch({navigation, route}) {
       setFlatlistLoading(true);
       await getUserAds();
       setFlatlistLoading(false);
-    } catch (error) {
-      console.log(JSON.stringify(error), '71');
-    }
+    } catch (error) {}
   };
 
   const getUserAds = async () => {
@@ -108,8 +105,11 @@ export default function TextSearch({navigation, route}) {
           key: `${adsData.length + index}`,
         };
       });
-      if (page === 1) setAdsData(ads);
-      else setAdsData([...adsData, ...ads]);
+      if (page === 1) {
+        setAdsData(ads);
+      } else {
+        setAdsData([...adsData, ...ads]);
+      }
     } catch (err) {
       Alert.alert(
         'ERROR',

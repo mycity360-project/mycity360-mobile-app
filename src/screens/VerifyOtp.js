@@ -8,7 +8,6 @@ import {BACKEND_CLIENT_ID} from '../shared/constants/env';
 
 export default function VerifyOtp({route}) {
   const {userid} = route.params;
-  console.log(route.params, 'route params');
   const {isVerified} = useContext(AuthContext);
   const [enteredOtp, setEnteredOtp] = useState('');
 
@@ -23,14 +22,10 @@ export default function VerifyOtp({route}) {
       const data = {
         phone_otp: otp,
       };
-      console.log(otp, userid, url, config, data);
 
       const resp = await http.post(url, data, config);
-      console.log(resp, '24');
       return resp;
-    } catch (err) {
-      console.log(JSON.stringify(err), 'verifyotp');
-    }
+    } catch (err) {}
   };
   return (
     <View style={styles.container}>
@@ -48,7 +43,6 @@ export default function VerifyOtp({route}) {
           btnTitle={'Verify'}
           onpress={async () => {
             let data = await verifyOtp(enteredOtp);
-            console.log(data);
             isVerified(data);
           }}
         />

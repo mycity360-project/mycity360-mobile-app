@@ -28,7 +28,6 @@ export default function SubCategory({navigation, route}) {
           },
         },
       );
-      // console.log(subCategoriesRespData.results);
       const subCategories = subCategoriesRespData.results.map(category => ({
         id: category.id.toString(),
         name: category.name,
@@ -37,10 +36,6 @@ export default function SubCategory({navigation, route}) {
       setSubCategoryData(subCategories);
       setIsLoading(false);
     } catch (err) {
-      console.log(
-        'Something went wrong while fetching sub categories line 30',
-        JSON.stringify(err),
-      );
       setIsLoading(false);
     }
   };

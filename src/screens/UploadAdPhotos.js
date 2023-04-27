@@ -28,7 +28,6 @@ export default function UploadAdPhotos({navigation, route}) {
   const [id, setId] = useState(1);
   const ref = useRef();
   const AdData = route.params.AdData;
-  console.log(AdData);
 
   const buttonView = (name, iconName, open) => {
     return (
@@ -62,10 +61,8 @@ export default function UploadAdPhotos({navigation, route}) {
       return item.id !== idToRemove;
     });
     setImages(imagesUpdated);
-    console.log(currentIndex, 'line 40');
 
     if (parseInt(currentIndex)) {
-      console.log('inside scrollto');
       ref.current.scrollToIndex({
         Animated: true,
         index: currentIndex - 1,
@@ -129,9 +126,8 @@ export default function UploadAdPhotos({navigation, route}) {
       } else if (response.customButton) {
         console.log('User tapped custom button: ', response.customButton);
       } else {
-        console.log(response.assets);
         const responseLength = response.assets.length;
-        if (responseLength == 1) {
+        if (responseLength === 1) {
           setMaxImageExceed(false);
           const resp = response.assets[0];
 
@@ -152,7 +148,6 @@ export default function UploadAdPhotos({navigation, route}) {
             const source = {id: count, uri: item.uri, type: item.type};
             updatedImages.push(source);
             count++;
-            console.log(count, 'id after');
           });
           setImages(updatedImages);
           setId(count + 1);
@@ -299,7 +294,6 @@ export default function UploadAdPhotos({navigation, route}) {
           },
         ],
       );
-      // console.log(JSON.stringify(error));
     }
   };
 
@@ -324,7 +318,6 @@ export default function UploadAdPhotos({navigation, route}) {
           keyExtractor={item => item.id}
           onScroll={event => {
             const x = event.nativeEvent.contentOffset.x;
-            console.log(x, (x / width).toFixed(0), 'line 84');
             setCurrentIndex((x / width).toFixed(0));
           }}
           horizontal={true}

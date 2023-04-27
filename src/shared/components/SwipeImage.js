@@ -57,7 +57,6 @@ const SwipeImage = React.forwardRef((props, ref) => {
         keyExtractor={item => item.id}
         onScroll={event => {
           const x = event.nativeEvent.contentOffset.x;
-          console.log(x, (x / width).toFixed(0), 'line 47 of SwipeImage.js');
           const index = (x / width).toFixed(0);
           setCurrentIndex(index);
           () => currentIndexSet(index);

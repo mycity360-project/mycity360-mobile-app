@@ -45,7 +45,6 @@ export default function Location({navigation}) {
           onPress: () => navigation.goBack(),
         },
       ]);
-      // console.log('Something went wrong while fetching locations 21 ', error);
     } finally {
       setIsLoading(false);
     }
@@ -78,7 +77,6 @@ export default function Location({navigation}) {
           onPress: () => navigation.goBack(),
         },
       ]);
-      // console.log('Something went wrong while fetching area' + error);
     }
   };
 

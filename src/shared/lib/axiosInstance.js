@@ -8,7 +8,6 @@ const axiosInstance = axios.create({
 });
 
 axiosInstance.interceptors.response.use(config => {
-  // console.log(config, 'axiosinastance 11');
   if (
     [
       HttpStatusCode.Accepted,
@@ -18,7 +17,6 @@ axiosInstance.interceptors.response.use(config => {
       HttpStatusCode.NonAuthoritativeInformation,
     ].includes(config.status)
   ) {
-    // console.log('21 axios inside if');
     return config?.data;
   } else {
     throw new Error(config);

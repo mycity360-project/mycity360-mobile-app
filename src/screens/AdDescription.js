@@ -26,7 +26,6 @@ export default function AdDescription({route, navigation}) {
   const adDetails = route.params.adDetails;
   const {location, area} = adDetails;
 
-  console.log(adDetails, location, area, '28');
   const openDialer = contactNumber => {
     Platform.OS === 'ios'
       ? Linking.openURL(`telprompt:${contactNumber}`)
@@ -54,7 +53,6 @@ export default function AdDescription({route, navigation}) {
       });
     } catch (error) {
       Alert.alert('ERROR', 'Something Went Wrong', [{text: 'OK'}]);
-      // console.log(JSON.stringify(error), '45');
     }
   };
 
@@ -70,26 +68,19 @@ export default function AdDescription({route, navigation}) {
           },
         },
       );
-      // console.log(answersRespData.results, '42');
       const answers = answersRespData.results.map(answer => ({
         question: answer.question.question,
         answer: answer.answer,
       }));
-      console.log(answers);
       setAnswerData(answers);
       // setIsLoading(false);
     } catch (err) {
-      console.log(
-        'Something went wrong while fetching answers 84',
-        JSON.stringify(err),
-      );
       // setIsLoading(false);
     }
   };
 
   useEffect(() => {
     getAnswers();
-    console.log(answerData, '61');
   }, []);
 
   return isLoading ? (
@@ -105,7 +96,6 @@ export default function AdDescription({route, navigation}) {
             keyExtractor={item => item.id}
             onScroll={event => {
               const x = event.nativeEvent.contentOffset.x;
-              console.log(x, (x / width).toFixed(0), 'line 84');
               setCurrentIndex((x / width).toFixed(0));
             }}
             horizontal={true}

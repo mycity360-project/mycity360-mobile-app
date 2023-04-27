@@ -10,7 +10,7 @@ import CategorySearch from '../screens/CategorySearch';
 import TextSearch from '../screens/TextSearch';
 import Location from '../screens/Location';
 import QuestionsScreen from '../screens/QuestionsScreen';
-import CustomNavigation from '../navigation/CustomNavigation';
+import CustomNavigation from '../navigation/customNavigation';
 const RootStack = createNativeStackNavigator();
 
 export default function AppStack() {

@@ -34,29 +34,25 @@ export default function Home({navigation}) {
   const [searchText, setSearchText] = useState('');
   const {userInfo} = useContext(AuthContext);
   const [showNoAdsFoundMsg, setShowNoAdsFoundMsg] = useState(false);
-  console.log(userInfo, '37');
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', async () => {
       // Clear the state on coming back after navigating
       setPage(1);
       setUserAdsData([]);
+      // setFlatlistLoading(false);
     });
     // Return the unsubscribe function to avoid memory leaks
     return unsubscribe;
   }, [navigation]);
 
   useEffect(() => {
-    setFlatlistLoading(true);
-    (async () => {
-      setSearchText('');
-      if (isFocused && !wasFocused.current) {
-        // Reload the screen when it comes into focus
-        await getUserAds();
-      }
-      // Update the previous focus state
-      wasFocused.current = isFocused;
-      setFlatlistLoading(false);
-    })();
+    setSearchText('');
+    if (isFocused && !wasFocused.current) {
+      // Reload the screen when it comes into focus
+      getUserAds();
+    }
+    // Update the previous focus state
+    wasFocused.current = isFocused;
   }, [isFocused]);
 
   const getCategories = async () => {
@@ -92,33 +88,36 @@ export default function Home({navigation}) {
   }, []);
 
   const renderFooter = () => {
-    if (showNoAdsFoundMsg) {
-      return (
-        <Text style={{fontSize: 14, color: '#222', textAlign: 'center'}}>
-          No Ads Found
-        </Text>
-      );
-    }
-    if (!showNoAdsFoundMsg && !hasMore) {
-      return (
-        <Text style={{fontSize: 14, color: '#222', textAlign: 'center'}}>
-          No More Ads to Show
-        </Text>
-      );
-    }
     if (flatlistLoading) {
       return (
         <View style={{marginTop: 10}}>
           <ActivityIndicator size="small" color="#0000ff" />
         </View>
       );
+    }
+
+    if (showNoAdsFoundMsg) {
+      return (
+        <Text style={{fontSize: 14, color: '#222', textAlign: 'center'}}>
+          No Ads Found
+        </Text>
+      );
     } else {
-      return null;
+      if (!hasMore) {
+        return (
+          <Text style={{fontSize: 14, color: '#222', textAlign: 'center'}}>
+            No More Ads to Show
+          </Text>
+        );
+      } else {
+        return null;
+      }
     }
   };
 
   const getUserAds = async () => {
     try {
+      setFlatlistLoading(true);
       const token = await AsyncStorage.getItem('token');
       const userAdsRespData = await http.get(
         `/user-ad/?is_active=True&page=${page}&area_id=${userInfo.localUserArea.id}`,

@@ -65,7 +65,6 @@ export default function Login() {
       setIsLoading(false);
       navigation.navigate('VerifyOtp', {userid: response.userid});
     }
-    console.log('68');
     setIsLoading(false);
   };
 

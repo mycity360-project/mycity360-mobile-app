@@ -29,7 +29,6 @@ export default function CategorySearch({navigation, route}) {
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', async () => {
       // Clear the state on coming back after navigating
-      console.log('32');
       setPage(1);
       setAdsData([]);
       getUserAds();
@@ -77,14 +76,12 @@ export default function CategorySearch({navigation, route}) {
 
   const getUserAds = async () => {
     try {
-      console.log('get ads', adsData, '64');
       const token = await AsyncStorage.getItem('token');
       let url = `/user-ad/?is_active=True&area_id=${areaID}&page=${page}`;
       if (categoryID !== '' && categoryID !== undefined) {
         url = url.concat(`&category_id=${categoryID}`);
       }
 
-      console.log(url, 'Line 66');
       const adsRespData = await http.get(url, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -110,11 +107,8 @@ export default function CategorySearch({navigation, route}) {
         };
       });
 
-      console.log(ads, '94');
       setAdsData([...adsData, ...ads]);
-      // console.log(adsData, '100');
     } catch (err) {
-      console.log('102 eror CategorySearch');
       Alert.alert(
         'ERROR',
         'Something went wrong, Unable to Fetch Ads CategorySearch',
