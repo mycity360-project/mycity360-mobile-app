@@ -6,14 +6,14 @@
  */
 
 import React from 'react';
-import {View} from 'react-native';
-import {Signup} from './src/pages/signup';
+import {AuthProvider} from './src/context/AuthContext';
+import AppNav from './src/navigation/AppNav';
 
 function App() {
   return (
-    <View>
-      <Signup />
-    </View>
+    <AuthProvider>
+      <AppNav />
+    </AuthProvider>
   );
 }
 
