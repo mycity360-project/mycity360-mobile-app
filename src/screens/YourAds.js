@@ -27,31 +27,19 @@ export default function YourAds({navigation, route}) {
   const pageSize = 10;
 
   useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', async () => {
-      // Clear the state on coming back after navigating
-      setPage(1);
-      setYourAdsData([]);
-    });
-    // Return the unsubscribe function to avoid memory leaks
-    return unsubscribe;
-  }, [navigation]);
-
-  useEffect(() => {
-    setPage(1);
-    setYourAdsData([]);
-    if (isFocused && !wasFocused.current) {
-      // Reload the screen when it comes into focus
-      getUserAds();
-    }
-    // Update the previous focus state
-    wasFocused.current = isFocused;
+    (async () => {
+      if (isFocused && !wasFocused.current) {
+        // Reload the screen when it comes into focus
+        setPage(1);
+        await getUserAds();
+        if (route.params?.showAlert) {
+          setShowAlert(true);
+        }
+      }
+      // Update the previous focus state
+      wasFocused.current = isFocused;
+    })();
   }, [isFocused]);
-
-  useEffect(() => {
-    if (route.params?.showAlert) {
-      setShowAlert(true);
-    }
-  }, [route.params?.showAlert]);
 
   const getUserAds = async () => {
     try {
@@ -83,7 +71,8 @@ export default function YourAds({navigation, route}) {
         areaName: ad.area?.name,
         key: `${yourAdsData.length + index}`,
       }));
-      setYourAdsData([...yourAdsData, ...ads]);
+      if (page === 1) setYourAdsData(ads);
+      else setYourAdsData([...yourAdsData, ...ads]);
     } catch (err) {
       Alert.alert(
         'ERROR',
