@@ -12,6 +12,8 @@ import {
   ActivityIndicator,
   Alert,
   TextInput,
+  Dimensions,
+  Linking,
 } from 'react-native';
 import {React, useEffect, useState, useRef, memo, useContext} from 'react';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
@@ -19,6 +21,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {http} from '../shared/lib';
 import {useIsFocused} from '@react-navigation/native';
 import {AuthContext} from '../context/AuthContext';
+import WebView from 'react-native-webview';
+const {width, height} = Dimensions.get('window');
 
 export default function Home({navigation}) {
   const [categoriesData, setCategoriesData] = useState([]);
@@ -34,6 +38,73 @@ export default function Home({navigation}) {
   const [searchText, setSearchText] = useState('');
   const {userInfo} = useContext(AuthContext);
   const [showNoAdsFoundMsg, setShowNoAdsFoundMsg] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const flatListRef = useRef(null);
+  const [isReady, setIsReady] = useState(false);
+  const [isScrolling, setIsScrolling] = useState(false);
+  const [bannerImages, setBannerImages] = useState([]);
+  const [showBanner, setShowBanner] = useState(false);
+
+  const getBannerImages = async () => {
+    try {
+      const token = await AsyncStorage.getItem('token');
+      const bannerRespData = await http.get('banner/user/?is_active=True', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const images = bannerRespData?.results?.map(img => ({
+        key: img.id.toString(),
+        image: img.image,
+        redirectUrl: img.redirect_url,
+      }));
+      setBannerImages(images);
+      setShowBanner(images.length ? true : false);
+    } catch (err) {
+      Alert.alert(
+        'ERROR',
+        'Something went wrong, Unable to Fetch banner images',
+        [
+          {
+            text: 'OK',
+          },
+        ],
+      );
+    }
+  };
+
+  const handleWebLink = uri => {
+    console.log(uri, '72');
+    navigation.navigate('WebViewScreen', {
+      uri,
+    });
+  };
+
+  const getBannerLayout = (data, index) => ({
+    length: width,
+    offset: width * index,
+    index,
+  });
+
+  useEffect(() => {
+    if (!isReady) return;
+    const interval = setInterval(() => {
+      if (!isScrolling) {
+        const nextIndex = (currentIndex + 1) % bannerImages.length;
+        setCurrentIndex(nextIndex);
+        flatListRef.current?.scrollToIndex({index: nextIndex, animated: true});
+      }
+    }, 10000);
+
+    return () => clearInterval(interval);
+  }, [currentIndex, bannerImages, isReady, isScrolling]);
+
+  useEffect(() => {
+    if (flatListRef.current && isReady) {
+      flatListRef.current.scrollToIndex({index: currentIndex, animated: true});
+    }
+  }, [currentIndex, isReady]);
+
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', async () => {
       // Clear the state on coming back after navigating
@@ -85,6 +156,7 @@ export default function Home({navigation}) {
 
   useEffect(() => {
     getCategories();
+    getBannerImages();
   }, []);
 
   const renderFooter = () => {
@@ -472,8 +544,68 @@ export default function Home({navigation}) {
               </View>
             )}
           </View>
-
-          <View style={styles.featuredAdsSection}>
+          {showBanner && (
+            <View style={styles.bannerSection}>
+              {/* <TouchableOpacity onPress={openLinkHandler}> */}
+              <FlatList
+                data={bannerImages}
+                ref={flatListRef}
+                keyExtractor={item => item.key}
+                onMomentumScrollBegin={() => setIsScrolling(true)}
+                onMomentumScrollEnd={event => {
+                  if (isScrolling) {
+                    const x = event.nativeEvent.contentOffset.x;
+                    let index = Math.round(x / width);
+                    const len = bannerImages.length - 1;
+                    if (index === len && currentIndex === len) {
+                      index = 0;
+                      flatListRef.current?.scrollToIndex({index});
+                    }
+                    setCurrentIndex(index);
+                    setIsScrolling(false);
+                  }
+                }}
+                getItemLayout={getBannerLayout}
+                onLayout={() => setIsReady(true)}
+                horizontal={true}
+                showsHorizontalScrollIndicator={false}
+                pagingEnabled={true}
+                renderItem={({item, index}) => {
+                  return (
+                    <TouchableOpacity
+                      onPress={() => handleWebLink(item.redirectUrl)}>
+                      <Image
+                        source={{uri: item.image}}
+                        resizeMode="contain"
+                        style={styles.wrapper}
+                      />
+                    </TouchableOpacity>
+                  );
+                }}
+              />
+              <View style={styles.dotWrapper}>
+                {bannerImages.map((e, index) => {
+                  return (
+                    <View
+                      key={index}
+                      style={[
+                        styles.dotCommon,
+                        parseInt(currentIndex) === index
+                          ? styles.dotActive
+                          : styles.dotNotActive,
+                      ]}
+                    />
+                  );
+                })}
+              </View>
+              {/* </TouchableOpacity> */}
+            </View>
+          )}
+          <View
+            style={[
+              styles.featuredAdsSection,
+              showBanner ? {flex: 2.8} : {flex: 4},
+            ]}>
             <FlatList
               data={userAdsData}
               renderItem={({item}) => <Item item={item} />}
@@ -565,5 +697,26 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  featuredAdsSection: {flex: 4, padding: '2%'},
+  bannerSection: {
+    flex: 1.2,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#999',
+    marginTop: '1%',
+  },
+  wrapper: {width: width, height: '100%'},
+  dotWrapper: {
+    flexDirection: 'row',
+    position: 'absolute',
+    alignSelf: 'center',
+    bottom: 10,
+  },
+  dotCommon: {width: 12, height: 12, borderRadius: 6, marginLeft: 5},
+  dotActive: {
+    backgroundColor: '#FA8C00',
+  },
+  dotNotActive: {
+    backgroundColor: '#fff',
+  },
+  featuredAdsSection: {padding: '2%'},
 });

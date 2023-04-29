@@ -11,6 +11,7 @@ import TextSearch from '../screens/TextSearch';
 import Location from '../screens/Location';
 import QuestionsScreen from '../screens/QuestionsScreen';
 import CustomNavigation from '../navigation/customNavigation';
+import WebViewScreen from '../screens/WebViewScreen';
 const RootStack = createNativeStackNavigator();
 
 export default function AppStack() {
@@ -36,6 +37,7 @@ export default function AppStack() {
       <RootStack.Screen name="TextSearch" component={TextSearch} />
       <RootStack.Screen name="Location" component={Location} />
       <RootStack.Screen name="QuestionsScreen" component={QuestionsScreen} />
+      <RootStack.Screen name="WebViewScreen" component={WebViewScreen} />
     </RootStack.Navigator>
   );
 }
