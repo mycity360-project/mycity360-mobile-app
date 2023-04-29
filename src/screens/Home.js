@@ -21,6 +21,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {http} from '../shared/lib';
 import {useIsFocused} from '@react-navigation/native';
 import {AuthContext} from '../context/AuthContext';
+import WebView from 'react-native-webview';
 const {width, height} = Dimensions.get('window');
 
 export default function Home({navigation}) {
@@ -41,13 +42,43 @@ export default function Home({navigation}) {
   const flatListRef = useRef(null);
   const [isReady, setIsReady] = useState(false);
   const [isScrolling, setIsScrolling] = useState(false);
+  const [bannerImages, setBannerImages] = useState([]);
+  const [showBanner, setShowBanner] = useState(false);
 
-  const images = [
-    {uri: 'https://source.unsplash.com/random/1000x400/?img=10', key: '1'},
-    {uri: 'https://source.unsplash.com/random/1000x400/?img=6', key: '2'},
-    {uri: 'https://source.unsplash.com/random/1000x400/?img=3', key: '3'},
-    {uri: 'https://source.unsplash.com/random/1000x400/?img=8', key: '4'},
-  ];
+  const getBannerImages = async () => {
+    try {
+      const token = await AsyncStorage.getItem('token');
+      const bannerRespData = await http.get('banner/user/?is_active=True', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const images = bannerRespData?.results?.map(img => ({
+        key: img.id.toString(),
+        image: img.image,
+        redirectUrl: img.redirect_url,
+      }));
+      setBannerImages(images);
+      setShowBanner(images.length ? true : false);
+    } catch (err) {
+      Alert.alert(
+        'ERROR',
+        'Something went wrong, Unable to Fetch banner images',
+        [
+          {
+            text: 'OK',
+          },
+        ],
+      );
+    }
+  };
+
+  const handleWebLink = uri => {
+    console.log(uri, '72');
+    navigation.navigate('WebViewScreen', {
+      uri,
+    });
+  };
 
   const getBannerLayout = (data, index) => ({
     length: width,
@@ -59,32 +90,20 @@ export default function Home({navigation}) {
     if (!isReady) return;
     const interval = setInterval(() => {
       if (!isScrolling) {
-        const nextIndex = (currentIndex + 1) % images.length;
+        const nextIndex = (currentIndex + 1) % bannerImages.length;
         setCurrentIndex(nextIndex);
         flatListRef.current?.scrollToIndex({index: nextIndex, animated: true});
       }
-    }, 60000);
+    }, 10000);
 
     return () => clearInterval(interval);
-  }, [currentIndex, images.length, isReady, isScrolling]);
+  }, [currentIndex, bannerImages, isReady, isScrolling]);
 
   useEffect(() => {
     if (flatListRef.current && isReady) {
       flatListRef.current.scrollToIndex({index: currentIndex, animated: true});
     }
   }, [currentIndex, isReady]);
-
-  const openLinkHandler = async () => {
-    const link = 'https://www.google.com';
-    const canOpen = await Linking.canOpenURL(link);
-    // const fallbackUrl = Platform.OS === 'ios' ? url : `http://${url}`;
-
-    if (canOpen) {
-      await Linking.openURL(link);
-    } else {
-      console.log('unable to open link 83');
-    }
-  };
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', async () => {
@@ -137,6 +156,7 @@ export default function Home({navigation}) {
 
   useEffect(() => {
     getCategories();
+    getBannerImages();
   }, []);
 
   const renderFooter = () => {
@@ -524,59 +544,68 @@ export default function Home({navigation}) {
               </View>
             )}
           </View>
-          <View style={styles.bannerSection}>
-            {/* <TouchableOpacity onPress={openLinkHandler}> */}
-            <FlatList
-              data={images}
-              ref={flatListRef}
-              keyExtractor={item => item.key}
-              onMomentumScrollBegin={() => setIsScrolling(true)}
-              onMomentumScrollEnd={event => {
-                setIsScrolling(false);
-                const x = event.nativeEvent.contentOffset.x;
-                let index = Math.round(x / width);
-                // console.log(index, x, width, x / width, '538');
-                console.log(parseInt(index) === len, currentIndex === index);
-                const len = images.length - 1;
-                if (parseInt(index) === len && currentIndex === index) {
-                  index = 0;
-                  flatListRef.current?.scrollToIndex({index});
-                }
-                setCurrentIndex(index);
-              }}
-              getItemLayout={getBannerLayout}
-              onLayout={() => setIsReady(true)}
-              horizontal={true}
-              showsHorizontalScrollIndicator={false}
-              pagingEnabled={true}
-              renderItem={({item, index}) => {
-                return (
-                  <Image
-                    source={{uri: item.uri}}
-                    resizeMode="contain"
-                    style={styles.wrapper}
-                  />
-                );
-              }}
-            />
-            <View style={styles.dotWrapper}>
-              {images.map((e, index) => {
-                return (
-                  <View
-                    key={index}
-                    style={[
-                      styles.dotCommon,
-                      parseInt(currentIndex) === index
-                        ? styles.dotActive
-                        : styles.dotNotActive,
-                    ]}
-                  />
-                );
-              })}
+          {showBanner && (
+            <View style={styles.bannerSection}>
+              {/* <TouchableOpacity onPress={openLinkHandler}> */}
+              <FlatList
+                data={bannerImages}
+                ref={flatListRef}
+                keyExtractor={item => item.key}
+                onMomentumScrollBegin={() => setIsScrolling(true)}
+                onMomentumScrollEnd={event => {
+                  if (isScrolling) {
+                    const x = event.nativeEvent.contentOffset.x;
+                    let index = Math.round(x / width);
+                    const len = bannerImages.length - 1;
+                    if (index === len && currentIndex === len) {
+                      index = 0;
+                      flatListRef.current?.scrollToIndex({index});
+                    }
+                    setCurrentIndex(index);
+                    setIsScrolling(false);
+                  }
+                }}
+                getItemLayout={getBannerLayout}
+                onLayout={() => setIsReady(true)}
+                horizontal={true}
+                showsHorizontalScrollIndicator={false}
+                pagingEnabled={true}
+                renderItem={({item, index}) => {
+                  return (
+                    <TouchableOpacity
+                      onPress={() => handleWebLink(item.redirectUrl)}>
+                      <Image
+                        source={{uri: item.image}}
+                        resizeMode="contain"
+                        style={styles.wrapper}
+                      />
+                    </TouchableOpacity>
+                  );
+                }}
+              />
+              <View style={styles.dotWrapper}>
+                {bannerImages.map((e, index) => {
+                  return (
+                    <View
+                      key={index}
+                      style={[
+                        styles.dotCommon,
+                        parseInt(currentIndex) === index
+                          ? styles.dotActive
+                          : styles.dotNotActive,
+                      ]}
+                    />
+                  );
+                })}
+              </View>
+              {/* </TouchableOpacity> */}
             </View>
-            {/* </TouchableOpacity> */}
-          </View>
-          <View style={styles.featuredAdsSection}>
+          )}
+          <View
+            style={[
+              styles.featuredAdsSection,
+              showBanner ? {flex: 2.8} : {flex: 4},
+            ]}>
             <FlatList
               data={userAdsData}
               renderItem={({item}) => <Item item={item} />}
@@ -689,5 +718,5 @@ const styles = StyleSheet.create({
   dotNotActive: {
     backgroundColor: '#fff',
   },
-  featuredAdsSection: {flex: 2.8, padding: '2%'},
+  featuredAdsSection: {padding: '2%'},
 });
