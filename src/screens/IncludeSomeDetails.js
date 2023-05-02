@@ -4,6 +4,7 @@ import {
   View,
   TouchableOpacity,
   TextInput,
+  SafeAreaView,
 } from 'react-native';
 import React, {useState} from 'react';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
@@ -14,16 +15,15 @@ export default function IncludeSomeDetails({navigation, route}) {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [descLength, setDescLength] = useState(Number(0));
-  const [price, setPrice] = useState('');
   const [isTitleError, setIsTitleError] = useState(false);
   const [isDescError, setIsDescError] = useState(false);
   const [isPriceError, setIsPriceError] = useState(false);
   const [isPriceZero, setIsPriceZero] = useState(false);
+  // const [adDescription, setAdDescription] = useState('');
+  // const [adDescriptionError, setAdDescriptionError] = useState('');
   const errors = {
     title: 'Title is Required',
     description: 'Description is Required',
-    price: 'Price is Required',
-    priceZero: 'Price Cannot be 0',
   };
   const onNextHandler = () => {
     if (title.length == Number(0)) {
@@ -33,28 +33,34 @@ export default function IncludeSomeDetails({navigation, route}) {
       setIsTitleError(false);
       setIsDescError(true);
       return;
-    } else if (price.length == Number(0)) {
-      setIsDescError(false);
-      setIsPriceError(true);
-      return;
-    } else if (!Number(price)) {
-      setIsPriceError(false);
-      setIsPriceZero(true);
     } else {
-      setIsPriceZero(false);
+      setIsDescError(false);
       navigation.navigate('QuestionsScreen', {
         AdData: {
           title: title,
           description: description,
-          price: Number(price),
           ...route.params,
         },
       });
     }
   };
 
+  // const handleDescChange = desc => {
+  //   const len = desc.length;
+  //   if (len > AD_DESC_MAX_LENGTH) {
+  //     setAdDescription(adDescription); // Reset to previous value if maxLength is exceeded
+  //     setAdDescriptionError(
+  //       `Ad description cannot exceed ${AD_DESC_MAX_LENGTH} characters`,
+  //     );
+  //   } else {
+  //     setAdDescription(desc);
+  //     setAdDescriptionError('');
+  //   }
+  //   setDescLength(len);
+  // };
+
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity
           onPress={() => {
@@ -74,7 +80,9 @@ export default function IncludeSomeDetails({navigation, route}) {
             placeholder="Enter Title"
             autoFocus={true}
             value={title}
-            onChangeText={title => setTitle(title)}
+            onChangeText={title => {
+              setTitle(title);
+            }}
             style={{borderBottomWidth: 1, padding: 1, marginBottom: 20}}
           />
         </View>
@@ -91,12 +99,11 @@ export default function IncludeSomeDetails({navigation, route}) {
           <TextInput
             placeholder="Describe your product."
             multiline={true}
-            maxLength={AD_DESC_MAX_LENGTH}
+            // maxLength={AD_DESC_MAX_LENGTH}
             numberOfLines={5}
             value={description}
             onChangeText={desc => {
               setDescription(desc);
-              setDescLength(desc.length);
             }}
             style={{
               borderWidth: 0.5,
@@ -105,20 +112,11 @@ export default function IncludeSomeDetails({navigation, route}) {
             }}
           />
         </View>
-        {isDescError ? (
-          <Text style={styles.error}>{errors.description}</Text>
-        ) : (
-          ''
-        )}
+        {isDescError && <Text style={styles.error}>{errors.description}</Text>}
 
-        <View style={{flex: 0.1, flexDirection: 'row'}}>
-          {descLength == AD_DESC_MAX_LENGTH ? (
-            <Text style={{color: 'red'}}>
-              You have reached maximum input limit
-            </Text>
-          ) : (
-            ''
-          )}
+        {/* <View style={{flex: 0.1, flexDirection: 'row'}}>
+          <Text style={{color: 'red'}}>{adDescriptionError}</Text>
+
           <View
             style={{
               flex: 1,
@@ -134,8 +132,8 @@ export default function IncludeSomeDetails({navigation, route}) {
               </Text>
             )}
           </View>
-        </View>
-        <View style={{flex: 1}}>
+        </View> */}
+        {/* <View style={{flex: 1}}>
           <Text style={{fontSize: 16, fontWeight: 500, color: '#222'}}>
             Price
           </Text>
@@ -154,7 +152,7 @@ export default function IncludeSomeDetails({navigation, route}) {
           ) : (
             ''
           )}
-        </View>
+        </View> */}
       </View>
       <View
         style={{flex: 1.5, justifyContent: 'center', alignContent: 'center'}}>
@@ -164,7 +162,7 @@ export default function IncludeSomeDetails({navigation, route}) {
           style={{width: '90%', marginHorizontal: '5%'}}
         />
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 

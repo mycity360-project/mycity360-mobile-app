@@ -6,35 +6,51 @@ import {
   TextInput,
   ActivityIndicator,
   FlatList,
+  Switch,
+  SafeAreaView,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import CustomButton from '../shared/components/CustomButton';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import {http} from '../shared/lib';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import ModalView from '../shared/components/ModalView';
 
 export default function QuestionsScreen({navigation, route}) {
   const AdData = route.params.AdData;
   const [isLoading, setIsLoading] = useState(false);
   const [questionData, setQuestionData] = useState([]);
   const [answerData, setAnswerData] = useState({});
+  const [toggleValue, setToggleValue] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedItem, setSelectedItem] = useState('');
+  const [selectedDropdownItemId, setSelectedDropdownItemId] = useState(null);
+  const [selectedDropdownItem, setSelectedDropdownItem] = useState('');
 
   const getQuestions = async () => {
     try {
       setIsLoading(true);
       const token = await AsyncStorage.getItem('token');
-      const questionsRespData = await http.get(
-        `question/user/?category_id=${AdData.subCategoryID}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+      const url = `question/user/?category_id=${AdData.subCategoryID}`;
+      const questionsRespData = await http.get(url, {
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
-      );
-      const questions = questionsRespData.results.map(question => ({
-        id: question.id.toString(),
-        question: question.question,
+      });
+      const questions = questionsRespData.results?.map((question, index) => ({
+        id: question?.id?.toString(),
+        question: question?.question,
+        field: question?.field_type,
+        label: question?.label,
+        placeholder: question?.placeholder,
+        isRequired: question?.is_required,
+        answerLimit: question?.answer_limit,
+        values: question?.values?.map((item, index) => ({
+          key: index.toString(),
+          value: item,
+        })),
       }));
+      console.log(questions, 44);
       setQuestionData(questions);
       setIsLoading(false);
     } catch (err) {
@@ -44,20 +60,95 @@ export default function QuestionsScreen({navigation, route}) {
 
   useEffect(() => {
     getQuestions();
+    console.log('55');
   }, []);
+
+  const handleAnswer = (id, answer) => {
+    console.log(id, answer);
+    setAnswerData(prev => ({
+      ...prev,
+      [id]: answer,
+    }));
+  };
+
+  const handleDropdownSelection = (id, answer) => {
+    setSelectedDropdownItem(answer);
+    handleAnswer(id, answer);
+  };
+
+  const handleToggle = (id, value) => {
+    setToggleValue(value);
+    let answer = value ? 'Yes' : 'No';
+    handleAnswer(id, answer);
+  };
 
   const renderQuestion = ({item, index}) => {
     return (
       <View>
-        <Text style={{color: '#222'}}>
-          {index + 1}. {item.question}
-        </Text>
-        <TextInput
-          style={styles.inputField}
-          onChangeText={txt => {
-            setAnswerData({...answerData, [item.id]: txt});
-          }}
-        />
+        {item.field === 'Text' ? (
+          <View style={{marginTop: 5}}>
+            <Text style={styles.questionText}>{item.question}</Text>
+            <TextInput
+              placeholder={item.placeholder}
+              maxLength={item.answerLimit}
+              onChangeText={answer => handleAnswer(item.id, answer)}
+              style={{borderBottomWidth: 1, padding: 1}}
+            />
+          </View>
+        ) : item.field === 'Dropdown' ? (
+          <View style={{marginTop: 15}}>
+            <Text style={styles.questionText}>{item.question}</Text>
+            <TouchableOpacity
+              onPress={() => {
+                setSelectedDropdownItemId(item.id);
+                setModalVisible(true);
+              }}>
+              <Text style={{borderBottomWidth: 1, padding: 5}}>
+                {answerData[item.id] || item.placeholder}
+              </Text>
+              {selectedDropdownItemId === item.id && (
+                <ModalView
+                  title={item.label}
+                  visible={modalVisible}
+                  data={item.values}
+                  onSelect={answer =>
+                    handleDropdownSelection(item.id, answer.value)
+                  }
+                  onClose={() => {
+                    setModalVisible(false);
+                    setSelectedDropdownItemId(null);
+                    setSelectedDropdownItem('');
+                  }}
+                />
+              )}
+            </TouchableOpacity>
+          </View>
+        ) : item.field === 'Number' ? (
+          <View style={{marginTop: 15}}>
+            <Text style={styles.questionText}>{item.question}</Text>
+            <TextInput
+              placeholder={item.placeholder}
+              maxLength={item.answerLimit}
+              keyboardType="numeric"
+              style={{borderBottomWidth: 1, padding: 1}}
+              onChangeText={answer => handleAnswer(item.id, answer)}
+            />
+          </View>
+        ) : item.field === 'Toggle' ? (
+          <View
+            style={{
+              marginTop: 15,
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}>
+            <Text style={styles.questionText}>{item.question}</Text>
+            <Switch
+              value={toggleValue}
+              onValueChange={selected => handleToggle(item.id, selected)}
+            />
+          </View>
+        ) : null}
       </View>
     );
   };
@@ -66,7 +157,7 @@ export default function QuestionsScreen({navigation, route}) {
       <ActivityIndicator size={'large'} />
     </View>
   ) : (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity
           onPress={() => {
@@ -78,10 +169,13 @@ export default function QuestionsScreen({navigation, route}) {
         <Text style={styles.headingText}>Include Some Details</Text>
       </View>
       <View style={styles.detailsFormSection}>
-        <FlatList data={questionData} renderItem={renderQuestion} />
+        <FlatList
+          data={questionData}
+          renderItem={renderQuestion}
+          showsVerticalScrollIndicator={false}
+        />
       </View>
-      <View
-        style={{flex: 1.5, justifyContent: 'center', alignContent: 'center'}}>
+      <View style={{flex: 1, justifyContent: 'center', alignContent: 'center'}}>
         <CustomButton
           btnTitle="Next"
           onpress={() => {
@@ -98,7 +192,7 @@ export default function QuestionsScreen({navigation, route}) {
           style={{width: '90%', marginHorizontal: '5%'}}
         />
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -115,11 +209,9 @@ const styles = StyleSheet.create({
     gap: 20,
   },
   headingText: {fontSize: 18, color: '#111'},
-  detailsFormSection: {flex: 10, padding: 20, alignContent: 'center'},
-  inputField: {
-    borderBottomColor: '#777',
-    borderBottomWidth: 1,
-    padding: 1,
-    marginBottom: 30,
+  detailsFormSection: {
+    flex: 10,
+    paddingHorizontal: 5,
   },
+  questionText: {fontSize: 16, color: '#222'},
 });

@@ -16,7 +16,6 @@ import {ActivityIndicator} from 'react-native';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import Modal from 'react-native-modal';
 import {http} from '../shared/lib';
-import {v4 as uuidv4} from 'uuid';
 
 export default function ProfileScreen() {
   const {logout} = useContext(AuthContext);

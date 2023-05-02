@@ -88,10 +88,10 @@ export default function Home({navigation}) {
         // <View></View>
         ''
       ) : (
-        <View style={{flex: 1}}>
+        <View style={{flex: 1.5}}>
           <View
             style={{
-              flex: 1.3,
+              flexGrow: 1,
               alignItems: 'center',
               justifyContent: 'center',
             }}>
@@ -99,7 +99,7 @@ export default function Home({navigation}) {
           </View>
           <View
             style={{
-              flex: 0.7,
+              flexGrow: 1,
               alignItems: 'center',
               justifyContent: 'center',
             }}>

@@ -323,7 +323,6 @@ export default function Home({navigation}) {
     return (
       <Pressable
         style={{
-          // backgroundColor: item.bgcolor,
           height: CARD_HEIGHT,
           padding: '2%',
           width: '49%',
@@ -336,7 +335,7 @@ export default function Home({navigation}) {
           navigation.navigate('AdDescription', {
             adDetails: {
               id: item.id,
-              title: item.name,
+              title: item.title,
               price: item.price,
               description: item.description,
               location: item.locationName,

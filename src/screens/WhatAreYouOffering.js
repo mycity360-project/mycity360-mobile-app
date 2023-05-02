@@ -6,6 +6,7 @@ import {
   View,
   FlatList,
   Image,
+  SafeAreaView,
 } from 'react-native';
 import React from 'react';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
@@ -65,7 +66,7 @@ export default function WhatAreYouOffering({navigation, route}) {
   );
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity
           onPress={() => {
@@ -91,7 +92,7 @@ export default function WhatAreYouOffering({navigation, route}) {
           maxToRenderPerBatch={10}
         />
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 

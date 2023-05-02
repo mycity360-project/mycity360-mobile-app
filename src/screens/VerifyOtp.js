@@ -1,4 +1,4 @@
-import {StyleSheet, View, TextInput} from 'react-native';
+import {StyleSheet, View, TextInput, SafeAreaView} from 'react-native';
 import React, {useState} from 'react';
 import CustomButton from '../shared/components/CustomButton';
 import {AuthContext} from '../context/AuthContext';
@@ -28,7 +28,7 @@ export default function VerifyOtp({route}) {
     } catch (err) {}
   };
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         {/* <CustomButton btnType="back" onpress={() => navigation.goBack()} /> */}
       </View>
@@ -47,7 +47,7 @@ export default function VerifyOtp({route}) {
           }}
         />
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 

@@ -4,5 +4,5 @@ module.exports = {
   APP_TITLE: 'MyCity360',
   MAX_IMAGE_ALLOWED: 6,
   AD_TITLE_MAX_LENGTH: 100,
-  AD_DESC_MAX_LENGTH: 200,
+  AD_DESC_MAX_LENGTH: 10,
 };

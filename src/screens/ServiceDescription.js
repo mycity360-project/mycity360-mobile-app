@@ -7,6 +7,7 @@ import {
   View,
   Linking,
   Platform,
+  SafeAreaView,
 } from 'react-native';
 import React from 'react';
 
@@ -20,7 +21,7 @@ export default function ServiceDescription({route, navigation}) {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <View style={styles.headerSection}>
         <View style={styles.imgSection}>
           {/* <Image
@@ -65,7 +66,7 @@ export default function ServiceDescription({route, navigation}) {
           <Text style={styles.callButtonText}>Call Now</Text>
         </Pressable>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 

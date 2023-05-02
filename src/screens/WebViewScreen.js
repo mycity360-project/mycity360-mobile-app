@@ -1,15 +1,13 @@
-import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
+import {StyleSheet, View, TouchableOpacity, SafeAreaView} from 'react-native';
 import React from 'react';
 import WebView from 'react-native-webview';
 import {StackActions} from '@react-navigation/native';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 
 export default function WebViewScreen({navigation, route}) {
-  const {uri} = route.params;
   const closeSellScreen = StackActions.pop(1);
-
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity
           onPress={() => {
@@ -19,9 +17,9 @@ export default function WebViewScreen({navigation, route}) {
         </TouchableOpacity>
       </View>
       <View style={styles.WebViewSection}>
-        <WebView source={{uri}} />
+        <WebView source={route.params} />
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 

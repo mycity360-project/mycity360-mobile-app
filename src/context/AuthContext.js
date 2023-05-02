@@ -18,12 +18,12 @@ export const AuthProvider = ({children}) => {
       },
     });
     user = {...user, localUserArea: user.area};
-    setUserToken(token);
     setUserInfo(user);
     AsyncStorage.setItem('tokenInfo', JSON.stringify(respData));
     AsyncStorage.setItem('token', token);
     AsyncStorage.setItem('userInfo', JSON.stringify(user));
     AsyncStorage.setItem('userID', JSON.stringify(userid));
+    setUserToken(token);
   };
 
   const login = async (username, password) => {
@@ -57,6 +57,7 @@ export const AuthProvider = ({children}) => {
       }
     } catch (error) {
       setIsLoading(false);
+      console.log(error.response, '60');
       if (error.response.status === 500) {
         Alert.alert('ERROR', 'User not exist ', [{text: 'OK'}]);
       } else if (error.response.status === 400) {
@@ -81,10 +82,10 @@ export const AuthProvider = ({children}) => {
   const isVerified = async respData => {
     try {
       setIsLoading(true);
-      onTokenAvailable(respData, respData.access_token, respData.user_id);
+      await onTokenAvailable(respData, respData.access_token, respData.user_id);
       setIsLoading(false);
     } catch (e) {
-      // Alert.alert('Error', 'Something Went Wrong', [{text: 'OK'}]);
+      Alert.alert('Error', 'Something Went Wrong', [{text: 'OK'}]);
     }
   };
   const isLoggedIn = async () => {

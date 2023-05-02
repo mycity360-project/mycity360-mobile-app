@@ -20,7 +20,6 @@ import {BACKEND_CLIENT_ID} from '../shared/constants/env';
 import {AuthContext} from '../context/AuthContext';
 import * as Yup from 'yup';
 import {Formik} from 'formik';
-import {number} from 'yargs';
 
 export default function SignUp() {
   const navigation = useNavigation();
@@ -118,7 +117,10 @@ export default function SignUp() {
       }
     } catch (error) {
       setIsLoading(false);
-      Alert.alert('ERROR', 'Something went wrong');
+      const msg =
+        error?.response?.data?.detail ||
+        'Something Went Wrong, We are working on it. Please try after Some time';
+      Alert.alert('ERROR', `${msg}`, [{text: 'OK'}]);
     }
   };
 
@@ -135,7 +137,7 @@ export default function SignUp() {
     password: Yup.string()
       .min(8, ({min}) => `Password must be atleast ${min} characters`)
       .matches(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/,
         'Minimum 8 characters, at least 1 uppercase letter, 1 lowercase letter, 1 number and 1 special character',
       )
       .required('Please Enter Password'),
@@ -257,6 +259,16 @@ export default function SignUp() {
                   onChangeText={handleChange('password')}
                   value={values.password}
                 />
+
+                <Text
+                  style={{
+                    fontSize: 10,
+                    color: '#666',
+                    marginHorizontal: '14%',
+                    marginTop: 1,
+                  }}>
+                  Allowed Special Characters @,$,!,%,*,?,&,#
+                </Text>
                 {errors.password && touched.password ? (
                   <Text style={styles.error}>{errors.password}</Text>
                 ) : (
@@ -276,7 +288,6 @@ export default function SignUp() {
                 ) : (
                   setConfirmPassword(values.confirmPassword)
                 )}
-
                 <DropDown
                   placeholder="Select Location"
                   dataArray={locationData}
@@ -307,7 +318,6 @@ export default function SignUp() {
                   icon="arrow-forward"
                   onpress={handleSubmit} //async () => await handleOnSignUpPress()
                 />
-
                 <View
                   style={{
                     flex: 0.4,

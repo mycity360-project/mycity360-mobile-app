@@ -28,7 +28,7 @@ export default function UploadAdPhotos({navigation, route}) {
   const [id, setId] = useState(1);
   const ref = useRef();
   const AdData = route.params.AdData;
-
+  console.log(JSON.stringify(AdData), '31');
   const buttonView = (name, iconName, open) => {
     return (
       <TouchableOpacity
@@ -76,7 +76,7 @@ export default function UploadAdPhotos({navigation, route}) {
       saveToPhotos: true,
       maxWidth: 500,
       maxHeight: 500,
-      quality: 0.5,
+      quality: 0.7,
     };
 
     launchCamera(options, response => {
@@ -115,7 +115,7 @@ export default function UploadAdPhotos({navigation, route}) {
       selectionLimit: 0,
       maxWidth: 500,
       maxHeight: 500,
-      quality: 0.5,
+      quality: 0.7,
     };
 
     launchImageLibrary(options, response => {
@@ -207,9 +207,7 @@ export default function UploadAdPhotos({navigation, route}) {
         },
         name: AdData.title,
         description: AdData.description,
-        price: Number(AdData.price),
         tags: [],
-        code: Math.floor(Math.random() * 1000000000 + 1),
       };
 
       const url = 'user-ad/';
@@ -223,7 +221,7 @@ export default function UploadAdPhotos({navigation, route}) {
       const resp = await http.post(url, data, config);
       return resp;
     } catch (error) {
-      throw new Error(error);
+      throw error;
     }
   };
 
@@ -260,19 +258,21 @@ export default function UploadAdPhotos({navigation, route}) {
     try {
       setIsLoading(true);
       //upload image one by one
-      if (images.length == 0) {
+      if (images.length === 0) {
         setIsLoading(false);
         Alert.alert('ERROR', 'Please Upload atleast 1 Image', [{text: 'OK'}]);
         return;
       }
+      console.log('267');
       let uploadedImgArr = [];
       for (const image of images) {
         let resp = await uploadImage(image);
         uploadedImgArr.push(resp);
       }
+      console.log(uploadedImgArr, '273');
 
       const adCreatedData = await createAdHandler(uploadedImgArr);
-
+      console.log(adCreatedData, '274');
       let answerArr = AdData.answers;
       let respArr = [];
       const userid = await AsyncStorage.getItem('userID');
@@ -284,6 +284,9 @@ export default function UploadAdPhotos({navigation, route}) {
       navigation.popToTop();
     } catch (error) {
       setIsLoading(false);
+      console.log(error, '286');
+      console.log(error.response, '287');
+
       Alert.alert(
         'ERROR',
         'Something went wrong, Ad not created. We are working on it, Please try after some time.',
