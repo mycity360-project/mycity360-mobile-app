@@ -207,6 +207,7 @@ export default function UploadAdPhotos({navigation, route}) {
         },
         name: AdData.title,
         description: AdData.description,
+        price: AdData.price,
         tags: [],
       };
 
@@ -411,7 +412,14 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     bottom: 10,
   },
-  dotCommon: {width: 12, height: 12, borderRadius: 6, marginLeft: 5},
+  dotCommon: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    marginLeft: 5,
+    borderWidth: 1,
+    borderColor: '#222',
+  },
   dotActive: {
     backgroundColor: '#FA8C00',
   },

@@ -322,7 +322,14 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     bottom: 20,
   },
-  dotCommon: {width: 12, height: 12, borderRadius: 6, marginLeft: 5},
+  dotCommon: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    marginLeft: 5,
+    borderWidth: 1,
+    borderColor: '#222',
+  },
   dotActive: {
     backgroundColor: '#FA8C00',
   },

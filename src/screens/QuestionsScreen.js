@@ -17,7 +17,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import ModalView from '../shared/components/ModalView';
 
 export default function QuestionsScreen({navigation, route}) {
-  const AdData = route.params.AdData;
+  const AdData = route.params;
+
   const [isLoading, setIsLoading] = useState(false);
   const [questionData, setQuestionData] = useState([]);
   const [answerData, setAnswerData] = useState({});
@@ -182,7 +183,7 @@ export default function QuestionsScreen({navigation, route}) {
             let data = Object.entries(answerData).map(([key, value]) => {
               return {id: key, answer: value};
             });
-            navigation.navigate('UploadAdPhotos', {
+            navigation.navigate('IncludeSomeDetails', {
               AdData: {
                 ...AdData,
                 answers: data,

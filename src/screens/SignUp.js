@@ -11,7 +11,7 @@ import {
   TouchableOpacity,
   Alert,
 } from 'react-native';
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState, useRef} from 'react';
 import CustomButton from '../shared/components/CustomButton';
 import DropDown from '../shared/components/DropDown';
 import {useNavigation} from '@react-navigation/native';
@@ -38,6 +38,12 @@ export default function SignUp() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showLocationError, setShowLocationError] = useState(false);
   const [showAreaError, setShowAreaError] = useState(false);
+
+  const lastNameRef = useRef();
+  const mobileRef = useRef();
+  const emailRef = useRef();
+  const passwordRef = useRef();
+  const confirmPasswordRef = useRef();
 
   const getLocations = async () => {
     setIsLoading(true);
@@ -124,6 +130,10 @@ export default function SignUp() {
     }
   };
 
+  const focusNextInput = nextInput => {
+    nextInput.current?.focus();
+  };
+
   const signUpValidationSchema = Yup.object().shape({
     firstName: Yup.string().required('First Name Required'),
     lastName: Yup.string().required('Last Name Required'),
@@ -199,6 +209,9 @@ export default function SignUp() {
                     value={values.firstName}
                     onBlur={handleBlur('firstName')}
                     onChangeText={handleChange('firstName')}
+                    autoFocus={true}
+                    returnKeyType="next"
+                    onSubmitEditing={() => focusNextInput(lastNameRef)}
                   />
 
                   <TextInput
@@ -211,6 +224,9 @@ export default function SignUp() {
                     value={values.lastName}
                     onBlur={handleBlur('lastName')}
                     onChangeText={handleChange('lastName')}
+                    ref={lastNameRef}
+                    returnKeyType="next"
+                    onSubmitEditing={() => focusNextInput(mobileRef)}
                   />
                 </View>
                 {errors.firstName && touched.firstName ? (
@@ -230,6 +246,9 @@ export default function SignUp() {
                   value={values.mobileNumber}
                   onBlur={handleBlur('mobileNumber')}
                   onChangeText={handleChange('mobileNumber')}
+                  ref={mobileRef}
+                  returnKeyType="next"
+                  onSubmitEditing={() => focusNextInput(emailRef)}
                 />
                 {errors.mobileNumber && touched.mobileNumber ? (
                   <Text style={styles.error}>{errors.mobileNumber}</Text>
@@ -244,6 +263,9 @@ export default function SignUp() {
                   onBlur={handleBlur('email')}
                   onChangeText={handleChange('email')}
                   value={values.email}
+                  ref={emailRef}
+                  returnKeyType="next"
+                  onSubmitEditing={() => focusNextInput(passwordRef)}
                 />
                 {errors.email && touched.email ? (
                   <Text style={styles.error}>{errors.email}</Text>
@@ -258,6 +280,9 @@ export default function SignUp() {
                   onBlur={handleBlur('password')}
                   onChangeText={handleChange('password')}
                   value={values.password}
+                  ref={passwordRef}
+                  returnKeyType="next"
+                  onSubmitEditing={() => focusNextInput(confirmPasswordRef)}
                 />
 
                 <Text
@@ -282,6 +307,7 @@ export default function SignUp() {
                   onBlur={handleBlur('confirmPassword')}
                   onChangeText={handleChange('confirmPassword')}
                   value={values.confirmPassword}
+                  ref={confirmPasswordRef}
                 />
                 {errors.confirmPassword && touched.confirmPassword ? (
                   <Text style={styles.error}> {errors.confirmPassword}</Text>

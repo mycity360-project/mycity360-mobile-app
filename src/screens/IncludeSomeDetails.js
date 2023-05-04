@@ -17,13 +17,17 @@ export default function IncludeSomeDetails({navigation, route}) {
   const [descLength, setDescLength] = useState(Number(0));
   const [isTitleError, setIsTitleError] = useState(false);
   const [isDescError, setIsDescError] = useState(false);
+  const [price, setPrice] = useState('');
   const [isPriceError, setIsPriceError] = useState(false);
   const [isPriceZero, setIsPriceZero] = useState(false);
   // const [adDescription, setAdDescription] = useState('');
   // const [adDescriptionError, setAdDescriptionError] = useState('');
+
   const errors = {
     title: 'Title is Required',
     description: 'Description is Required',
+    price: 'Price is Required',
+    priceZero: 'Price Cannot be 0',
   };
   const onNextHandler = () => {
     if (title.length == Number(0)) {
@@ -33,13 +37,21 @@ export default function IncludeSomeDetails({navigation, route}) {
       setIsTitleError(false);
       setIsDescError(true);
       return;
-    } else {
+    } else if (price.length == Number(0)) {
       setIsDescError(false);
-      navigation.navigate('QuestionsScreen', {
+      setIsPriceError(true);
+      return;
+    } else if (!Number(price)) {
+      setIsPriceError(false);
+      setIsPriceZero(true);
+    } else {
+      setIsPriceZero(false);
+      navigation.navigate('UploadAdPhotos', {
         AdData: {
           title: title,
           description: description,
-          ...route.params,
+          price: Number(price),
+          ...route.params?.AdData,
         },
       });
     }
@@ -153,6 +165,27 @@ export default function IncludeSomeDetails({navigation, route}) {
             ''
           )}
         </View> */}
+
+        <View style={{flex: 1}}>
+          <Text style={{fontSize: 16, fontWeight: 500, color: '#222'}}>
+            Price
+          </Text>
+          <TextInput
+            placeholder="Enter Price"
+            keyboardType="numeric"
+            value={price}
+            onChangeText={price => {
+              setPrice(price);
+            }}
+            style={{borderBottomWidth: 1, padding: 1}}
+          />
+          {isPriceError ? <Text style={styles.error}>{errors.price}</Text> : ''}
+          {isPriceZero ? (
+            <Text style={styles.error}>{errors.priceZero}</Text>
+          ) : (
+            ''
+          )}
+        </View>
       </View>
       <View
         style={{flex: 1.5, justifyContent: 'center', alignContent: 'center'}}>

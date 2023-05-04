@@ -251,7 +251,7 @@ export default function Home({navigation}) {
     index,
   });
 
-  const CARD_HEIGHT = 200;
+  const CARD_HEIGHT = 175;
   const getAdCardLayout = (_, index) => ({
     length: CARD_HEIGHT,
     offset: CARD_HEIGHT * index,
@@ -353,7 +353,7 @@ export default function Home({navigation}) {
         <View
           pointerEvents="box-only"
           style={{
-            flex: 1.5,
+            flex: 1.9,
             alignItems: 'center',
             justifyContent: 'center',
             // backgroundColor: '#664489',
@@ -364,26 +364,40 @@ export default function Home({navigation}) {
             resizeMode="contain"
           />
 
-          {item.isFeatured ? featuredTag() : ''}
+          {item.isFeatured ?? featuredTag()}
         </View>
         <View
           style={{
             flex: 1,
-            // backgroundColor: '#ccc',
             justifyContent: 'space-between',
           }}>
-          <View>
+          <Text
+            numberOfLines={1}
+            style={{fontSize: 14, width: '90%', color: '#000'}}>
+            {item.title}
+          </Text>
+          <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
             <Text style={{fontSize: 14, fontWeight: 600, color: '#111'}}>
               ₹ {item.price}
             </Text>
-            <Text
-              numberOfLines={2}
-              style={{fontSize: 14, width: '90%', color: '#000'}}>
-              {item.title}
-            </Text>
+
+            <View style={{flexDirection: 'row', marginBottom: 5}}>
+              <MaterialIcon name="location-pin" size={16} color={'#666'} />
+              <Text
+                style={{
+                  fontSize: 12,
+                  textAlign: 'left',
+                  fontWeight: 500,
+                  color: '#666',
+                }}>
+                {item.locationName === item.areaName
+                  ? item.locationName
+                  : `${item.areaName} , ${item.locationName}`}
+              </Text>
+            </View>
           </View>
 
-          <View style={{flexDirection: 'row', marginBottom: 5}}>
+          {/* <View style={{flexDirection: 'row', marginBottom: 5}}>
             <MaterialIcon name="location-pin" size={16} color={'#666'} />
             <Text
               style={{
@@ -396,7 +410,7 @@ export default function Home({navigation}) {
                 ? item.locationName
                 : `${item.areaName} , ${item.locationName}`}
             </Text>
-          </View>
+          </View> */}
         </View>
       </Pressable>
     );
@@ -424,7 +438,7 @@ export default function Home({navigation}) {
                   flexDirection: 'row',
                 }}
                 onPress={() => navigation.navigate('Location')}>
-                <MaterialIcon name="location-pin" color={'#222'} size={20} />
+                <MaterialIcon name="location-pin" color={'#222'} size={16} />
                 <Text
                   style={{
                     color: '#222',
@@ -628,38 +642,41 @@ export default function Home({navigation}) {
 }
 
 const styles = StyleSheet.create({
-  container: {flex: 1},
+  container: {flex: 1, backgroundColor: '#e9e9e9'},
   innerContainer: {
     flex: 1,
   },
   header: {
-    flex: 1,
+    flex: 1.1,
+    backgroundColor: '#FFF',
+    padding: '1%',
   },
   locationSection: {
-    flex: 0.7,
+    flex: 0.5,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: '2%',
+    paddingHorizontal: '1%',
   },
   btnSection: {
-    flex: 1.15,
+    flex: 1.3,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
   searchBarSection: {
-    flex: 1.15,
+    flex: 1,
     flexDirection: 'row',
-    width: '85%',
-    marginHorizontal: '7.5%',
+    marginHorizontal: '8%',
     borderColor: '#FA8C00',
     borderWidth: 1,
     borderRadius: 11,
+    backgroundColor: '#FFF',
   },
   inputBox: {
     width: '80%',
     height: '100%',
+    padding: 5,
   },
   searchBtn: {
     width: '20%',
@@ -671,13 +688,14 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 10,
   },
   categoryAndSellBtnSection: {
-    flex: 0.8,
+    flex: 1,
     flexDirection: 'row',
     gap: 5,
-    marginTop: '1%',
+    marginTop: '2%',
     borderColor: '#999',
     borderTopWidth: 0.3,
     borderBottomWidth: 0.3,
+    backgroundColor: '#FFF',
   },
   sellBtn: {
     flex: 0.2,
@@ -697,11 +715,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   bannerSection: {
-    flex: 1.2,
+    flex: 2.5,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#999',
-    marginTop: '1%',
+    backgroundColor: '#FFF',
+    marginTop: '2%',
   },
   wrapper: {width: width, height: '100%'},
   dotWrapper: {
@@ -710,12 +728,19 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     bottom: 10,
   },
-  dotCommon: {width: 12, height: 12, borderRadius: 6, marginLeft: 5},
+  dotCommon: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    marginLeft: 5,
+    borderWidth: 1,
+    borderColor: '#222',
+  },
   dotActive: {
     backgroundColor: '#FA8C00',
   },
   dotNotActive: {
     backgroundColor: '#fff',
   },
-  featuredAdsSection: {padding: '2%'},
+  featuredAdsSection: {padding: '2%', marginTop: '2%', backgroundColor: '#FFF'},
 });

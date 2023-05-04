@@ -61,7 +61,7 @@ export default function SubCategory({navigation, route}) {
           justifyContent: 'center',
         }}
         onPress={() =>
-          navigation.navigate('IncludeSomeDetails', {
+          navigation.navigate('QuestionsScreen', {
             categoryID: categoryID,
             subCategoryID: item.id,
           })
