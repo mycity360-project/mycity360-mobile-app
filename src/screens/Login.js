@@ -82,93 +82,93 @@ export default function Login() {
         enableOnAndroid={true}
         scrollEnabled={false}
         contentContainerStyle={{flexGrow: 1}}>
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <View style={styles.innerContainer}>
-            <View style={styles.headerSection} />
-            <View style={styles.logoSection}>
-              <Image
-                source={require('../assets/images/logo.png')}
-                style={{width: 75, height: 75}}
-              />
-              <Text style={styles.logoName}>MyCity360</Text>
-            </View>
-            <View style={styles.loginFormSection}>
-              <Text
-                style={{
-                  fontSize: 24,
-                  fontWeight: '400',
-                  color: '#FF8C00',
-                  textAlign: 'center',
-                }}>
-                Login
-              </Text>
-              <TextInput
-                placeholder="Enter Email / Mobile Number"
-                style={styles.input}
-                autoCapitalize="none"
-                onChangeText={mail => {
-                  setEmail(mail);
-                }}
-                returnKeyType="next"
-                onSubmitEditing={() => passwordRef.current.focus()}
-              />
-              {isEmailError ? (
-                <Text style={styles.error}>{errors.email}</Text>
-              ) : (
-                ''
-              )}
-              {isPhoneError ? (
-                <Text style={styles.error}>{errors.phone}</Text>
-              ) : (
-                ''
-              )}
-              <TextInput
-                placeholder="Enter Password"
-                style={styles.input}
-                autoCapitalize="none"
-                secureTextEntry={true}
-                returnKeyType="send"
-                onChangeText={value => {
-                  setPassword(value);
-                }}
-                onSubmitEditing={loginHandler}
-                ref={passwordRef}
-              />
-              {ispasswordError ? (
-                <Text style={styles.error}>{errors.password}</Text>
-              ) : (
-                ''
-              )}
-              <CustomButton
-                btnTitle="Login"
-                onpress={() => {
-                  loginHandler();
-                }}
-                style={styles.loginBtn}
-                icon="arrow-forward"
-              />
-              <View
-                style={{
-                  flex: 0.1,
-                  alignItems: 'flex-start',
-                  justifyContent: 'center',
-                  flexDirection: 'row',
-                  gap: 5,
-                }}>
-                <Text style={{fontSize: 16}}>Need an account?</Text>
-                <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
-                  <Text
-                    style={{
-                      fontSize: 16,
-                      color: '#FA8C00',
-                    }}>
-                    Sign Up
-                  </Text>
-                </TouchableOpacity>
-              </View>
+        <View style={styles.innerContainer}>
+          <View style={styles.headerSection} />
+          <View style={styles.logoSection}>
+            <Image
+              source={require('../assets/images/logo.png')}
+              style={{width: 75, height: 75}}
+            />
+            <Text style={styles.logoName}>MyCity360</Text>
+          </View>
+          <View style={styles.loginFormSection}>
+            <Text
+              style={{
+                fontSize: 24,
+                fontWeight: '400',
+                color: '#FF8C00',
+                textAlign: 'center',
+              }}>
+              Login
+            </Text>
+            <TextInput
+              placeholder="Enter Email / Mobile Number"
+              style={styles.input}
+              autoCapitalize="none"
+              onChangeText={mail => {
+                setEmail(mail);
+              }}
+              returnKeyType="next"
+              onSubmitEditing={() => passwordRef.current.focus()}
+            />
+            {isEmailError ? (
+              <Text style={styles.error}>{errors.email}</Text>
+            ) : (
+              ''
+            )}
+            {isPhoneError ? (
+              <Text style={styles.error}>{errors.phone}</Text>
+            ) : (
+              ''
+            )}
+            <TextInput
+              placeholder="Enter Password"
+              style={styles.input}
+              autoCapitalize="none"
+              secureTextEntry={true}
+              returnKeyType="send"
+              onChangeText={value => {
+                setPassword(value);
+              }}
+              onSubmitEditing={loginHandler}
+              ref={passwordRef}
+            />
+            {ispasswordError ? (
+              <Text style={styles.error}>{errors.password}</Text>
+            ) : (
+              ''
+            )}
+
+            <CustomButton
+              btnTitle="Login"
+              onpress={() => {
+                loginHandler();
+              }}
+              style={styles.loginBtn}
+              icon="arrow-forward"
+            />
+
+            <View
+              style={{
+                flex: 0.1,
+                alignItems: 'flex-start',
+                justifyContent: 'center',
+                flexDirection: 'row',
+                gap: 5,
+              }}>
+              <Text style={{fontSize: 16}}>Need an account?</Text>
+              <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    color: '#FA8C00',
+                  }}>
+                  Sign Up
+                </Text>
+              </TouchableOpacity>
             </View>
           </View>
-        </TouchableWithoutFeedback>
+        </View>
       </KeyboardAwareScrollView>
     </SafeAreaView>
   );

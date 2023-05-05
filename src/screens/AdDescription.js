@@ -147,9 +147,7 @@ export default function AdDescription({route, navigation}) {
             <Text style={styles.priceText}>₹ {adDetails.price}</Text>
           </View>
 
-          <Text numberOfLines={1} style={styles.infoSectionMiddle}>
-            {adDetails.title}
-          </Text>
+          <Text style={styles.infoSectionMiddle}>{adDetails.title}</Text>
           <View style={styles.infoSectionBottom}>
             <View style={styles.locationSection}>
               <MaterialIcon name="location-pin" size={18} color={'#444'} />

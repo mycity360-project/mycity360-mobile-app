@@ -34,6 +34,8 @@ export default function Home({navigation}) {
         icon: service.icon,
         description: service.description,
         phone: service.phone,
+        images: service.images,
+        serviceID: service.id,
       }));
       setServicesData(services);
       setIsLoading(false);
@@ -82,10 +84,11 @@ export default function Home({navigation}) {
           title: item.title,
           description: item.description,
           phone: item.phone,
+          images: item.images,
+          serviceID: item.serviceID,
         })
       }>
       {item.empty ? (
-        // <View></View>
         ''
       ) : (
         <View style={{flex: 1.5}}>

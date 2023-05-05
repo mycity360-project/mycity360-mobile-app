@@ -207,7 +207,10 @@ export default function SignUp() {
                     ]}
                     placeholder="First Name"
                     value={values.firstName}
-                    onBlur={handleBlur('firstName')}
+                    onBlur={() => {
+                      setFirstName(values.firstName);
+                      handleBlur('firstName');
+                    }}
                     onChangeText={handleChange('firstName')}
                     autoFocus={true}
                     returnKeyType="next"
@@ -222,62 +225,66 @@ export default function SignUp() {
                       {marginRight: '10%'},
                     ]}
                     value={values.lastName}
-                    onBlur={handleBlur('lastName')}
+                    onBlur={() => {
+                      setLastName(values.lastName);
+                      handleBlur('lastName');
+                    }}
                     onChangeText={handleChange('lastName')}
                     ref={lastNameRef}
                     returnKeyType="next"
                     onSubmitEditing={() => focusNextInput(mobileRef)}
                   />
                 </View>
-                {errors.firstName && touched.firstName ? (
+                {errors.firstName && touched.firstName && (
                   <Text style={styles.error}>{errors.firstName}</Text>
-                ) : (
-                  setFirstName(values.firstName)
                 )}
-                {errors.lastName && touched.lastName ? (
+                {errors.lastName && touched.lastName && (
                   <Text style={styles.error}>{errors.lastName}</Text>
-                ) : (
-                  setLastName(values.lastName)
                 )}
                 <TextInput
                   placeholder="Enter Mobile Number"
                   style={[styles.input, styles.inputCommon]}
                   keyboardType="numeric"
                   value={values.mobileNumber}
-                  onBlur={handleBlur('mobileNumber')}
+                  onBlur={() => {
+                    setMobileNumber(values.mobileNumber);
+                    handleBlur('mobileNumber');
+                  }}
                   onChangeText={handleChange('mobileNumber')}
                   ref={mobileRef}
                   returnKeyType="next"
                   onSubmitEditing={() => focusNextInput(emailRef)}
                 />
-                {errors.mobileNumber && touched.mobileNumber ? (
+                {errors.mobileNumber && touched.mobileNumber && (
                   <Text style={styles.error}>{errors.mobileNumber}</Text>
-                ) : (
-                  setMobileNumber(values.mobileNumber)
                 )}
                 <TextInput
                   placeholder="Enter you email"
                   style={[styles.input, styles.inputCommon]}
                   autoCapitalize={'none'}
                   keyboardType="email-address"
-                  onBlur={handleBlur('email')}
+                  onBlur={() => {
+                    setEmail(values.email);
+                    handleBlur('email');
+                  }}
                   onChangeText={handleChange('email')}
                   value={values.email}
                   ref={emailRef}
                   returnKeyType="next"
                   onSubmitEditing={() => focusNextInput(passwordRef)}
                 />
-                {errors.email && touched.email ? (
+                {errors.email && touched.email && (
                   <Text style={styles.error}>{errors.email}</Text>
-                ) : (
-                  setEmail(values.email)
                 )}
                 <TextInput
                   style={[styles.input, styles.inputCommon]}
                   placeholder="Enter your password"
                   secureTextEntry={true}
                   autoCapitalize={'none'}
-                  onBlur={handleBlur('password')}
+                  onBlur={() => {
+                    setPassword(values.password);
+                    handleBlur('password');
+                  }}
                   onChangeText={handleChange('password')}
                   value={values.password}
                   ref={passwordRef}
@@ -294,25 +301,24 @@ export default function SignUp() {
                   }}>
                   Allowed Special Characters @,$,!,%,*,?,&,#
                 </Text>
-                {errors.password && touched.password ? (
+                {errors.password && touched.password && (
                   <Text style={styles.error}>{errors.password}</Text>
-                ) : (
-                  setPassword(values.password)
                 )}
                 <TextInput
                   style={[styles.input, styles.inputCommon]}
                   placeholder="Confirm password"
                   secureTextEntry={true}
                   autoCapitalize={'none'}
-                  onBlur={handleBlur('confirmPassword')}
+                  onBlur={() => {
+                    setConfirmPassword(values.confirmPassword);
+                    handleBlur('confirmPassword');
+                  }}
                   onChangeText={handleChange('confirmPassword')}
                   value={values.confirmPassword}
                   ref={confirmPasswordRef}
                 />
-                {errors.confirmPassword && touched.confirmPassword ? (
+                {errors.confirmPassword && touched.confirmPassword && (
                   <Text style={styles.error}> {errors.confirmPassword}</Text>
-                ) : (
-                  setConfirmPassword(values.confirmPassword)
                 )}
                 <DropDown
                   placeholder="Select Location"

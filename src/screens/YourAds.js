@@ -46,15 +46,12 @@ export default function YourAds({navigation, route}) {
       setFlatlistLoading(true);
       const token = await AsyncStorage.getItem('token');
       const userData = await AsyncStorage.getItem('userInfo');
-
-      const yourAdsRespData = await http.get(
-        `/user-ad/?user_id=${JSON.parse(userData).id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+      const url = `/user-ad/?user_id=${JSON.parse(userData).id}&page=${page}`;
+      const yourAdsRespData = await http.get(url, {
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
-      );
+      });
       setHasMore(page <= Math.ceil(yourAdsRespData.count) / pageSize);
       setShowNoAdsFoundMsg(Math.ceil(yourAdsRespData.count) ? false : true);
       const ads = yourAdsRespData.results?.map((ad, index) => ({
@@ -71,8 +68,14 @@ export default function YourAds({navigation, route}) {
         areaName: ad.area?.name,
         key: `${yourAdsData.length + index}`,
       }));
-      if (page === 1) setYourAdsData(ads);
-      else setYourAdsData([...yourAdsData, ...ads]);
+      console.log(page, '74');
+      if (page === 1) {
+        console.log(page, '76');
+        setYourAdsData(ads);
+      } else {
+        console.log(page, '79');
+        setYourAdsData([...yourAdsData, ...ads]);
+      }
     } catch (err) {
       Alert.alert(
         'ERROR',
