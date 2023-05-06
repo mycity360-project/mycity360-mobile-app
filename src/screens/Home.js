@@ -140,6 +140,8 @@ export default function Home({navigation}) {
         name: category.name,
         icon: category.icon,
         seq: category.sequence,
+        // isPrice: category?.is_price,
+        isPrice: false,
       }));
 
       setCategoriesData(categories);
@@ -396,25 +398,129 @@ export default function Home({navigation}) {
               </Text>
             </View>
           </View>
-
-          {/* <View style={{flexDirection: 'row', marginBottom: 5}}>
-            <MaterialIcon name="location-pin" size={16} color={'#666'} />
-            <Text
-              style={{
-                fontSize: 12,
-                textAlign: 'left',
-                fontWeight: 500,
-                color: '#666',
-              }}>
-              {item.locationName === item.areaName
-                ? item.locationName
-                : `${item.areaName} , ${item.locationName}`}
-            </Text>
-          </View> */}
         </View>
       </Pressable>
     );
   });
+
+  const renderHeader = () => {
+    return (
+      <View style={{flex: 1}}>
+        <View style={styles.categoryAndSellBtnSection}>
+          {/* Sell Button to add item for sell */}
+          <TouchableOpacity
+            style={styles.sellBtn}
+            onPress={() => {
+              navigation.navigate('WhatAreYouOffering', {
+                categoriesData: categoriesData,
+              });
+            }}>
+            <View
+              style={{
+                flex: 1.1,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+              <MaterialIcon
+                name="add-circle-outline"
+                color={'#FF8C00'}
+                size={45}
+              />
+            </View>
+
+            <View
+              style={{
+                flex: 0.9,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+              <Text style={{fontSize: 16, color: '#111', marginBottom: '-10%'}}>
+                Sell /
+              </Text>
+              <Text style={{fontSize: 16, color: '#111'}}>Post Ad</Text>
+            </View>
+          </TouchableOpacity>
+          {/* Category Horizontal List */}
+          {isCategoryLoding ? (
+            <View
+              style={[
+                styles.categoryListSection,
+                {justifyContent: 'center', alignItems: 'center'},
+              ]}>
+              <ActivityIndicator size="small" color="#0000ff" />
+            </View>
+          ) : (
+            <View style={styles.categoryListSection}>
+              <FlatList
+                horizontal={true}
+                data={categoriesData}
+                renderItem={renderItem}
+                showsHorizontalScrollIndicator={true}
+                getItemLayout={getItemLayout}
+                initialNumToRender={5}
+                maxToRenderPerBatch={5}
+              />
+            </View>
+          )}
+        </View>
+        {showBanner && (
+          <View style={styles.bannerSection}>
+            <FlatList
+              data={bannerImages}
+              ref={flatListRef}
+              keyExtractor={item => item.key}
+              onMomentumScrollBegin={() => setIsScrolling(true)}
+              onMomentumScrollEnd={event => {
+                if (isScrolling) {
+                  const x = event.nativeEvent.contentOffset.x;
+                  let index = Math.round(x / width);
+                  const len = bannerImages.length - 1;
+                  if (index === len && currentIndex === len) {
+                    index = 0;
+                    flatListRef.current?.scrollToIndex({index});
+                  }
+                  setCurrentIndex(index);
+                  setIsScrolling(false);
+                }
+              }}
+              getItemLayout={getBannerLayout}
+              onLayout={() => setIsReady(true)}
+              horizontal={true}
+              showsHorizontalScrollIndicator={false}
+              pagingEnabled={true}
+              renderItem={({item, index}) => {
+                return (
+                  <TouchableOpacity
+                    onPress={() => handleWebLink(item.redirectUrl)}>
+                    <Image
+                      source={{uri: item.image}}
+                      resizeMode="contain"
+                      style={styles.wrapper}
+                    />
+                  </TouchableOpacity>
+                );
+              }}
+            />
+            <View style={styles.dotWrapper}>
+              {bannerImages.map((e, index) => {
+                return (
+                  <View
+                    key={index}
+                    style={[
+                      styles.dotCommon,
+                      parseInt(currentIndex) === index
+                        ? styles.dotActive
+                        : styles.dotNotActive,
+                    ]}
+                  />
+                );
+              })}
+            </View>
+          </View>
+        )}
+      </View>
+    );
+  };
 
   return isLoading ? (
     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
@@ -499,130 +605,24 @@ export default function Home({navigation}) {
               </TouchableOpacity>
             </View>
           </View>
-          <View style={styles.categoryAndSellBtnSection}>
-            {/* Sell Button to add item for sell */}
-            <TouchableOpacity
-              style={styles.sellBtn}
-              onPress={() => {
-                navigation.navigate('WhatAreYouOffering', {
-                  categoriesData: categoriesData,
-                });
-              }}>
-              <View
-                style={{
-                  flex: 1.1,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}>
-                <MaterialIcon
-                  name="add-circle-outline"
-                  color={'#FF8C00'}
-                  size={45}
-                />
-              </View>
 
-              <View
-                style={{
-                  flex: 0.9,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}>
-                <Text
-                  style={{fontSize: 16, color: '#111', marginBottom: '-10%'}}>
-                  Sell /
-                </Text>
-                <Text style={{fontSize: 16, color: '#111'}}>Post Ad</Text>
-              </View>
-            </TouchableOpacity>
-            {/* Category Horizontal List */}
-            {isCategoryLoding ? (
-              <View
-                style={[
-                  styles.categoryListSection,
-                  {justifyContent: 'center', alignItems: 'center'},
-                ]}>
-                <ActivityIndicator size="small" color="#0000ff" />
-              </View>
-            ) : (
-              <View style={styles.categoryListSection}>
-                <FlatList
-                  horizontal={true}
-                  data={categoriesData}
-                  renderItem={renderItem}
-                  showsHorizontalScrollIndicator={true}
-                  getItemLayout={getItemLayout}
-                  initialNumToRender={5}
-                  maxToRenderPerBatch={5}
-                />
-              </View>
-            )}
-          </View>
-          {showBanner && (
-            <View style={styles.bannerSection}>
-              {/* <TouchableOpacity onPress={openLinkHandler}> */}
-              <FlatList
-                data={bannerImages}
-                ref={flatListRef}
-                keyExtractor={item => item.key}
-                onMomentumScrollBegin={() => setIsScrolling(true)}
-                onMomentumScrollEnd={event => {
-                  if (isScrolling) {
-                    const x = event.nativeEvent.contentOffset.x;
-                    let index = Math.round(x / width);
-                    const len = bannerImages.length - 1;
-                    if (index === len && currentIndex === len) {
-                      index = 0;
-                      flatListRef.current?.scrollToIndex({index});
-                    }
-                    setCurrentIndex(index);
-                    setIsScrolling(false);
-                  }
-                }}
-                getItemLayout={getBannerLayout}
-                onLayout={() => setIsReady(true)}
-                horizontal={true}
-                showsHorizontalScrollIndicator={false}
-                pagingEnabled={true}
-                renderItem={({item, index}) => {
-                  return (
-                    <TouchableOpacity
-                      onPress={() => handleWebLink(item.redirectUrl)}>
-                      <Image
-                        source={{uri: item.image}}
-                        resizeMode="contain"
-                        style={styles.wrapper}
-                      />
-                    </TouchableOpacity>
-                  );
-                }}
-              />
-              <View style={styles.dotWrapper}>
-                {bannerImages.map((e, index) => {
-                  return (
-                    <View
-                      key={index}
-                      style={[
-                        styles.dotCommon,
-                        parseInt(currentIndex) === index
-                          ? styles.dotActive
-                          : styles.dotNotActive,
-                      ]}
-                    />
-                  );
-                })}
-              </View>
-              {/* </TouchableOpacity> */}
-            </View>
-          )}
           <View
             style={[
-              styles.featuredAdsSection,
-              showBanner ? {flex: 2.8} : {flex: 4},
+              // styles.featuredAdsSection,
+              // showBanner ? {flex: 2.8} : {flex: 4},
+              {flex: 6},
             ]}>
             <FlatList
               data={userAdsData}
+              contentContainerStyle={styles.featuredAdsSection}
+              ListHeaderComponentStyle={{
+                flex: 3,
+                marginBottom: '2%',
+                backgroundColor: '#FFF',
+              }}
               renderItem={({item}) => <Item item={item} />}
               getItemLayout={getAdCardLayout}
+              ListHeaderComponent={renderHeader}
               numColumns={2}
               columnWrapperStyle={{
                 justifyContent: 'space-between',
@@ -710,12 +710,8 @@ const styles = StyleSheet.create({
     flex: 0.8,
   },
 
-  category: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   bannerSection: {
-    flex: 2.5,
+    flex: 3,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#FFF',
@@ -742,5 +738,5 @@ const styles = StyleSheet.create({
   dotNotActive: {
     backgroundColor: '#fff',
   },
-  featuredAdsSection: {padding: '2%', marginTop: '2%', backgroundColor: '#FFF'},
+  featuredAdsSection: {padding: '2%', marginTop: '2%'},
 });

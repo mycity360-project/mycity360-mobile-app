@@ -43,6 +43,7 @@ export default function WhatAreYouOffering({navigation, route}) {
         navigation.navigate('SubCategory', {
           categoryID: item.id,
           categoryName: item.name,
+          isPrice:item.isPrice,
         })
       }>
       <View style={{alignItems: 'center', justifyContent: 'center'}}>

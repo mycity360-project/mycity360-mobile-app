@@ -14,7 +14,7 @@ import {http} from '../shared/lib';
 export default function SubCategory({navigation, route}) {
   const [isLoading, setIsLoading] = useState(false);
   const [subcategoryData, setSubCategoryData] = useState([]);
-  const {categoryID, categoryName} = route.params;
+  const {categoryID, categoryName, isPrice} = route.params;
 
   const getSubCategories = async () => {
     try {
@@ -64,6 +64,7 @@ export default function SubCategory({navigation, route}) {
           navigation.navigate('QuestionsScreen', {
             categoryID: categoryID,
             subCategoryID: item.id,
+            isPrice: isPrice,
           })
         }>
         <Text style={{fontSize: 16, color: '#222', marginLeft: 10}}>

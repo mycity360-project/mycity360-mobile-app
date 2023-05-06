@@ -12,6 +12,8 @@ import CustomButton from '../shared/components/CustomButton';
 import {AD_DESC_MAX_LENGTH} from '../shared/constants/env';
 
 export default function IncludeSomeDetails({navigation, route}) {
+  const {AdData, isPrice} = route.params;
+
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [descLength, setDescLength] = useState(Number(0));
@@ -30,31 +32,38 @@ export default function IncludeSomeDetails({navigation, route}) {
     priceZero: 'Price Cannot be 0',
   };
   const onNextHandler = () => {
-    if (title.length == Number(0)) {
+    if (parseInt(title.length) === Number(0)) {
       setIsTitleError(true);
       return;
-    } else if (description.length == Number(0)) {
+    }
+    if (parseInt(description.length) === Number(0)) {
       setIsTitleError(false);
       setIsDescError(true);
       return;
-    } else if (price.length == Number(0)) {
-      setIsDescError(false);
-      setIsPriceError(true);
-      return;
-    } else if (!Number(price)) {
-      setIsPriceError(false);
-      setIsPriceZero(true);
-    } else {
-      setIsPriceZero(false);
-      navigation.navigate('UploadAdPhotos', {
-        AdData: {
-          title: title,
-          description: description,
-          price: Number(price),
-          ...route.params?.AdData,
-        },
-      });
     }
+    if (isPrice) {
+      if (parseInt(price.length) === Number(0)) {
+        setIsDescError(false);
+        setIsPriceError(true);
+        return;
+      }
+      if (!Number(price)) {
+        setIsPriceError(false);
+        setIsPriceZero(true);
+        return;
+      }
+    }
+    setIsDescError(false);
+    setIsPriceError(false);
+    setIsPriceZero(false);
+    navigation.navigate('UploadAdPhotos', {
+      AdData: {
+        ...AdData,
+        title: title,
+        description: description,
+        ...(isPrice && {price: Number(price)}),
+      },
+    });
   };
 
   // const handleDescChange = desc => {
@@ -145,47 +154,27 @@ export default function IncludeSomeDetails({navigation, route}) {
             )}
           </View>
         </View> */}
-        {/* <View style={{flex: 1}}>
-          <Text style={{fontSize: 16, fontWeight: 500, color: '#222'}}>
-            Price
-          </Text>
-          <TextInput
-            placeholder="Enter Price"
-            keyboardType="numeric"
-            value={price}
-            onChangeText={price => {
-              setPrice(price);
-            }}
-            style={{borderBottomWidth: 1, padding: 1}}
-          />
-          {isPriceError ? <Text style={styles.error}>{errors.price}</Text> : ''}
-          {isPriceZero ? (
-            <Text style={styles.error}>{errors.priceZero}</Text>
-          ) : (
-            ''
-          )}
-        </View> */}
 
-        <View style={{flex: 1}}>
-          <Text style={{fontSize: 16, fontWeight: 500, color: '#222'}}>
-            Price
-          </Text>
-          <TextInput
-            placeholder="Enter Price"
-            keyboardType="numeric"
-            value={price}
-            onChangeText={price => {
-              setPrice(price);
-            }}
-            style={{borderBottomWidth: 1, padding: 1}}
-          />
-          {isPriceError ? <Text style={styles.error}>{errors.price}</Text> : ''}
-          {isPriceZero ? (
-            <Text style={styles.error}>{errors.priceZero}</Text>
-          ) : (
-            ''
-          )}
-        </View>
+        {isPrice && (
+          <View style={{flex: 1}}>
+            <Text style={{fontSize: 16, fontWeight: 500, color: '#222'}}>
+              Price
+            </Text>
+            <TextInput
+              placeholder="Enter Price"
+              keyboardType="numeric"
+              value={price}
+              onChangeText={price => {
+                setPrice(price);
+              }}
+              style={{borderBottomWidth: 1, padding: 1}}
+            />
+            {isPriceError && <Text style={styles.error}>{errors.price}</Text>}
+            {isPriceZero && (
+              <Text style={styles.error}>{errors.priceZero}</Text>
+            )}
+          </View>
+        )}
       </View>
       <View
         style={{flex: 1.5, justifyContent: 'center', alignContent: 'center'}}>

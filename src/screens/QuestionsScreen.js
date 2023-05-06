@@ -17,7 +17,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import ModalView from '../shared/components/ModalView';
 
 export default function QuestionsScreen({navigation, route}) {
-  const AdData = route.params;
+  const {isPrice, ...AdData} = route.params;
 
   const [isLoading, setIsLoading] = useState(false);
   const [questionData, setQuestionData] = useState([]);
@@ -188,6 +188,7 @@ export default function QuestionsScreen({navigation, route}) {
                 ...AdData,
                 answers: data,
               },
+              isPrice,
             });
           }}
           style={{width: '90%', marginHorizontal: '5%'}}
