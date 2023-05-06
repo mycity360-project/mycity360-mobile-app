@@ -140,8 +140,7 @@ export default function Home({navigation}) {
         name: category.name,
         icon: category.icon,
         seq: category.sequence,
-        // isPrice: category?.is_price,
-        isPrice: false,
+        isPrice: category.is_price,
       }));
 
       setCategoriesData(categories);
