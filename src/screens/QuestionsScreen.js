@@ -38,21 +38,28 @@ export default function QuestionsScreen({navigation, route}) {
           Authorization: `Bearer ${token}`,
         },
       });
-      const questions = questionsRespData.results?.map((question, index) => ({
-        id: question?.id?.toString(),
-        question: question?.question,
-        field: question?.field_type,
-        label: question?.label,
-        placeholder: question?.placeholder,
-        isRequired: question?.is_required,
-        answerLimit: question?.answer_limit,
-        values: question?.values?.map((item, index) => ({
-          key: index.toString(),
-          value: item,
-        })),
-      }));
-      console.log(questions, 44);
+      let answerArr = {};
+      const questions = questionsRespData.results?.map((question, index) => {
+        let data = {
+          id: question?.id?.toString(),
+          question: question?.question,
+          field: question?.field_type,
+          label: question?.label,
+          placeholder: question?.placeholder,
+          isRequired: question?.is_required,
+          answerLimit: question?.answer_limit,
+          values: question?.values?.map((item, index) => ({
+            key: index.toString(),
+            value: item,
+          })),
+        };
+        if (data.field === 'Toggle') {
+          answerArr[data.id] = 'No';
+        }
+        return data;
+      });
       setQuestionData(questions);
+      setAnswerData({...answerArr});
       setIsLoading(false);
     } catch (err) {
       setIsLoading(false);
@@ -82,78 +89,82 @@ export default function QuestionsScreen({navigation, route}) {
     let answer = value ? 'Yes' : 'No';
     handleAnswer(id, answer);
   };
-
   const renderQuestion = ({item, index}) => {
-    return (
-      <View>
-        {item.field === 'Text' ? (
-          <View style={{marginTop: 5}}>
-            <Text style={styles.questionText}>{item.question}</Text>
-            <TextInput
-              placeholder={item.placeholder}
-              maxLength={item.answerLimit}
-              onChangeText={answer => handleAnswer(item.id, answer)}
-              style={{borderBottomWidth: 1, padding: 1}}
-            />
-          </View>
-        ) : item.field === 'Dropdown' ? (
-          <View style={{marginTop: 15}}>
-            <Text style={styles.questionText}>{item.question}</Text>
-            <TouchableOpacity
-              onPress={() => {
-                setSelectedDropdownItemId(item.id);
-                setModalVisible(true);
-              }}>
-              <Text style={{borderBottomWidth: 1, padding: 5}}>
-                {answerData[item.id] || item.placeholder}
-              </Text>
-              {selectedDropdownItemId === item.id && (
-                <ModalView
-                  title={item.label}
-                  visible={modalVisible}
-                  data={item.values}
-                  onSelect={answer =>
-                    handleDropdownSelection(item.id, answer.value)
-                  }
-                  onClose={() => {
-                    setModalVisible(false);
-                    setSelectedDropdownItemId(null);
-                    setSelectedDropdownItem('');
-                  }}
-                />
-              )}
-            </TouchableOpacity>
-          </View>
-        ) : item.field === 'Number' ? (
-          <View style={{marginTop: 15}}>
-            <Text style={styles.questionText}>{item.question}</Text>
-            <TextInput
-              placeholder={item.placeholder}
-              maxLength={item.answerLimit}
-              keyboardType="numeric"
-              style={{borderBottomWidth: 1, padding: 1}}
-              onChangeText={answer => handleAnswer(item.id, answer)}
-            />
-          </View>
-        ) : item.field === 'Toggle' ? (
-          (answerData[item.id] = 'No' && (
-            <View
-              style={{
-                marginTop: 15,
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-              }}>
-              <Text style={styles.questionText}>{item.question}</Text>
-              <Switch
-                value={answerData[item.id] === 'No' ? false : true}
-                onValueChange={selected => handleToggle(item.id, selected)}
+    if (item.field === 'Text') {
+      return (
+        <View style={{marginTop: 5}}>
+          <Text style={styles.questionText}>{item.question}</Text>
+          <TextInput
+            placeholder={item.placeholder}
+            maxLength={item.answerLimit}
+            onChangeText={answer => handleAnswer(item.id, answer)}
+            style={{borderBottomWidth: 1, padding: 1}}
+          />
+        </View>
+      );
+    } else if (item.field === 'Dropdown') {
+      return (
+        <View style={{marginTop: 15}}>
+          <Text style={styles.questionText}>{item.question}</Text>
+          <TouchableOpacity
+            onPress={() => {
+              setSelectedDropdownItemId(item.id);
+              setModalVisible(true);
+            }}>
+            <Text style={{borderBottomWidth: 1, padding: 5}}>
+              {answerData[item.id] || item.placeholder}
+            </Text>
+            {selectedDropdownItemId === item.id && (
+              <ModalView
+                title={item.label}
+                visible={modalVisible}
+                data={item.values}
+                onSelect={answer =>
+                  handleDropdownSelection(item.id, answer.value)
+                }
+                onClose={() => {
+                  setModalVisible(false);
+                  setSelectedDropdownItemId(null);
+                  setSelectedDropdownItem('');
+                }}
               />
-            </View>
-          ))
-        ) : null}
-      </View>
-    );
+            )}
+          </TouchableOpacity>
+        </View>
+      );
+    } else if (item.field === 'Number') {
+      return (
+        <View style={{marginTop: 15}}>
+          <Text style={styles.questionText}>{item.question}</Text>
+          <TextInput
+            placeholder={item.placeholder}
+            maxLength={item.answerLimit}
+            keyboardType="numeric"
+            style={{borderBottomWidth: 1, padding: 1}}
+            onChangeText={answer => handleAnswer(item.id, answer)}
+          />
+        </View>
+      );
+    } else if (item.field === 'Toggle') {
+      console.log(answerData, ' In bachloars ');
+      return (
+        <View
+          style={{
+            marginTop: 15,
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}>
+          <Text style={styles.questionText}>{item.question}</Text>
+          <Switch
+            value={answerData[item.id] === 'No' ? false : true}
+            onValueChange={selected => handleToggle(item.id, selected)}
+          />
+        </View>
+      );
+    } else {
+      return null;
+    }
   };
 
   const handleNext = () => {
