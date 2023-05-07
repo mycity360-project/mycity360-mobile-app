@@ -178,14 +178,14 @@ export default function AdDescription({route, navigation}) {
         <View>
           <FlatList
             data={answerData}
-            numColumns={2}
+            showsVerticalScrollIndicator={true}
             renderItem={({item}) => {
               return (
                 <View
                   style={{
+                    flex: -1,
                     flexDirection: 'row',
-                    gap: 2,
-                    width: '45%',
+                    gap: 1,
                     padding: 2,
                   }}>
                   <Text style={{color: '#222', fontWeight: 500, fontSize: 12}}>
@@ -280,7 +280,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFF',
   },
   adQuesAnsSection: {
-    flex: 2,
+    flex: 1.5,
     padding: 5,
     marginTop: '2%',
     backgroundColor: '#FFF',
@@ -289,7 +289,6 @@ const styles = StyleSheet.create({
     flex: 0.3,
     justifyContent: 'center',
     padding: 5,
-    marginTop: '2%',
     backgroundColor: '#FFF',
   },
   otherDetailsText: {fontSize: 14, color: '#111', fontWeight: 500},
