@@ -12,6 +12,7 @@ import {
   Alert,
   ActivityIndicator,
   SafeAreaView,
+  ScrollView,
 } from 'react-native';
 import React, {useState, useEffect} from 'react';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
@@ -122,7 +123,7 @@ export default function AdDescription({route, navigation}) {
                   key={index}
                   style={[
                     styles.dotCommon,
-                    parseInt(currentIndex) === index
+                    parseInt(currentIndex, 10) === index
                       ? styles.dotActive
                       : styles.dotNotActive,
                   ]}
@@ -175,30 +176,43 @@ export default function AdDescription({route, navigation}) {
         <Text style={{fontSize: 16, fontWeight: 600, color: '#111'}}>
           Details
         </Text>
-        <View>
-          <FlatList
-            data={answerData}
-            showsVerticalScrollIndicator={true}
-            renderItem={({item}) => {
-              return (
-                <View
-                  style={{
-                    flex: -1,
-                    flexDirection: 'row',
-                    gap: 1,
-                    padding: 2,
-                  }}>
-                  <Text style={{color: '#222', fontWeight: 500, fontSize: 12}}>
-                    {item.question} -
-                  </Text>
-                  <Text style={{color: '#111', fontSize: 12}}>
-                    {item.answer}
-                  </Text>
-                </View>
-              );
-            }}
-          />
-        </View>
+        <FlatList
+          data={[{id: 'column1'}, {id: 'column2'}]}
+          numColumns={2}
+          keyExtractor={item => item.id}
+          renderItem={({item}) => (
+            <View style={{flex: 1}}>
+              <FlatList
+                data={
+                  item.id === 'column1'
+                    ? answerData.slice(0, Math.ceil(answerData.length / 2))
+                    : answerData.slice(Math.ceil(answerData.length / 2))
+                }
+                renderItem={({item}) => (
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      flexWrap: 'wrap',
+                      gap: 2,
+                      width: '100%',
+                      padding: 2,
+                    }}>
+                    <Text
+                      style={{color: '#222', fontWeight: 900, fontSize: 12}}>
+                      {item.question} -
+                    </Text>
+                    <Text
+                      style={{color: '#111', fontSize: 12}}
+                      numberOfLines={2}
+                      ellipsizeMode="tail">
+                      {item.answer}
+                    </Text>
+                  </View>
+                )}
+              />
+            </View>
+          )}
+        />
       </View>
 
       <View style={styles.otherDetailsSection}>

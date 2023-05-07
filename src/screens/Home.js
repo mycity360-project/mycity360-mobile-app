@@ -21,7 +21,7 @@ import {http} from '../shared/lib';
 import {useIsFocused} from '@react-navigation/native';
 import {AuthContext} from '../context/AuthContext';
 const {width, height} = Dimensions.get('window');
-const bannerHeight = height * 0.33;
+const screenHeight = height;
 export default function Home({navigation}) {
   const [categoriesData, setCategoriesData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -434,7 +434,11 @@ export default function Home({navigation}) {
   const renderHeader = () => {
     return (
       <View style={{flex: 1, marginTop: '2%'}}>
-        <View style={styles.categoryAndSellBtnSection}>
+        <View
+          style={[
+            styles.categoryAndSellBtnSection,
+            {height: screenHeight * 0.14},
+          ]}>
           {/* Sell Button to add item for sell */}
           <TouchableOpacity
             style={styles.sellBtn}
@@ -492,7 +496,7 @@ export default function Home({navigation}) {
           )}
         </View>
         {showBanner && (
-          <View style={[styles.bannerSection, {height: bannerHeight}]}>
+          <View style={[styles.bannerSection, {height: screenHeight * 0.33}]}>
             <FlatList
               data={bannerImages}
               ref={flatListRef}
@@ -716,7 +720,6 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 10,
   },
   categoryAndSellBtnSection: {
-    height: 100,
     flexDirection: 'row',
     gap: 5,
     borderColor: '#999',
