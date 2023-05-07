@@ -21,7 +21,7 @@ export default function IncludeSomeDetails({navigation, route}) {
   const [isDescError, setIsDescError] = useState(false);
   const [price, setPrice] = useState('');
   const [isPriceError, setIsPriceError] = useState(false);
-  const [isPriceZero, setIsPriceZero] = useState(false);
+  const [isPriceZeroError, setIsPriceZeroError] = useState(false);
   // const [adDescription, setAdDescription] = useState('');
   // const [adDescriptionError, setAdDescriptionError] = useState('');
 
@@ -31,6 +31,7 @@ export default function IncludeSomeDetails({navigation, route}) {
     price: 'Price is Required',
     priceZero: 'Price Cannot be 0',
   };
+
   const onNextHandler = () => {
     if (parseInt(title.length) === Number(0)) {
       setIsTitleError(true);
@@ -49,13 +50,13 @@ export default function IncludeSomeDetails({navigation, route}) {
       }
       if (!Number(price)) {
         setIsPriceError(false);
-        setIsPriceZero(true);
+        setIsPriceZeroError(true);
         return;
       }
     }
     setIsDescError(false);
     setIsPriceError(false);
-    setIsPriceZero(false);
+    setIsPriceZeroError(false);
     navigation.navigate('UploadAdPhotos', {
       AdData: {
         ...AdData,
@@ -170,7 +171,7 @@ export default function IncludeSomeDetails({navigation, route}) {
               style={{borderBottomWidth: 1, padding: 1}}
             />
             {isPriceError && <Text style={styles.error}>{errors.price}</Text>}
-            {isPriceZero && (
+            {isPriceZeroError && (
               <Text style={styles.error}>{errors.priceZero}</Text>
             )}
           </View>

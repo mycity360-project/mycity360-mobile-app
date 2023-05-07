@@ -215,6 +215,7 @@ export default function Home({navigation}) {
           subCategoryID: ad.category.id,
           locationName: ad.area?.location?.name,
           areaName: ad.area?.name,
+          isPrice: ad.category.is_price,
           key: `${userAdsData.length + index}`,
         };
       });
@@ -253,6 +254,7 @@ export default function Home({navigation}) {
   });
 
   const CARD_HEIGHT = 175;
+  const numColumns = 2;
   const getAdCardLayout = (_, index) => ({
     length: CARD_HEIGHT,
     offset: CARD_HEIGHT * index,
@@ -283,8 +285,8 @@ export default function Home({navigation}) {
         <Image
           source={{
             uri: item.icon,
-            width: 50,
-            height: 50,
+            width: 45,
+            height: 45,
           }}
         />
       </View>
@@ -320,91 +322,115 @@ export default function Home({navigation}) {
     );
   };
 
+  const formatData = (ads, num) => {
+    const numberOfFullRows = Math.floor(ads.length / num);
+    let numberOfItemsLastRow = ads.length - numberOfFullRows * num;
+    while (numberOfItemsLastRow !== num && numberOfItemsLastRow !== 0) {
+      ads.push({key: `blank-${numberOfItemsLastRow}`, empty: true});
+      numberOfItemsLastRow++;
+    }
+    return ads;
+  };
+
   const Item = memo(({item}) => {
     return (
-      <Pressable
+      <View
         style={{
-          height: CARD_HEIGHT,
-          padding: '2%',
-          width: '49%',
-          marginBottom: '1%',
-          borderWidth: 2,
-          borderColor: '#CCC',
-          borderRadius: 5,
-        }}
-        onPress={() =>
-          navigation.navigate('AdDescription', {
-            adDetails: {
-              id: item.id,
-              title: item.title,
-              price: item.price,
-              description: item.description,
-              location: item.locationName,
-              area: item.areaName,
-              createdOn: item.createdOn,
-              images: item.images,
-              userID: item.userID,
-              phone: item.phone,
-              categoryID: item.subCategoryID,
-              showCallNowBtn: true,
-              showDeleteBtn: false,
-            },
-          })
-        }>
-        <View
-          pointerEvents="box-only"
-          style={{
-            flex: 1.9,
-            alignItems: 'center',
-            justifyContent: 'center',
-            // backgroundColor: '#664489',
-          }}>
-          <Image
-            source={{uri: item.images[0].image}}
-            style={{height: '90%', width: '80%'}}
-            resizeMode="contain"
-          />
+          width: '50%',
+          backgroundColor: '#FFF',
+          paddingHorizontal: '1%',
+        }}>
+        {item.empty ? (
+          ''
+        ) : (
+          <Pressable
+            style={{
+              height: CARD_HEIGHT,
+              padding: '2%',
+              width: '98%',
+              marginBottom: '1%',
+              borderWidth: 2,
+              borderColor: '#CCC',
+              borderRadius: 5,
+            }}
+            onPress={() =>
+              navigation.navigate('AdDescription', {
+                adDetails: {
+                  id: item.id,
+                  title: item.title,
+                  price: item.price,
+                  description: item.description,
+                  location: item.locationName,
+                  area: item.areaName,
+                  createdOn: item.createdOn,
+                  images: item.images,
+                  userID: item.userID,
+                  phone: item.phone,
+                  categoryID: item.subCategoryID,
+                  isPrice: item.isPrice,
+                  showCallNowBtn: true,
+                  showDeleteBtn: false,
+                },
+              })
+            }>
+            <View
+              pointerEvents="box-only"
+              style={{
+                flex: 1.9,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+              <Image
+                source={{uri: item.images[0].image}}
+                style={{height: '90%', width: '80%'}}
+                resizeMode="contain"
+              />
 
-          {item.isFeatured ?? featuredTag()}
-        </View>
-        <View
-          style={{
-            flex: 1,
-            justifyContent: 'space-between',
-          }}>
-          <Text
-            numberOfLines={1}
-            style={{fontSize: 14, width: '90%', color: '#000'}}>
-            {item.title}
-          </Text>
-          <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-            <Text style={{fontSize: 14, fontWeight: 600, color: '#111'}}>
-              ₹ {item.price}
-            </Text>
-
-            <View style={{flexDirection: 'row', marginBottom: 5}}>
-              <MaterialIcon name="location-pin" size={16} color={'#666'} />
-              <Text
-                style={{
-                  fontSize: 12,
-                  textAlign: 'left',
-                  fontWeight: 500,
-                  color: '#666',
-                }}>
-                {item.locationName === item.areaName
-                  ? item.locationName
-                  : `${item.areaName} , ${item.locationName}`}
-              </Text>
+              {item.isFeatured && featuredTag}
             </View>
-          </View>
-        </View>
-      </Pressable>
+            <View
+              style={{
+                flex: 1,
+                justifyContent: 'space-between',
+              }}>
+              <Text
+                numberOfLines={1}
+                style={{fontSize: 14, width: '90%', color: '#000'}}>
+                {item.title}
+              </Text>
+              <View
+                style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                {item.isPrice && (
+                  <Text style={{fontSize: 14, fontWeight: 600, color: '#111'}}>
+                    ₹ {item.price}
+                  </Text>
+                )}
+
+                <View style={{flexDirection: 'row', marginBottom: 5}}>
+                  <MaterialIcon name="location-pin" size={16} color={'#666'} />
+                  <Text
+                    style={{
+                      fontSize: 12,
+                      textAlign: 'left',
+                      fontWeight: 500,
+                      color: '#666',
+                    }}>
+                    {item.locationName === item.areaName
+                      ? item.locationName
+                      : `${item.areaName} , ${item.locationName}`}
+                  </Text>
+                </View>
+              </View>
+            </View>
+          </Pressable>
+        )}
+      </View>
     );
   });
 
   const renderHeader = () => {
     return (
-      <View style={{flex: 1}}>
+      <View style={{flex: 1, marginTop: '2%'}}>
         <View style={styles.categoryAndSellBtnSection}>
           {/* Sell Button to add item for sell */}
           <TouchableOpacity
@@ -607,22 +633,21 @@ export default function Home({navigation}) {
 
           <View
             style={[
-              // styles.featuredAdsSection,
+              styles.featuredAdsSection,
               // showBanner ? {flex: 2.8} : {flex: 4},
               {flex: 6},
             ]}>
             <FlatList
-              data={userAdsData}
-              contentContainerStyle={styles.featuredAdsSection}
+              data={formatData(userAdsData, numColumns)}
               ListHeaderComponentStyle={{
-                flex: 3,
+                flex: 1,
                 marginBottom: '2%',
                 backgroundColor: '#FFF',
               }}
               renderItem={({item}) => <Item item={item} />}
               getItemLayout={getAdCardLayout}
               ListHeaderComponent={renderHeader}
-              numColumns={2}
+              numColumns={numColumns}
               columnWrapperStyle={{
                 justifyContent: 'space-between',
               }}
@@ -630,8 +655,9 @@ export default function Home({navigation}) {
               maxToRenderPerBatch={8}
               showsVerticalScrollIndicator={false}
               onEndReached={!flatlistLoading && hasMore ? handleLoadMore : null}
-              onEndReachedThreshold={0.5}
+              onEndReachedThreshold={0.1}
               ListFooterComponent={renderFooter}
+              ListFooterComponentStyle={{backgroundColor: '#FFF'}}
             />
           </View>
         </View>
@@ -646,12 +672,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    flex: 1.1,
+    flex: 1,
     backgroundColor: '#FFF',
     padding: '1%',
   },
   locationSection: {
-    flex: 0.5,
+    flex: 0.7,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -687,14 +713,12 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 10,
   },
   categoryAndSellBtnSection: {
-    flex: 1,
+    height: 100,
     flexDirection: 'row',
     gap: 5,
-    marginTop: '2%',
     borderColor: '#999',
     borderTopWidth: 0.3,
     borderBottomWidth: 0.3,
-    backgroundColor: '#FFF',
   },
   sellBtn: {
     flex: 0.2,
@@ -706,14 +730,13 @@ const styles = StyleSheet.create({
     padding: 5,
   },
   categoryListSection: {
-    flex: 0.8,
+    flex: 0.9,
   },
 
   bannerSection: {
-    flex: 3,
+    height: 200,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#FFF',
     marginTop: '2%',
   },
   wrapper: {width: width, height: '100%'},
@@ -737,5 +760,4 @@ const styles = StyleSheet.create({
   dotNotActive: {
     backgroundColor: '#fff',
   },
-  featuredAdsSection: {padding: '2%', marginTop: '2%'},
 });

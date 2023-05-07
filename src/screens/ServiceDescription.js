@@ -80,7 +80,7 @@ export default function ServiceDescription({route, navigation}) {
           </TouchableOpacity>
         </View>
         <View style={styles.adInfoSection}>
-          <Text style={styles.infoSectionMiddle}>{title}</Text>
+          <Text style={styles.title}>{title}</Text>
         </View>
       </View>
 
@@ -89,36 +89,6 @@ export default function ServiceDescription({route, navigation}) {
           Description
         </Text>
         <Text style={{color: '#111'}}>{description}</Text>
-      </View>
-
-      <View style={styles.adQuesAnsSection}>
-        <Text style={{fontSize: 16, fontWeight: 600, color: '#111'}}>
-          Details
-        </Text>
-        {/* <View>
-          <FlatList
-            data={answerData}
-            numColumns={2}
-            renderItem={({item}) => {
-              return (
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    gap: 2,
-                    width: '45%',
-                    padding: 2,
-                  }}>
-                  <Text style={{color: '#222', fontWeight: 500, fontSize: 12}}>
-                    {item.question} -
-                  </Text>
-                  <Text style={{color: '#111', fontSize: 12}}>
-                    {item.answer}
-                  </Text>
-                </View>
-              );
-            }}
-          />
-        </View> */}
       </View>
 
       <View style={styles.otherDetailsSection}>
@@ -136,61 +106,27 @@ export default function ServiceDescription({route, navigation}) {
 
 const styles = StyleSheet.create({
   container: {flex: 1, backgroundColor: '#F5F5F5'},
-  adHeaderSection: {flex: 3, paddingTop: 5},
+  adHeaderSection: {flex: 2, paddingTop: 5},
   adImgSection: {
-    flex: 1.5,
+    flex: 3,
     alignItems: 'center',
     justifyContent: 'center',
   },
   adInfoSection: {
-    flex: 0.5,
+    flex: 1,
     padding: 5,
     marginTop: '2%',
     backgroundColor: '#FFF',
   },
-  infoSectionTop: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  priceText: {fontSize: 20, fontWeight: 600, color: '#111'},
-  infoSectionMiddle: {
-    flex: 1,
-    fontSize: 16,
-    width: '90%',
-    color: '#000',
-  },
-  infoSectionBottom: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-    justifyContent: 'space-between',
-  },
-  locationSection: {flexDirection: 'row'},
-  locationText: {
-    fontSize: 14,
-    fontWeight: 500,
-    color: '#444',
-  },
-  dateAdded: {
-    fontSize: 14,
-    fontWeight: 500,
-    color: '#444',
-  },
+  title: {fontSize: 16, fontWeight: 500, color: '#222'},
   adDescriptionSection: {
-    flex: 1,
-    padding: 5,
-    marginTop: '2%',
-    backgroundColor: '#FFF',
-  },
-  adQuesAnsSection: {
     flex: 2,
     padding: 5,
     marginTop: '2%',
     backgroundColor: '#FFF',
   },
   otherDetailsSection: {
-    flex: 0.3,
+    flex: 0.2,
     justifyContent: 'center',
     padding: 5,
     marginTop: '2%',
@@ -198,7 +134,7 @@ const styles = StyleSheet.create({
   },
   otherDetailsText: {fontSize: 14, color: '#111', fontWeight: 500},
   footer: {
-    flex: 0.6,
+    flex: 0.5,
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: '2%',

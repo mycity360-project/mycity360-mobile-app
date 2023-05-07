@@ -136,22 +136,53 @@ export default function QuestionsScreen({navigation, route}) {
             />
           </View>
         ) : item.field === 'Toggle' ? (
-          <View
-            style={{
-              marginTop: 15,
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}>
-            <Text style={styles.questionText}>{item.question}</Text>
-            <Switch
-              value={toggleValue}
-              onValueChange={selected => handleToggle(item.id, selected)}
-            />
-          </View>
+          (answerData[item.id] = 'No' && (
+            <View
+              style={{
+                marginTop: 15,
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}>
+              <Text style={styles.questionText}>{item.question}</Text>
+              <Switch
+                value={answerData[item.id] === 'No' ? false : true}
+                onValueChange={selected => handleToggle(item.id, selected)}
+              />
+            </View>
+          ))
         ) : null}
       </View>
     );
+  };
+
+  const handleNext = () => {
+    const requiredQuestions = questionData.filter(
+      question => question.isRequired,
+    );
+    const answeredQuestions = Object.keys(answerData).map(key => parseInt(key));
+    const unansweredQuestions = requiredQuestions.filter(
+      question => !answeredQuestions.includes(parseInt(question.id)),
+    );
+
+    if (unansweredQuestions.length > 0) {
+      alert(
+        `Please answer the following required questions: ${unansweredQuestions
+          .map(question => question.question)
+          .join(', ')}`,
+      );
+      return;
+    }
+    let data = Object.entries(answerData).map(([key, value]) => {
+      return {id: key, answer: value};
+    });
+    navigation.navigate('IncludeSomeDetails', {
+      AdData: {
+        ...AdData,
+        answers: data,
+      },
+      isPrice,
+    });
   };
   return isLoading ? (
     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
@@ -166,7 +197,6 @@ export default function QuestionsScreen({navigation, route}) {
           }}>
           <MaterialIcon name="arrow-back" color={'#111'} size={28} />
         </TouchableOpacity>
-
         <Text style={styles.headingText}>Include Some Details</Text>
       </View>
       <View style={styles.detailsFormSection}>
@@ -179,18 +209,7 @@ export default function QuestionsScreen({navigation, route}) {
       <View style={{flex: 1, justifyContent: 'center', alignContent: 'center'}}>
         <CustomButton
           btnTitle="Next"
-          onpress={() => {
-            let data = Object.entries(answerData).map(([key, value]) => {
-              return {id: key, answer: value};
-            });
-            navigation.navigate('IncludeSomeDetails', {
-              AdData: {
-                ...AdData,
-                answers: data,
-              },
-              isPrice,
-            });
-          }}
+          onpress={handleNext}
           style={{width: '90%', marginHorizontal: '5%'}}
         />
       </View>

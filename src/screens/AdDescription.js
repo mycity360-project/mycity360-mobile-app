@@ -24,7 +24,7 @@ export default function AdDescription({route, navigation}) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answerData, setAnswerData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const adDetails = route.params.adDetails;
+  const {adDetails} = route.params;
   const {location, area} = adDetails;
 
   const openDialer = contactNumber => {
@@ -143,9 +143,11 @@ export default function AdDescription({route, navigation}) {
           </TouchableOpacity>
         </View>
         <View style={styles.adInfoSection}>
-          <View style={styles.infoSectionTop}>
-            <Text style={styles.priceText}>₹ {adDetails.price}</Text>
-          </View>
+          {adDetails.isPrice && (
+            <View style={styles.infoSectionTop}>
+              <Text style={styles.priceText}>₹ {adDetails.price}</Text>
+            </View>
+          )}
 
           <Text style={styles.infoSectionMiddle}>{adDetails.title}</Text>
           <View style={styles.infoSectionBottom}>
