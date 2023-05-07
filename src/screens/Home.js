@@ -13,7 +13,6 @@ import {
   Alert,
   TextInput,
   Dimensions,
-  Linking,
 } from 'react-native';
 import {React, useEffect, useState, useRef, memo, useContext} from 'react';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
@@ -21,9 +20,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {http} from '../shared/lib';
 import {useIsFocused} from '@react-navigation/native';
 import {AuthContext} from '../context/AuthContext';
-import WebView from 'react-native-webview';
 const {width, height} = Dimensions.get('window');
-
+const bannerHeight = height * 0.33;
 export default function Home({navigation}) {
   const [categoriesData, setCategoriesData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -48,11 +46,14 @@ export default function Home({navigation}) {
   const getBannerImages = async () => {
     try {
       const token = await AsyncStorage.getItem('token');
-      const bannerRespData = await http.get('banner/user/?is_active=True', {
-        headers: {
-          Authorization: `Bearer ${token}`,
+      const bannerRespData = await http.get(
+        `banner/user/?is_active=True&area_id=${userInfo.localUserArea.id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
-      });
+      );
       const images = bannerRespData?.results?.map(img => ({
         key: img.id.toString(),
         image: img.image,
@@ -87,7 +88,9 @@ export default function Home({navigation}) {
   });
 
   useEffect(() => {
-    if (!isReady) return;
+    if (!isReady) {
+      return;
+    }
     const interval = setInterval(() => {
       if (!isScrolling) {
         const nextIndex = (currentIndex + 1) % bannerImages.length;
@@ -109,7 +112,7 @@ export default function Home({navigation}) {
     const unsubscribe = navigation.addListener('focus', async () => {
       // Clear the state on coming back after navigating
       setPage(1);
-      setUserAdsData([]);
+      setUserAdsData(prevData => []);
       // setFlatlistLoading(false);
     });
     // Return the unsubscribe function to avoid memory leaks
@@ -121,6 +124,7 @@ export default function Home({navigation}) {
     if (isFocused && !wasFocused.current) {
       // Reload the screen when it comes into focus
       getUserAds();
+      getBannerImages();
     }
     // Update the previous focus state
     wasFocused.current = isFocused;
@@ -219,8 +223,7 @@ export default function Home({navigation}) {
           key: `${userAdsData.length + index}`,
         };
       });
-
-      setUserAdsData([...userAdsData, ...ads]);
+      setUserAdsData(prevData => [...prevData, ...ads]);
     } catch (err) {
       Alert.alert('ERROR', 'Something went wrong, Unable to Fetch Ads Home', [
         {
@@ -386,7 +389,7 @@ export default function Home({navigation}) {
                 resizeMode="contain"
               />
 
-              {item.isFeatured && featuredTag}
+              {item.isFeatured && featuredTag()}
             </View>
             <View
               style={{
@@ -489,7 +492,7 @@ export default function Home({navigation}) {
           )}
         </View>
         {showBanner && (
-          <View style={styles.bannerSection}>
+          <View style={[styles.bannerSection, {height: bannerHeight}]}>
             <FlatList
               data={bannerImages}
               ref={flatListRef}
@@ -533,7 +536,7 @@ export default function Home({navigation}) {
                     key={index}
                     style={[
                       styles.dotCommon,
-                      parseInt(currentIndex) === index
+                      parseInt(currentIndex, 10) === index
                         ? styles.dotActive
                         : styles.dotNotActive,
                     ]}
@@ -641,7 +644,7 @@ export default function Home({navigation}) {
               data={formatData(userAdsData, numColumns)}
               ListHeaderComponentStyle={{
                 flex: 1,
-                marginBottom: '2%',
+                // marginBottom: '2%',
                 backgroundColor: '#FFF',
               }}
               renderItem={({item}) => <Item item={item} />}
@@ -667,7 +670,7 @@ export default function Home({navigation}) {
 }
 
 const styles = StyleSheet.create({
-  container: {flex: 1, backgroundColor: '#e9e9e9'},
+  container: {flex: 1, backgroundColor: '#fff'},
   innerContainer: {
     flex: 1,
   },
@@ -734,10 +737,9 @@ const styles = StyleSheet.create({
   },
 
   bannerSection: {
-    height: 200,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: '2%',
+    // marginTop: '2%',
   },
   wrapper: {width: width, height: '100%'},
   dotWrapper: {
