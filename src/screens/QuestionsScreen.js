@@ -8,6 +8,7 @@ import {
   FlatList,
   Switch,
   SafeAreaView,
+  Alert,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
@@ -38,37 +39,52 @@ export default function QuestionsScreen({navigation, route}) {
           Authorization: `Bearer ${token}`,
         },
       });
-      let answerArr = {};
-      const questions = questionsRespData.results?.map((question, index) => {
-        let data = {
-          id: question?.id?.toString(),
-          question: question?.question,
-          field: question?.field_type,
-          label: question?.label,
-          placeholder: question?.placeholder,
-          isRequired: question?.is_required,
-          answerLimit: question?.answer_limit,
-          values: question?.values?.map((item, index) => ({
-            key: index.toString(),
-            value: item,
-          })),
-        };
-        if (data.field === 'Toggle') {
-          answerArr[data.id] = 'No';
-        }
-        return data;
-      });
-      setQuestionData(questions);
-      setAnswerData({...answerArr});
-      setIsLoading(false);
+      if (questionsRespData.results && questionsRespData.results.length > 0) {
+        let answerArr = {};
+        const questions = questionsRespData.results?.map((question, index) => {
+          let data = {
+            id: question?.id?.toString(),
+            question: question?.question,
+            field: question?.field_type,
+            label: question?.label,
+            placeholder: question?.placeholder,
+            isRequired: question?.is_required,
+            answerLimit: question?.answer_limit,
+            values: question?.values?.map((item, index) => ({
+              key: index.toString(),
+              value: item,
+            })),
+          };
+          if (data.field === 'Toggle') {
+            answerArr[data.id] = 'No';
+          }
+          return data;
+        });
+        setQuestionData(questions);
+        setAnswerData({...answerArr});
+      } else {
+        setIsLoading(false);
+        navigation.replace('IncludeSomeDetails', {
+          AdData: {
+            ...AdData,
+            answers: [],
+          },
+          isPrice,
+        });
+      }
     } catch (err) {
+      Alert.alert('ERROR', 'Something went wrong, Unable to Fetch Questions', [
+        {
+          text: 'OK',
+        },
+      ]);
+    } finally {
       setIsLoading(false);
     }
   };
 
   useEffect(() => {
     getQuestions();
-    console.log('55');
   }, []);
 
   const handleAnswer = (id, answer) => {
@@ -93,7 +109,10 @@ export default function QuestionsScreen({navigation, route}) {
     if (item.field === 'Text') {
       return (
         <View style={{marginTop: 5}}>
-          <Text style={styles.questionText}>{item.question}</Text>
+          <Text style={styles.questionText}>
+            {item.question}
+            {item.isRequired && <Text style={{color: 'red'}}>*</Text>}
+          </Text>
           <TextInput
             placeholder={item.placeholder}
             maxLength={item.answerLimit}
@@ -105,7 +124,10 @@ export default function QuestionsScreen({navigation, route}) {
     } else if (item.field === 'Dropdown') {
       return (
         <View style={{marginTop: 15}}>
-          <Text style={styles.questionText}>{item.question}</Text>
+          <Text style={styles.questionText}>
+            {item.question}
+            {item.isRequired && <Text style={{color: 'red'}}>*</Text>}
+          </Text>
           <TouchableOpacity
             onPress={() => {
               setSelectedDropdownItemId(item.id);
@@ -135,7 +157,10 @@ export default function QuestionsScreen({navigation, route}) {
     } else if (item.field === 'Number') {
       return (
         <View style={{marginTop: 15}}>
-          <Text style={styles.questionText}>{item.question}</Text>
+          <Text style={styles.questionText}>
+            {item.question}
+            {item.isRequired && <Text style={{color: 'red'}}>*</Text>}
+          </Text>
           <TextInput
             placeholder={item.placeholder}
             maxLength={item.answerLimit}
@@ -146,7 +171,6 @@ export default function QuestionsScreen({navigation, route}) {
         </View>
       );
     } else if (item.field === 'Toggle') {
-      console.log(answerData, ' In bachloars ');
       return (
         <View
           style={{
@@ -155,7 +179,10 @@ export default function QuestionsScreen({navigation, route}) {
             alignItems: 'center',
             justifyContent: 'space-between',
           }}>
-          <Text style={styles.questionText}>{item.question}</Text>
+          <Text style={styles.questionText}>
+            {item.question}
+            {item.isRequired && <Text style={{color: 'red'}}>*</Text>}
+          </Text>
           <Switch
             value={answerData[item.id] === 'No' ? false : true}
             onValueChange={selected => handleToggle(item.id, selected)}
@@ -178,7 +205,7 @@ export default function QuestionsScreen({navigation, route}) {
 
     if (unansweredQuestions.length > 0) {
       alert(
-        `Please answer the following required questions: ${unansweredQuestions
+        `Please answer the following required questions:\n${unansweredQuestions
           .map(question => question.question)
           .join(', ')}`,
       );
@@ -215,6 +242,12 @@ export default function QuestionsScreen({navigation, route}) {
           data={questionData}
           renderItem={renderQuestion}
           showsVerticalScrollIndicator={false}
+          ListFooterComponent={
+            <Text>
+              <Text style={{color: 'red'}}>*</Text> mark fields are required
+              fields.
+            </Text>
+          }
         />
       </View>
       <View style={{flex: 1, justifyContent: 'center', alignContent: 'center'}}>
