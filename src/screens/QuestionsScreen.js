@@ -207,7 +207,7 @@ export default function QuestionsScreen({navigation, route}) {
       alert(
         `Please answer the following required questions:\n${unansweredQuestions
           .map(question => question.question)
-          .join(', ')}`,
+          .join(',\n')}`,
       );
       return;
     }

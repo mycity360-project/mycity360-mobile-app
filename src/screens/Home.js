@@ -23,8 +23,8 @@ import {AuthContext} from '../context/AuthContext';
 const {width, height} = Dimensions.get('window');
 const screenHeight = height;
 export default function Home({navigation}) {
+  // const [isSplashVisible, setSplashVisible] = useState(true);
   const [categoriesData, setCategoriesData] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
   const [isCategoryLoding, setIsCategoryLoding] = useState(false);
   const [flatlistLoading, setFlatlistLoading] = useState(false);
   const [userAdsData, setUserAdsData] = useState([]);
@@ -42,6 +42,15 @@ export default function Home({navigation}) {
   const [isScrolling, setIsScrolling] = useState(false);
   const [bannerImages, setBannerImages] = useState([]);
   const [showBanner, setShowBanner] = useState(false);
+
+  // useEffect(() => {
+  //   // Simulating a delay for the splash screen
+  //   const splashTimeout = setTimeout(() => {
+  //     setSplashVisible(false);
+  //   }, 3000);
+
+  //   return () => clearTimeout(splashTimeout);
+  // }, []);
 
   const getBannerImages = async () => {
     try {
@@ -175,14 +184,18 @@ export default function Home({navigation}) {
 
     if (showNoAdsFoundMsg) {
       return (
-        <Text style={{fontSize: 14, color: '#222', textAlign: 'center'}}>
+        <Text
+          allowFontScaling={false}
+          style={{fontSize: 14, color: '#222', textAlign: 'center'}}>
           No Ads Found
         </Text>
       );
     } else {
       if (!hasMore) {
         return (
-          <Text style={{fontSize: 14, color: '#222', textAlign: 'center'}}>
+          <Text
+            allowFontScaling={false}
+            style={{fontSize: 14, color: '#222', textAlign: 'center'}}>
             No More Ads to Show
           </Text>
         );
@@ -296,6 +309,7 @@ export default function Home({navigation}) {
 
       <View style={{flex: 0.8, alignItems: 'center', justifyContent: 'center'}}>
         <Text
+          allowFontScaling={false}
           style={{
             fontSize: 14,
             color: '#111',
@@ -318,7 +332,9 @@ export default function Home({navigation}) {
           top: 5,
           borderRadius: 2,
         }}>
-        <Text style={{color: '#222', fontSize: 12, fontWeight: 500}}>
+        <Text
+          allowFontScaling={false}
+          style={{color: '#222', fontSize: 12, fontWeight: 500}}>
           FEATURED
         </Text>
       </View>
@@ -397,6 +413,7 @@ export default function Home({navigation}) {
                 justifyContent: 'space-between',
               }}>
               <Text
+                allowFontScaling={false}
                 numberOfLines={1}
                 style={{fontSize: 14, width: '90%', color: '#000'}}>
                 {item.title}
@@ -404,7 +421,9 @@ export default function Home({navigation}) {
               <View
                 style={{flexDirection: 'row', justifyContent: 'space-between'}}>
                 {item.isPrice && (
-                  <Text style={{fontSize: 14, fontWeight: 600, color: '#111'}}>
+                  <Text
+                    allowFontScaling={false}
+                    style={{fontSize: 14, fontWeight: 600, color: '#111'}}>
                     ₹ {item.price}
                   </Text>
                 )}
@@ -412,6 +431,7 @@ export default function Home({navigation}) {
                 <View style={{flexDirection: 'row', marginBottom: 5}}>
                   <MaterialIcon name="location-pin" size={16} color={'#666'} />
                   <Text
+                    allowFontScaling={false}
                     style={{
                       fontSize: 12,
                       textAlign: 'left',
@@ -466,10 +486,16 @@ export default function Home({navigation}) {
                 alignItems: 'center',
                 justifyContent: 'center',
               }}>
-              <Text style={{fontSize: 16, color: '#111', marginBottom: '-10%'}}>
+              <Text
+                allowFontScaling={false}
+                style={{fontSize: 16, color: '#111', marginBottom: '-10%'}}>
                 Sell /
               </Text>
-              <Text style={{fontSize: 16, color: '#111'}}>Post Ad</Text>
+              <Text
+                allowFontScaling={false}
+                style={{fontSize: 16, color: '#111'}}>
+                Post Ad
+              </Text>
             </View>
           </TouchableOpacity>
           {/* Category Horizontal List */}
@@ -526,7 +552,7 @@ export default function Home({navigation}) {
                     onPress={() => handleWebLink(item.redirectUrl)}>
                     <Image
                       source={{uri: item.image}}
-                      resizeMode="contain"
+                      resizeMode="cover"
                       style={styles.wrapper}
                     />
                   </TouchableOpacity>
@@ -554,10 +580,12 @@ export default function Home({navigation}) {
     );
   };
 
-  return isLoading ? (
-    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-      <ActivityIndicator size={'large'} />
-    </View>
+  return false ? (
+    <Image
+      style={styles.container}
+      resizeMode="cover"
+      source={require('../assets/images/splash.jpeg')}
+    />
   ) : (
     <SafeAreaView style={styles.container}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -565,6 +593,7 @@ export default function Home({navigation}) {
           <View style={styles.header}>
             <View style={styles.locationSection}>
               <Text
+                allowFontScaling={false}
                 style={{
                   color: '#222',
                   fontWeight: 500,
@@ -578,6 +607,7 @@ export default function Home({navigation}) {
                 onPress={() => navigation.navigate('Location')}>
                 <MaterialIcon name="location-pin" color={'#222'} size={16} />
                 <Text
+                  allowFontScaling={false}
                   style={{
                     color: '#222',
                     fontWeight: 500,
@@ -599,7 +629,11 @@ export default function Home({navigation}) {
                   justifyContent: 'center',
                   alignItems: 'center',
                 }}>
-                <Text style={{fontSize: 20, color: '#111'}}>Ads</Text>
+                <Text
+                  allowFontScaling={false}
+                  style={{fontSize: 20, color: '#111'}}>
+                  Ads
+                </Text>
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => navigation.navigate('Service')}
@@ -612,11 +646,16 @@ export default function Home({navigation}) {
                   justifyContent: 'center',
                   alignItems: 'center',
                 }}>
-                <Text style={{fontSize: 20, color: '#111'}}>Services</Text>
+                <Text
+                  allowFontScaling={false}
+                  style={{fontSize: 20, color: '#111'}}>
+                  Services
+                </Text>
               </TouchableOpacity>
             </View>
             <View style={styles.searchBarSection}>
               <TextInput
+                allowFontScaling={false}
                 returnKeyType="search"
                 placeholder="Find Mobile, Cars ....."
                 style={styles.inputBox}
