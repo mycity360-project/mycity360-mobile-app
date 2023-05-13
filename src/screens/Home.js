@@ -580,13 +580,7 @@ export default function Home({navigation}) {
     );
   };
 
-  return false ? (
-    <Image
-      style={styles.container}
-      resizeMode="cover"
-      source={require('../assets/images/splash.jpeg')}
-    />
-  ) : (
+  return (
     <SafeAreaView style={styles.container}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.innerContainer}>

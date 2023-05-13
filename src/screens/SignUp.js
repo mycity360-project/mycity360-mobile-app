@@ -55,8 +55,14 @@ export default function SignUp() {
         value: location.name,
       }));
       setLocationData(locations);
-    } catch (error) {}
-    setIsLoading(false);
+    } catch (error) {
+      const msg =
+        error?.response?.data?.detail ||
+        'Something Went Wrong, We are working on it. Please try after Some time';
+      Alert.alert('ERROR', `${msg}`, [{text: 'OK'}]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -77,8 +83,14 @@ export default function SignUp() {
 
       setAreaData(areas);
       setIsDisabled(false);
+    } catch (error) {
+      const msg =
+        error?.response?.data?.detail ||
+        'Something Went Wrong, We are working on it. Please try after Some time';
+      Alert.alert('ERROR', `${msg}`, [{text: 'OK'}]);
+    } finally {
       setIsLoading(false);
-    } catch (error) {}
+    }
   };
 
   const setLocation = async location => {
@@ -113,20 +125,19 @@ export default function SignUp() {
 
       const user_id = resp.id;
       if (user_id) {
-        setIsLoading(false);
         resp.is_phone_verified
           ? await login(email, password)
           : navigation.navigate('VerifyOtp', {userid: user_id});
       } else {
-        setIsLoading(false);
         throw new Error('Not able to get UserId Something went wrong');
       }
     } catch (error) {
-      setIsLoading(false);
       const msg =
         error?.response?.data?.detail ||
         'Something Went Wrong, We are working on it. Please try after Some time';
       Alert.alert('ERROR', `${msg}`, [{text: 'OK'}]);
+    } finally {
+      setIsLoading(false);
     }
   };
 
