@@ -89,10 +89,13 @@ export default function Login() {
               source={require('../assets/images/logo.png')}
               style={{width: 75, height: 75}}
             />
-            <Text style={styles.logoName}>MyCity360</Text>
+            <Text allowFontScaling={false} style={styles.logoName}>
+              MyCity360
+            </Text>
           </View>
           <View style={styles.loginFormSection}>
             <Text
+              allowFontScaling={false}
               style={{
                 fontSize: 24,
                 fontWeight: '400',
@@ -102,6 +105,7 @@ export default function Login() {
               Login
             </Text>
             <TextInput
+              allowFontScaling={false}
               placeholder="Enter Email / Mobile Number"
               style={styles.input}
               autoCapitalize="none"
@@ -112,16 +116,21 @@ export default function Login() {
               onSubmitEditing={() => passwordRef.current.focus()}
             />
             {isEmailError ? (
-              <Text style={styles.error}>{errors.email}</Text>
+              <Text allowFontScaling={false} style={styles.error}>
+                {errors.email}
+              </Text>
             ) : (
               ''
             )}
             {isPhoneError ? (
-              <Text style={styles.error}>{errors.phone}</Text>
+              <Text allowFontScaling={false} style={styles.error}>
+                {errors.phone}
+              </Text>
             ) : (
               ''
             )}
             <TextInput
+              allowFontScaling={false}
               placeholder="Enter Password"
               style={styles.input}
               autoCapitalize="none"
@@ -134,7 +143,9 @@ export default function Login() {
               ref={passwordRef}
             />
             {ispasswordError ? (
-              <Text style={styles.error}>{errors.password}</Text>
+              <Text allowFontScaling={false} style={styles.error}>
+                {errors.password}
+              </Text>
             ) : (
               ''
             )}
@@ -156,9 +167,12 @@ export default function Login() {
                 flexDirection: 'row',
                 gap: 5,
               }}>
-              <Text style={{fontSize: 16}}>Need an account?</Text>
+              <Text allowFontScaling={false} style={{fontSize: 16}}>
+                Need an account?
+              </Text>
               <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
                 <Text
+                  allowFontScaling={false}
                   style={{
                     fontSize: 16,
                     color: '#FA8C00',

@@ -29,14 +29,18 @@ export default function TextSearch({navigation, route}) {
   const renderFooter = () => {
     if (showNoAdsFoundMsg) {
       return (
-        <Text style={{fontSize: 14, color: '#222', textAlign: 'center'}}>
+        <Text
+          allowFontScaling={false}
+          style={{fontSize: 14, color: '#222', textAlign: 'center'}}>
           No Ads Found
         </Text>
       );
     }
     if (!showNoAdsFoundMsg && !hasMore) {
       return (
-        <Text style={{fontSize: 14, color: '#222', textAlign: 'center'}}>
+        <Text
+          allowFontScaling={false}
+          style={{fontSize: 14, color: '#222', textAlign: 'center'}}>
           No More Ads to Show
         </Text>
       );
@@ -177,11 +181,17 @@ export default function TextSearch({navigation, route}) {
         </View>
 
         <View style={{width: '70%', height: '90%', paddingLeft: 5}}>
-          <Text style={{fontSize: 16, color: '#111', fontWeight: 500}}>
+          <Text
+            allowFontScaling={false}
+            style={{fontSize: 16, color: '#111', fontWeight: 500}}>
             {item.title}
           </Text>
-          <Text style={{fontSize: 16, color: '#111'}}>₹ {item.price}</Text>
-          <Text style={{fontSize: 16, color: '#111'}}>{item.description}</Text>
+          <Text allowFontScaling={false} style={{fontSize: 16, color: '#111'}}>
+            ₹ {item.price}
+          </Text>
+          <Text allowFontScaling={false} style={{fontSize: 16, color: '#111'}}>
+            {item.description}
+          </Text>
         </View>
       </TouchableOpacity>
     );
@@ -201,6 +211,7 @@ export default function TextSearch({navigation, route}) {
             <MaterialIcon name="arrow-back" size={26} color={'#444'} />
           </TouchableOpacity>
           <TextInput
+            allowFontScaling={false}
             returnKeyType="search"
             placeholder="Find Mobile, Cars ....."
             style={styles.inputBox}

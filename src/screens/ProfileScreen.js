@@ -182,7 +182,9 @@ export default function ProfileScreen() {
               size={styles.rowIcon.size}
               color={styles.rowIcon.color}
             />
-            <Text style={styles.rowText}>{userInfo?.area?.name}</Text>
+            <Text allowFontScaling={false} style={styles.rowText}>
+              {userInfo?.area?.name}
+            </Text>
           </View>
           <View style={styles.row}>
             <MaterialIcon
@@ -190,7 +192,9 @@ export default function ProfileScreen() {
               size={styles.rowIcon.size}
               color={styles.rowIcon.color}
             />
-            <Text style={styles.rowText}>{userInfo.phone}</Text>
+            <Text allowFontScaling={false} style={styles.rowText}>
+              {userInfo.phone}
+            </Text>
           </View>
           <View style={styles.row}>
             <MaterialIcon
@@ -198,7 +202,9 @@ export default function ProfileScreen() {
               size={styles.rowIcon.size}
               color={styles.rowIcon.color}
             />
-            <Text style={styles.rowText}>{userInfo.email}</Text>
+            <Text allowFontScaling={false} style={styles.rowText}>
+              {userInfo.email}
+            </Text>
           </View>
         </View>
       </View>
@@ -213,7 +219,9 @@ export default function ProfileScreen() {
               color={styles.menuItemIcon.color}
               size={styles.menuItemIcon.size}
             />
-            <Text style={styles.menuItemText}>Logout</Text>
+            <Text allowFontScaling={false} style={styles.menuItemText}>
+              Logout
+            </Text>
           </View>
         </TouchableRipple>
       </View>
@@ -250,13 +258,17 @@ export default function ProfileScreen() {
             onPress={() => openCamera()}
             style={{width: '100%', height: 40, flexDirection: 'row', gap: 5}}>
             <MaterialIcon name="photo-camera" size={24} color={'#222'} />
-            <Text style={{fontSize: 18}}>Camera</Text>
+            <Text allowFontScaling={false} style={{fontSize: 18}}>
+              Camera
+            </Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => openGallery()}
             style={{width: '100%', height: 50, flexDirection: 'row', gap: 5}}>
             <MaterialIcon name="folder-open" size={24} color={'#222'} />
-            <Text style={{fontSize: 18}}>Gallery</Text>
+            <Text allowFontScaling={false} style={{fontSize: 18}}>
+              Gallery
+            </Text>
           </TouchableOpacity>
         </View>
       </Modal>

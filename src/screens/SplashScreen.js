@@ -1,12 +1,15 @@
 import React from 'react';
-import {View, Image, StyleSheet} from 'react-native';
+import {View, ImageBackground, StyleSheet, Dimensions} from 'react-native';
 
 const SplashScreen = () => {
+  const {width, height} = Dimensions.get('window');
+
   return (
     <View style={styles.container}>
-      <Image
+      <ImageBackground
         source={require('../assets/images/splash.jpeg')}
         style={styles.image}
+        resizeMode="contain"
       />
     </View>
   );
@@ -22,7 +25,6 @@ const styles = StyleSheet.create({
   image: {
     width: '100%',
     height: '100%',
-    resizeMode: 'cover',
   },
 });
 

@@ -23,7 +23,6 @@ import {AuthContext} from '../context/AuthContext';
 const {width, height} = Dimensions.get('window');
 const screenHeight = height;
 export default function Home({navigation}) {
-  // const [isSplashVisible, setSplashVisible] = useState(true);
   const [categoriesData, setCategoriesData] = useState([]);
   const [isCategoryLoding, setIsCategoryLoding] = useState(false);
   const [flatlistLoading, setFlatlistLoading] = useState(false);
@@ -42,15 +41,6 @@ export default function Home({navigation}) {
   const [isScrolling, setIsScrolling] = useState(false);
   const [bannerImages, setBannerImages] = useState([]);
   const [showBanner, setShowBanner] = useState(false);
-
-  // useEffect(() => {
-  //   // Simulating a delay for the splash screen
-  //   const splashTimeout = setTimeout(() => {
-  //     setSplashVisible(false);
-  //   }, 3000);
-
-  //   return () => clearTimeout(splashTimeout);
-  // }, []);
 
   const getBannerImages = async () => {
     try {
@@ -119,23 +109,18 @@ export default function Home({navigation}) {
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', async () => {
-      // Clear the state on coming back after navigating
       setPage(1);
-      setUserAdsData(prevData => []);
-      // setFlatlistLoading(false);
+      setUserAdsData(() => []);
     });
-    // Return the unsubscribe function to avoid memory leaks
     return unsubscribe;
   }, [navigation]);
 
   useEffect(() => {
     setSearchText('');
     if (isFocused && !wasFocused.current) {
-      // Reload the screen when it comes into focus
       getUserAds();
       getBannerImages();
     }
-    // Update the previous focus state
     wasFocused.current = isFocused;
   }, [isFocused]);
 

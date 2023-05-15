@@ -107,6 +107,7 @@ export default function Home({navigation}) {
               justifyContent: 'center',
             }}>
             <Text
+              allowFontScaling={false}
               style={{
                 fontSize: 16,
                 color: '#111',
@@ -138,7 +139,11 @@ export default function Home({navigation}) {
               justifyContent: 'center',
               alignItems: 'center',
             }}>
-            <Text style={{fontSize: 20, color: '#111'}}>Ads</Text>
+            <Text
+              allowFontScaling={false}
+              style={{fontSize: 20, color: '#111'}}>
+              Ads
+            </Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => navigation.navigate('Service')}
@@ -151,7 +156,11 @@ export default function Home({navigation}) {
               justifyContent: 'center',
               alignItems: 'center',
             }}>
-            <Text style={{fontSize: 20, color: '#111'}}>Services</Text>
+            <Text
+              allowFontScaling={false}
+              style={{fontSize: 20, color: '#111'}}>
+              Services
+            </Text>
           </TouchableOpacity>
         </View>
       </View>

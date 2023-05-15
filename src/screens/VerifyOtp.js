@@ -34,6 +34,7 @@ export default function VerifyOtp({route}) {
       </View>
       <View style={styles.formContainer}>
         <TextInput
+          allowFontScaling={false}
           style={styles.input}
           placeholder="Enter Mobile OTP"
           keyboardType="numeric"

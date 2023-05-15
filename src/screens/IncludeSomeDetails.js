@@ -91,14 +91,19 @@ export default function IncludeSomeDetails({navigation, route}) {
           <MaterialIcon name="arrow-back" color={'#111'} size={28} />
         </TouchableOpacity>
 
-        <Text style={styles.headingText}>Include Some Details</Text>
+        <Text allowFontScaling={false} style={styles.headingText}>
+          Include Some Details
+        </Text>
       </View>
       <View style={styles.detailsFormSection}>
         <View style={{flex: 0.2}}>
-          <Text style={{fontSize: 16, fontWeight: 500, color: '#222'}}>
+          <Text
+            allowFontScaling={false}
+            style={{fontSize: 16, fontWeight: 500, color: '#222'}}>
             Title
           </Text>
           <TextInput
+            allowFontScaling={false}
             placeholder="Enter Title"
             autoFocus={true}
             value={title}
@@ -108,9 +113,16 @@ export default function IncludeSomeDetails({navigation, route}) {
             style={{borderBottomWidth: 1, padding: 1, marginBottom: 20}}
           />
         </View>
-        {isTitleError ? <Text style={styles.error}>{errors.title}</Text> : ''}
+        {isTitleError ? (
+          <Text allowFontScaling={false} style={styles.error}>
+            {errors.title}
+          </Text>
+        ) : (
+          ''
+        )}
         <View style={{flex: 0.3, marginBottom: '8%'}}>
           <Text
+            allowFontScaling={false}
             style={{
               fontSize: 16,
               fontWeight: 500,
@@ -119,6 +131,7 @@ export default function IncludeSomeDetails({navigation, route}) {
             Description
           </Text>
           <TextInput
+            allowFontScaling={false}
             placeholder="Describe your product."
             multiline={true}
             // maxLength={AD_DESC_MAX_LENGTH}
@@ -134,10 +147,14 @@ export default function IncludeSomeDetails({navigation, route}) {
             }}
           />
         </View>
-        {isDescError && <Text style={styles.error}>{errors.description}</Text>}
+        {isDescError && (
+          <Text allowFontScaling={false} style={styles.error}>
+            {errors.description}
+          </Text>
+        )}
 
         {/* <View style={{flex: 0.1, flexDirection: 'row'}}>
-          <Text style={{color: 'red'}}>{adDescriptionError}</Text>
+          <Text allowFontScaling={false} style={{color: 'red'}}>{adDescriptionError}</Text>
 
           <View
             style={{
@@ -145,11 +162,11 @@ export default function IncludeSomeDetails({navigation, route}) {
               alignItems: 'flex-end',
             }}>
             {AD_DESC_MAX_LENGTH - descLength <= 30 ? (
-              <Text style={{color: 'red'}}>
+              <Text allowFontScaling={false} style={{color: 'red'}}>
                 {descLength}/{AD_DESC_MAX_LENGTH}
               </Text>
             ) : (
-              <Text>
+              <Text allowFontScaling={false}>
                 {descLength}/{AD_DESC_MAX_LENGTH}
               </Text>
             )}
@@ -158,10 +175,13 @@ export default function IncludeSomeDetails({navigation, route}) {
 
         {isPrice && (
           <View style={{flex: 1}}>
-            <Text style={{fontSize: 16, fontWeight: 500, color: '#222'}}>
+            <Text
+              allowFontScaling={false}
+              style={{fontSize: 16, fontWeight: 500, color: '#222'}}>
               Price
             </Text>
             <TextInput
+              allowFontScaling={false}
               placeholder="Enter Price"
               keyboardType="numeric"
               value={price}
@@ -170,9 +190,15 @@ export default function IncludeSomeDetails({navigation, route}) {
               }}
               style={{borderBottomWidth: 1, padding: 1}}
             />
-            {isPriceError && <Text style={styles.error}>{errors.price}</Text>}
+            {isPriceError && (
+              <Text allowFontScaling={false} style={styles.error}>
+                {errors.price}
+              </Text>
+            )}
             {isPriceZeroError && (
-              <Text style={styles.error}>{errors.priceZero}</Text>
+              <Text allowFontScaling={false} style={styles.error}>
+                {errors.priceZero}
+              </Text>
             )}
           </View>
         )}

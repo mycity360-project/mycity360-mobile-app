@@ -43,7 +43,7 @@ export default function WhatAreYouOffering({navigation, route}) {
         navigation.navigate('SubCategory', {
           categoryID: item.id,
           categoryName: item.name,
-          isPrice:item.isPrice,
+          isPrice: item.isPrice,
         })
       }>
       <View style={{alignItems: 'center', justifyContent: 'center'}}>
@@ -55,6 +55,7 @@ export default function WhatAreYouOffering({navigation, route}) {
           }}
         />
         <Text
+          allowFontScaling={false}
           style={{
             fontSize: 12,
             color: '#111',
@@ -76,7 +77,9 @@ export default function WhatAreYouOffering({navigation, route}) {
           <MaterialIcon name="close" color={'#444'} size={32} />
         </TouchableOpacity>
 
-        <Text style={styles.headingText}>What Are You Offering ?</Text>
+        <Text allowFontScaling={false} style={styles.headingText}>
+          What Are You Offering ?
+        </Text>
       </View>
       <View style={styles.categoryListSection}>
         {/* Render catrgory cards */}

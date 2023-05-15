@@ -109,11 +109,16 @@ export default function QuestionsScreen({navigation, route}) {
     if (item.field === 'Text') {
       return (
         <View style={{marginTop: 5}}>
-          <Text style={styles.questionText}>
+          <Text allowFontScaling={false} style={styles.questionText}>
             {item.question}
-            {item.isRequired && <Text style={{color: 'red'}}>*</Text>}
+            {item.isRequired && (
+              <Text allowFontScaling={false} style={{color: 'red'}}>
+                *
+              </Text>
+            )}
           </Text>
           <TextInput
+            allowFontScaling={false}
             placeholder={item.placeholder}
             maxLength={item.answerLimit}
             onChangeText={answer => handleAnswer(item.id, answer)}
@@ -124,16 +129,22 @@ export default function QuestionsScreen({navigation, route}) {
     } else if (item.field === 'Dropdown') {
       return (
         <View style={{marginTop: 15}}>
-          <Text style={styles.questionText}>
+          <Text allowFontScaling={false} style={styles.questionText}>
             {item.question}
-            {item.isRequired && <Text style={{color: 'red'}}>*</Text>}
+            {item.isRequired && (
+              <Text allowFontScaling={false} style={{color: 'red'}}>
+                *
+              </Text>
+            )}
           </Text>
           <TouchableOpacity
             onPress={() => {
               setSelectedDropdownItemId(item.id);
               setModalVisible(true);
             }}>
-            <Text style={{borderBottomWidth: 1, padding: 5}}>
+            <Text
+              allowFontScaling={false}
+              style={{borderBottomWidth: 1, padding: 5}}>
               {answerData[item.id] || item.placeholder}
             </Text>
             {selectedDropdownItemId === item.id && (
@@ -157,11 +168,16 @@ export default function QuestionsScreen({navigation, route}) {
     } else if (item.field === 'Number') {
       return (
         <View style={{marginTop: 15}}>
-          <Text style={styles.questionText}>
+          <Text allowFontScaling={false} style={styles.questionText}>
             {item.question}
-            {item.isRequired && <Text style={{color: 'red'}}>*</Text>}
+            {item.isRequired && (
+              <Text allowFontScaling={false} style={{color: 'red'}}>
+                *
+              </Text>
+            )}
           </Text>
           <TextInput
+            allowFontScaling={false}
             placeholder={item.placeholder}
             maxLength={item.answerLimit}
             keyboardType="numeric"
@@ -179,9 +195,13 @@ export default function QuestionsScreen({navigation, route}) {
             alignItems: 'center',
             justifyContent: 'space-between',
           }}>
-          <Text style={styles.questionText}>
+          <Text allowFontScaling={false} style={styles.questionText}>
             {item.question}
-            {item.isRequired && <Text style={{color: 'red'}}>*</Text>}
+            {item.isRequired && (
+              <Text allowFontScaling={false} style={{color: 'red'}}>
+                *
+              </Text>
+            )}
           </Text>
           <Switch
             value={answerData[item.id] === 'No' ? false : true}
@@ -235,7 +255,9 @@ export default function QuestionsScreen({navigation, route}) {
           }}>
           <MaterialIcon name="arrow-back" color={'#111'} size={28} />
         </TouchableOpacity>
-        <Text style={styles.headingText}>Include Some Details</Text>
+        <Text allowFontScaling={false} style={styles.headingText}>
+          Include Some Details
+        </Text>
       </View>
       <View style={styles.detailsFormSection}>
         <FlatList
@@ -243,9 +265,11 @@ export default function QuestionsScreen({navigation, route}) {
           renderItem={renderQuestion}
           showsVerticalScrollIndicator={false}
           ListFooterComponent={
-            <Text>
-              <Text style={{color: 'red'}}>*</Text> mark fields are required
-              fields.
+            <Text allowFontScaling={false}>
+              <Text allowFontScaling={false} style={{color: 'red'}}>
+                *
+              </Text>{' '}
+              mark fields are required fields.
             </Text>
           }
         />

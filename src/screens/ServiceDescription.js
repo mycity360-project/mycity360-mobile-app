@@ -80,24 +80,34 @@ export default function ServiceDescription({route, navigation}) {
           </TouchableOpacity>
         </View>
         <View style={styles.adInfoSection}>
-          <Text style={styles.title}>{title}</Text>
+          <Text allowFontScaling={false} style={styles.title}>
+            {title}
+          </Text>
         </View>
       </View>
 
       <View style={styles.adDescriptionSection}>
-        <Text style={{fontSize: 16, fontWeight: 600, color: '#111'}}>
+        <Text
+          allowFontScaling={false}
+          style={{fontSize: 16, fontWeight: 600, color: '#111'}}>
           Description
         </Text>
-        <Text style={{color: '#111'}}>{description}</Text>
+        <Text allowFontScaling={false} style={{color: '#111'}}>
+          {description}
+        </Text>
       </View>
 
       <View style={styles.otherDetailsSection}>
-        <Text style={styles.otherDetailsText}>Service ID: {serviceID}</Text>
+        <Text allowFontScaling={false} style={styles.otherDetailsText}>
+          Service ID: {serviceID}
+        </Text>
       </View>
 
       <View style={styles.footer}>
         <TouchableOpacity style={styles.button} onPress={openDialer}>
-          <Text style={styles.buttonText}>Call Now</Text>
+          <Text allowFontScaling={false} style={styles.buttonText}>
+            Call Now
+          </Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>

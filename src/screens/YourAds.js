@@ -103,14 +103,18 @@ export default function YourAds({navigation, route}) {
 
     if (showNoAdsFoundMsg) {
       return (
-        <Text style={{fontSize: 14, color: '#222', textAlign: 'center'}}>
+        <Text
+          allowFontScaling={false}
+          style={{fontSize: 14, color: '#222', textAlign: 'center'}}>
           No Ads Found.
         </Text>
       );
     } else {
       if (!hasMore) {
         return (
-          <Text style={{fontSize: 14, color: '#222', textAlign: 'center'}}>
+          <Text
+            allowFontScaling={false}
+            style={{fontSize: 14, color: '#222', textAlign: 'center'}}>
             No More Ads to Show
           </Text>
         );
@@ -188,11 +192,17 @@ export default function YourAds({navigation, route}) {
         </View>
 
         <View style={{width: '70%', height: '90%', paddingLeft: 5}}>
-          <Text style={{fontSize: 16, color: '#111', fontWeight: 500}}>
+          <Text
+            allowFontScaling={false}
+            style={{fontSize: 16, color: '#111', fontWeight: 500}}>
             {item.title}
           </Text>
-          <Text style={{fontSize: 16, color: '#111'}}>₹ {item.price}</Text>
-          <Text style={{fontSize: 16, color: '#111'}}>{item.description}</Text>
+          <Text allowFontScaling={false} style={{fontSize: 16, color: '#111'}}>
+            ₹ {item.price}
+          </Text>
+          <Text allowFontScaling={false} style={{fontSize: 16, color: '#111'}}>
+            {item.description}
+          </Text>
         </View>
       </TouchableOpacity>
     );
@@ -207,7 +217,9 @@ export default function YourAds({navigation, route}) {
           <MaterialIcon name="arrow-back" color={'#111'} size={28} />
         </TouchableOpacity>
 
-        <Text style={styles.headingText}>Your Ads</Text>
+        <Text allowFontScaling={false} style={styles.headingText}>
+          Your Ads
+        </Text>
       </View>
       <View style={styles.yourAdsSection}>
         <FlatList

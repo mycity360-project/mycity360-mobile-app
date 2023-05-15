@@ -67,7 +67,9 @@ export default function SubCategory({navigation, route}) {
             isPrice: isPrice,
           })
         }>
-        <Text style={{fontSize: 16, color: '#222', marginLeft: 10}}>
+        <Text
+          allowFontScaling={false}
+          style={{fontSize: 16, color: '#222', marginLeft: 10}}>
           {item.name}
         </Text>
       </TouchableOpacity>
@@ -87,7 +89,9 @@ export default function SubCategory({navigation, route}) {
           <MaterialIcon name="arrow-back" color={'#333'} size={28} />
         </TouchableOpacity>
 
-        <Text style={styles.headingText}>{categoryName}</Text>
+        <Text allowFontScaling={false} style={styles.headingText}>
+          {categoryName}
+        </Text>
       </View>
       <View style={styles.subCategorySection}>
         <FlatList

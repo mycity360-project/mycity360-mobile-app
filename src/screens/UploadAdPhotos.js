@@ -51,7 +51,11 @@ export default function UploadAdPhotos({navigation, route}) {
           color={'#222'}
           style={{flex: 1}}
         />
-        <Text style={{color: '#222', flex: 1, fontSize: 16}}>{name}</Text>
+        <Text
+          allowFontScaling={false}
+          style={{color: '#222', flex: 1, fontSize: 16}}>
+          {name}
+        </Text>
       </TouchableOpacity>
     );
   };
@@ -369,7 +373,7 @@ export default function UploadAdPhotos({navigation, route}) {
               marginRight: 15,
               marginBottom: 10,
             }}>
-            <Text style={{color: '#222'}}>
+            <Text allowFontScaling={false} style={{color: '#222'}}>
               {parseInt(currentIndex) + 1}/{images.length}
             </Text>
           </View>
@@ -378,7 +382,9 @@ export default function UploadAdPhotos({navigation, route}) {
         )}
       </View>
       <View style={styles.cardButtonSection}>
-        <Text style={{color: '#222', textAlign: 'center', fontWeight: 500}}>
+        <Text
+          allowFontScaling={false}
+          style={{color: '#222', textAlign: 'center', fontWeight: 500}}>
           * Select only {MAX_IMAGE_ALLOWED} images to Upload.
         </Text>
         {maxImageExceed

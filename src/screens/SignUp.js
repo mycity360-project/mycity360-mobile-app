@@ -208,9 +208,14 @@ export default function SignUp() {
               <View style={styles.header} />
 
               <View style={styles.registerFormContainer}>
-                <Text style={styles.registerFormHeading}>Register</Text>
+                <Text
+                  allowFontScaling={false}
+                  style={styles.registerFormHeading}>
+                  Register
+                </Text>
                 <View style={styles.nameInputContainer}>
                   <TextInput
+                    allowFontScaling={false}
                     style={[
                       styles.nameInput,
                       styles.inputCommon,
@@ -229,6 +234,7 @@ export default function SignUp() {
                   />
 
                   <TextInput
+                    allowFontScaling={false}
                     placeholder="Last Name"
                     style={[
                       styles.nameInput,
@@ -247,12 +253,17 @@ export default function SignUp() {
                   />
                 </View>
                 {errors.firstName && touched.firstName && (
-                  <Text style={styles.error}>{errors.firstName}</Text>
+                  <Text allowFontScaling={false} style={styles.error}>
+                    {errors.firstName}
+                  </Text>
                 )}
                 {errors.lastName && touched.lastName && (
-                  <Text style={styles.error}>{errors.lastName}</Text>
+                  <Text allowFontScaling={false} style={styles.error}>
+                    {errors.lastName}
+                  </Text>
                 )}
                 <TextInput
+                  allowFontScaling={false}
                   placeholder="Enter Mobile Number"
                   style={[styles.input, styles.inputCommon]}
                   keyboardType="numeric"
@@ -267,9 +278,12 @@ export default function SignUp() {
                   onSubmitEditing={() => focusNextInput(emailRef)}
                 />
                 {errors.mobileNumber && touched.mobileNumber && (
-                  <Text style={styles.error}>{errors.mobileNumber}</Text>
+                  <Text allowFontScaling={false} style={styles.error}>
+                    {errors.mobileNumber}
+                  </Text>
                 )}
                 <TextInput
+                  allowFontScaling={false}
                   placeholder="Enter you email"
                   style={[styles.input, styles.inputCommon]}
                   autoCapitalize={'none'}
@@ -285,9 +299,12 @@ export default function SignUp() {
                   onSubmitEditing={() => focusNextInput(passwordRef)}
                 />
                 {errors.email && touched.email && (
-                  <Text style={styles.error}>{errors.email}</Text>
+                  <Text allowFontScaling={false} style={styles.error}>
+                    {errors.email}
+                  </Text>
                 )}
                 <TextInput
+                  allowFontScaling={false}
                   style={[styles.input, styles.inputCommon]}
                   placeholder="Enter your password"
                   secureTextEntry={true}
@@ -304,6 +321,7 @@ export default function SignUp() {
                 />
 
                 <Text
+                  allowFontScaling={false}
                   style={{
                     fontSize: 10,
                     color: '#666',
@@ -313,9 +331,12 @@ export default function SignUp() {
                   Allowed Special Characters @,$,!,%,*,?,&,#
                 </Text>
                 {errors.password && touched.password && (
-                  <Text style={styles.error}>{errors.password}</Text>
+                  <Text allowFontScaling={false} style={styles.error}>
+                    {errors.password}
+                  </Text>
                 )}
                 <TextInput
+                  allowFontScaling={false}
                   style={[styles.input, styles.inputCommon]}
                   placeholder="Confirm password"
                   secureTextEntry={true}
@@ -329,7 +350,10 @@ export default function SignUp() {
                   ref={confirmPasswordRef}
                 />
                 {errors.confirmPassword && touched.confirmPassword && (
-                  <Text style={styles.error}> {errors.confirmPassword}</Text>
+                  <Text allowFontScaling={false} style={styles.error}>
+                    {' '}
+                    {errors.confirmPassword}
+                  </Text>
                 )}
                 <DropDown
                   placeholder="Select Location"
@@ -339,7 +363,9 @@ export default function SignUp() {
                   selectedValue={selectedLocation}
                 />
                 {showLocationError ? (
-                  <Text style={styles.error}>Please Select Location</Text>
+                  <Text allowFontScaling={false} style={styles.error}>
+                    Please Select Location
+                  </Text>
                 ) : (
                   ''
                 )}
@@ -351,7 +377,9 @@ export default function SignUp() {
                   selectedValue={selectedArea}
                 />
                 {showAreaError ? (
-                  <Text style={styles.error}>Please Select Area</Text>
+                  <Text allowFontScaling={false} style={styles.error}>
+                    Please Select Area
+                  </Text>
                 ) : (
                   ''
                 )}
@@ -369,10 +397,13 @@ export default function SignUp() {
                     flexDirection: 'row',
                     gap: 5,
                   }}>
-                  <Text style={{fontSize: 16}}>Already Registered?</Text>
+                  <Text allowFontScaling={false} style={{fontSize: 16}}>
+                    Already Registered?
+                  </Text>
                   <TouchableOpacity
                     onPress={() => navigation.navigate('Login')}>
                     <Text
+                      allowFontScaling={false}
                       style={{
                         fontSize: 16,
                         color: '#FA8C00',

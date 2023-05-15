@@ -25,6 +25,7 @@ export default function AdDescription({route, navigation}) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answerData, setAnswerData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isQuesAnsAvailable, setIsQuesAnsAvailable] = useState(false);
   const {adDetails} = route.params;
   const {location, area} = adDetails;
 
@@ -76,6 +77,7 @@ export default function AdDescription({route, navigation}) {
         answer: answer.answer,
       }));
       setAnswerData(answers);
+      setIsQuesAnsAvailable(answers.length ? true : false);
     } catch (err) {
       Alert.alert('ERROR', 'Something Went Wrong', [{text: 'OK'}]);
     } finally {
@@ -87,6 +89,33 @@ export default function AdDescription({route, navigation}) {
     getAnswers();
   }, []);
 
+  const renderHeader = () => {
+    return (
+      <>
+        <View>
+          <Text
+            allowFontScaling={false}
+            style={{fontSize: 16, fontWeight: 600, color: '#111'}}>
+            Description
+          </Text>
+          <Text allowFontScaling={false} style={{color: '#111'}}>
+            {adDetails.description}
+          </Text>
+        </View>
+        {isQuesAnsAvailable && (
+          <Text
+            style={{
+              fontSize: 16,
+              fontWeight: 600,
+              color: '#111',
+              marginTop: 10,
+            }}>
+            Details
+          </Text>
+        )}
+      </>
+    );
+  };
   return isLoading ? (
     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
       <ActivityIndicator size={'large'} />
@@ -146,37 +175,35 @@ export default function AdDescription({route, navigation}) {
         <View style={styles.adInfoSection}>
           {adDetails.isPrice && (
             <View style={styles.infoSectionTop}>
-              <Text style={styles.priceText}>₹ {adDetails.price}</Text>
+              <Text allowFontScaling={false} style={styles.priceText}>
+                ₹ {adDetails.price}
+              </Text>
+              <Text allowFontScaling={false} style={styles.adID}>
+                Ad ID: {adDetails.id}
+              </Text>
             </View>
           )}
 
-          <Text style={styles.infoSectionMiddle}>{adDetails.title}</Text>
+          <Text allowFontScaling={false} style={styles.infoSectionMiddle}>
+            {adDetails.title}
+          </Text>
           <View style={styles.infoSectionBottom}>
             <View style={styles.locationSection}>
               <MaterialIcon name="location-pin" size={18} color={'#444'} />
-              <Text style={styles.locationText}>
+              <Text allowFontScaling={false} style={styles.locationText}>
                 {location === area ? location : `${area} , ${location}`}
               </Text>
             </View>
-            <Text style={styles.dateAdded}>
+            <Text allowFontScaling={false} style={styles.dateAdded}>
               {Moment(adDetails.createdOn).format('DD MMM YYYY')}
             </Text>
           </View>
         </View>
       </View>
 
-      <View style={styles.adDescriptionSection}>
-        <Text style={{fontSize: 16, fontWeight: 600, color: '#111'}}>
-          Description
-        </Text>
-        <Text style={{color: '#111'}}>{adDetails.description}</Text>
-      </View>
-
-      <View style={styles.adQuesAnsSection}>
-        <Text style={{fontSize: 16, fontWeight: 600, color: '#111'}}>
-          Details
-        </Text>
+      <View style={styles.descAndDetailSection}>
         <FlatList
+          ListHeaderComponent={renderHeader}
           data={[{id: 'column1'}, {id: 'column2'}]}
           numColumns={2}
           keyExtractor={item => item.id}
@@ -198,10 +225,12 @@ export default function AdDescription({route, navigation}) {
                       padding: 2,
                     }}>
                     <Text
+                      allowFontScaling={false}
                       style={{color: '#222', fontWeight: 900, fontSize: 12}}>
                       {item.question} -
                     </Text>
                     <Text
+                      allowFontScaling={false}
                       style={{color: '#111', fontSize: 12}}
                       numberOfLines={2}
                       ellipsizeMode="tail">
@@ -215,16 +244,14 @@ export default function AdDescription({route, navigation}) {
         />
       </View>
 
-      <View style={styles.otherDetailsSection}>
-        <Text style={styles.otherDetailsText}>Ad ID: {adDetails.id}</Text>
-      </View>
-
       <View style={styles.footer}>
         {adDetails.showCallNowBtn && (
           <TouchableOpacity
             style={styles.button}
             onPress={() => openDialer(adDetails.phone)}>
-            <Text style={styles.buttonText}>Call Now</Text>
+            <Text allowFontScaling={false} style={styles.buttonText}>
+              Call Now
+            </Text>
           </TouchableOpacity>
         )}
         {adDetails.showDeleteBtn && (
@@ -236,7 +263,9 @@ export default function AdDescription({route, navigation}) {
                 {text: 'Cancel'},
               ]);
             }}>
-            <Text style={styles.buttonText}>Delete Ad</Text>
+            <Text allowFontScaling={false} style={styles.buttonText}>
+              Delete Ad
+            </Text>
           </TouchableOpacity>
         )}
       </View>
@@ -246,14 +275,14 @@ export default function AdDescription({route, navigation}) {
 
 const styles = StyleSheet.create({
   container: {flex: 1, backgroundColor: '#F5F5F5'},
-  adHeaderSection: {flex: 3, paddingTop: 5},
+  adHeaderSection: {flex: 1, paddingTop: 5},
   adImgSection: {
-    flex: 1.5,
+    flex: 0.75,
     alignItems: 'center',
     justifyContent: 'center',
   },
   adInfoSection: {
-    flex: 0.5,
+    flex: 0.25,
     padding: 5,
     marginTop: '2%',
     backgroundColor: '#FFF',
@@ -264,6 +293,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   priceText: {fontSize: 20, fontWeight: 600, color: '#111'},
+  adID: {fontSize: 14, color: '#111', fontWeight: 500},
   infoSectionMiddle: {
     flex: 1,
     fontSize: 16,
@@ -287,27 +317,15 @@ const styles = StyleSheet.create({
     fontWeight: 500,
     color: '#444',
   },
-  adDescriptionSection: {
+  descAndDetailSection: {
     flex: 1,
     padding: 5,
     marginTop: '2%',
     backgroundColor: '#FFF',
   },
-  adQuesAnsSection: {
-    flex: 1.5,
-    padding: 5,
-    marginTop: '2%',
-    backgroundColor: '#FFF',
-  },
-  otherDetailsSection: {
-    flex: 0.3,
-    justifyContent: 'center',
-    padding: 5,
-    backgroundColor: '#FFF',
-  },
-  otherDetailsText: {fontSize: 14, color: '#111', fontWeight: 500},
+
   footer: {
-    flex: 0.6,
+    flex: 0.2,
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: '2%',
