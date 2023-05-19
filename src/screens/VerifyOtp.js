@@ -25,13 +25,16 @@ export default function VerifyOtp({route}) {
 
       const resp = await http.post(url, data, config);
       return resp;
-    } catch (err) {}
+    } catch (error) {
+      const msg =
+        error?.response?.data?.detail ||
+        'Something Went Wrong, We are working on it. Please try after Some time';
+      Alert.alert('ERROR', `${msg}`, [{text: 'OK'}]);
+    }
   };
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        {/* <CustomButton btnType="back" onpress={() => navigation.goBack()} /> */}
-      </View>
+      <View style={styles.header}></View>
       <View style={styles.formContainer}>
         <TextInput
           allowFontScaling={false}

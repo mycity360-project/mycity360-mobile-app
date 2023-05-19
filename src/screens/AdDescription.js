@@ -12,13 +12,13 @@ import {
   Alert,
   ActivityIndicator,
   SafeAreaView,
-  ScrollView,
 } from 'react-native';
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import {http} from '../shared/lib';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Moment from 'moment';
+import {AuthContext} from '../context/AuthContext';
 const {width, height} = Dimensions.get('window');
 
 export default function AdDescription({route, navigation}) {
@@ -26,6 +26,7 @@ export default function AdDescription({route, navigation}) {
   const [answerData, setAnswerData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isQuesAnsAvailable, setIsQuesAnsAvailable] = useState(false);
+  const {logout} = useContext(AuthContext);
   const {adDetails} = route.params;
   const {location, area} = adDetails;
 
@@ -55,7 +56,11 @@ export default function AdDescription({route, navigation}) {
         btnText: 'OK',
       });
     } catch (error) {
-      Alert.alert('ERROR', 'Something Went Wrong', [{text: 'OK'}]);
+      if (error.response.status === 401) {
+        logout();
+      } else {
+        Alert.alert('ERROR', 'Something Went Wrong', [{text: 'OK'}]);
+      }
     }
   };
 
@@ -78,8 +83,12 @@ export default function AdDescription({route, navigation}) {
       }));
       setAnswerData(answers);
       setIsQuesAnsAvailable(answers.length ? true : false);
-    } catch (err) {
-      Alert.alert('ERROR', 'Something Went Wrong', [{text: 'OK'}]);
+    } catch (error) {
+      if (error.response.status === 401) {
+        logout();
+      } else {
+        Alert.alert('ERROR', 'Something Went Wrong', [{text: 'OK'}]);
+      }
     } finally {
       setIsLoading(false);
     }

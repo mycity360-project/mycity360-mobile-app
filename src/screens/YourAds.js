@@ -9,11 +9,12 @@ import {
   Image,
   Alert,
 } from 'react-native';
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect, useRef, useContext} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {http} from '../shared/lib';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import {useIsFocused} from '@react-navigation/native';
+import {AuthContext} from '../context/AuthContext';
 
 export default function YourAds({navigation, route}) {
   const [yourAdsData, setYourAdsData] = useState([]);
@@ -25,6 +26,7 @@ export default function YourAds({navigation, route}) {
   const [hasMore, setHasMore] = useState(true);
   const [showNoAdsFoundMsg, setShowNoAdsFoundMsg] = useState(false);
   const pageSize = 10;
+  const {logout} = useContext(AuthContext);
 
   useEffect(() => {
     (async () => {
@@ -68,25 +70,27 @@ export default function YourAds({navigation, route}) {
         areaName: ad.area?.name,
         key: `${yourAdsData.length + index}`,
       }));
-      console.log(page, '74');
+
       if (page === 1) {
-        console.log(page, '76');
         setYourAdsData(ads);
       } else {
-        console.log(page, '79');
         setYourAdsData([...yourAdsData, ...ads]);
       }
-    } catch (err) {
-      Alert.alert(
-        'ERROR',
-        'Something went wrong, we are working on it YourAds',
-        [
-          {
-            text: 'OK',
-            onPress: () => navigation.goBack(),
-          },
-        ],
-      );
+    } catch (error) {
+      if (error.response.status === 401) {
+        logout();
+      } else {
+        Alert.alert(
+          'ERROR',
+          'Something went wrong, we are working on it YourAds',
+          [
+            {
+              text: 'OK',
+              onPress: () => navigation.goBack(),
+            },
+          ],
+        );
+      }
     } finally {
       setFlatlistLoading(false);
     }

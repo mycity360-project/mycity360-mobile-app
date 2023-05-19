@@ -57,7 +57,6 @@ export const AuthProvider = ({children}) => {
       }
     } catch (error) {
       setIsLoading(false);
-      console.log(error.response, '60');
       if (error.response.status === 500) {
         Alert.alert('ERROR', 'User not exist ', [{text: 'OK'}]);
       } else if (error.response.status === 400) {
@@ -72,7 +71,7 @@ export const AuthProvider = ({children}) => {
     setIsLoading(true);
     setUserToken(null);
     setUserInfo(null);
-    AsyncStorage.clear();
+    await AsyncStorage.clear();
     setIsLoading(false);
   };
 
@@ -81,7 +80,7 @@ export const AuthProvider = ({children}) => {
       setIsLoading(true);
       await onTokenAvailable(respData, respData.access_token, respData.user_id);
       setIsLoading(false);
-    } catch (e) {
+    } catch (error) {
       Alert.alert('Error', 'Something Went Wrong', [{text: 'OK'}]);
     }
   };

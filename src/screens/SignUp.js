@@ -23,7 +23,7 @@ import {Formik} from 'formik';
 
 export default function SignUp() {
   const navigation = useNavigation();
-  const {login} = useContext(AuthContext);
+  const {login, logout} = useContext(AuthContext);
   const [locationData, setLocationData] = useState([]);
   const [areaData, setAreaData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -38,7 +38,6 @@ export default function SignUp() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showLocationError, setShowLocationError] = useState(false);
   const [showAreaError, setShowAreaError] = useState(false);
-
   const lastNameRef = useRef();
   const mobileRef = useRef();
   const emailRef = useRef();
@@ -56,10 +55,14 @@ export default function SignUp() {
       }));
       setLocationData(locations);
     } catch (error) {
-      const msg =
-        error?.response?.data?.detail ||
-        'Something Went Wrong, We are working on it. Please try after Some time';
-      Alert.alert('ERROR', `${msg}`, [{text: 'OK'}]);
+      if (error.response.status === 401) {
+        logout();
+      } else {
+        const msg =
+          error?.response?.data?.detail ||
+          'Something Went Wrong, We are working on it. Please try after Some time';
+        Alert.alert('ERROR', `${msg}`, [{text: 'OK'}]);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -84,10 +87,14 @@ export default function SignUp() {
       setAreaData(areas);
       setIsDisabled(false);
     } catch (error) {
-      const msg =
-        error?.response?.data?.detail ||
-        'Something Went Wrong, We are working on it. Please try after Some time';
-      Alert.alert('ERROR', `${msg}`, [{text: 'OK'}]);
+      if (error.response.status === 401) {
+        logout();
+      } else {
+        const msg =
+          error?.response?.data?.detail ||
+          'Something Went Wrong, We are working on it. Please try after Some time';
+        Alert.alert('ERROR', `${msg}`, [{text: 'OK'}]);
+      }
     } finally {
       setIsLoading(false);
     }

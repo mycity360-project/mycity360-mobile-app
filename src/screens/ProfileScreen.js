@@ -16,6 +16,7 @@ import {ActivityIndicator} from 'react-native';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import Modal from 'react-native-modal';
 import {http} from '../shared/lib';
+import {request, PERMISSIONS} from 'react-native-permissions';
 
 export default function ProfileScreen() {
   const {logout} = useContext(AuthContext);
@@ -33,17 +34,25 @@ export default function ProfileScreen() {
       setProfileImage({uri: info.profile_image});
       setIsLoading(false);
     } catch (error) {
-      Alert.alert('ERROR', 'Something went wrong in loading Profile Image', [
-        {
-          text: 'OK',
-        },
-      ]);
+      if (error.response.status === 401) {
+        logout();
+      } else {
+        Alert.alert('ERROR', 'Something went wrong in loading Profile Image', [
+          {
+            text: 'OK',
+          },
+        ]);
+      }
     }
   };
 
   useEffect(() => {
     getInfo();
   }, []);
+
+  const askForPermission = permission => {
+    return request(permission);
+  };
 
   const openCamera = () => {
     const options = {
@@ -117,15 +126,22 @@ export default function ProfileScreen() {
       resp.localUserArea = localUserArea;
       await AsyncStorage.setItem('userInfo', JSON.stringify(resp));
       setProfileImage({uri: resp.profile_image});
-
-      setIsLoading(false);
     } catch (error) {
+      if (error.response.status === 401) {
+        logout();
+      } else {
+        Alert.alert(
+          'ERROR',
+          'Something went wrong, Profile Image not uploaded',
+          [
+            {
+              text: 'OK',
+            },
+          ],
+        );
+      }
+    } finally {
       setIsLoading(false);
-      Alert.alert('ERROR', 'Something went wrong, Profile Image not uploaded', [
-        {
-          text: 'OK',
-        },
-      ]);
     }
   };
 
@@ -255,7 +271,19 @@ export default function ProfileScreen() {
             borderBottomWidth: 0.4,
           }}>
           <TouchableOpacity
-            onPress={() => openCamera()}
+            onPress={async () => {
+              let resp = '';
+              if (Platform.OS === 'ios') {
+                resp = await askForPermission(PERMISSIONS.IOS.CAMERA);
+              } else {
+                resp = await askForPermission(PERMISSIONS.ANDROID.CAMERA);
+              }
+              console.log(resp);
+
+              if (resp === 'granted') {
+                openCamera();
+              }
+            }}
             style={{width: '100%', height: 40, flexDirection: 'row', gap: 5}}>
             <MaterialIcon name="photo-camera" size={24} color={'#222'} />
             <Text allowFontScaling={false} style={{fontSize: 18}}>
@@ -263,7 +291,20 @@ export default function ProfileScreen() {
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => openGallery()}
+            onPress={async () => {
+              let resp = '';
+              if (Platform.OS === 'ios') {
+                resp = await askForPermission(PERMISSIONS.IOS.PHOTO_LIBRARY);
+              } else {
+                resp = await askForPermission(
+                  PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE,
+                );
+              }
+
+              if (resp === 'granted') {
+                openGallery();
+              }
+            }}
             style={{width: '100%', height: 50, flexDirection: 'row', gap: 5}}>
             <MaterialIcon name="folder-open" size={24} color={'#222'} />
             <Text allowFontScaling={false} style={{fontSize: 18}}>

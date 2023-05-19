@@ -7,15 +7,17 @@ import {
   SafeAreaView,
   ActivityIndicator,
 } from 'react-native';
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {http} from '../shared/lib';
+import {AuthContext} from '../context/AuthContext';
+
 export default function SubCategory({navigation, route}) {
   const [isLoading, setIsLoading] = useState(false);
   const [subcategoryData, setSubCategoryData] = useState([]);
   const {categoryID, categoryName, isPrice} = route.params;
-
+  const {logout} = useContext(AuthContext);
   const getSubCategories = async () => {
     try {
       setIsLoading(true);
@@ -34,8 +36,21 @@ export default function SubCategory({navigation, route}) {
       }));
 
       setSubCategoryData(subCategories);
-      setIsLoading(false);
-    } catch (err) {
+    } catch (error) {
+      if (error.response.status === 401) {
+        logout();
+      } else {
+        Alert.alert(
+          'ERROR',
+          'Something went wrong, Unable to Fetch Sub Categories',
+          [
+            {
+              text: 'OK',
+            },
+          ],
+        );
+      }
+    } finally {
       setIsLoading(false);
     }
   };

@@ -10,13 +10,13 @@ import {
   SafeAreaView,
   Alert,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useContext} from 'react';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import CustomButton from '../shared/components/CustomButton';
 import {http} from '../shared/lib';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ModalView from '../shared/components/ModalView';
-
+import {AuthContext} from '../context/AuthContext';
 export default function QuestionsScreen({navigation, route}) {
   const {isPrice, ...AdData} = route.params;
 
@@ -28,6 +28,7 @@ export default function QuestionsScreen({navigation, route}) {
   const [selectedItem, setSelectedItem] = useState('');
   const [selectedDropdownItemId, setSelectedDropdownItemId] = useState(null);
   const [selectedDropdownItem, setSelectedDropdownItem] = useState('');
+  const {logout} = useContext(AuthContext);
 
   const getQuestions = async () => {
     try {
@@ -72,12 +73,20 @@ export default function QuestionsScreen({navigation, route}) {
           isPrice,
         });
       }
-    } catch (err) {
-      Alert.alert('ERROR', 'Something went wrong, Unable to Fetch Questions', [
-        {
-          text: 'OK',
-        },
-      ]);
+    } catch (error) {
+      if (error.response.status === 401) {
+        logout();
+      } else {
+        Alert.alert(
+          'ERROR',
+          'Something went wrong, Unable to Fetch Questions',
+          [
+            {
+              text: 'OK',
+            },
+          ],
+        );
+      }
     } finally {
       setIsLoading(false);
     }

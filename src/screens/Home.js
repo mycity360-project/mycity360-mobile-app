@@ -33,7 +33,7 @@ export default function Home({navigation}) {
   const wasFocused = useRef(false);
   const [hasMore, setHasMore] = useState(true);
   const [searchText, setSearchText] = useState('');
-  const {userInfo} = useContext(AuthContext);
+  const {userInfo, logout} = useContext(AuthContext);
   const [showNoAdsFoundMsg, setShowNoAdsFoundMsg] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const flatListRef = useRef(null);
@@ -60,21 +60,24 @@ export default function Home({navigation}) {
       }));
       setBannerImages(images);
       setShowBanner(images.length ? true : false);
-    } catch (err) {
-      Alert.alert(
-        'ERROR',
-        'Something went wrong, Unable to Fetch banner images',
-        [
-          {
-            text: 'OK',
-          },
-        ],
-      );
+    } catch (error) {
+      if (error.response.status === 401) {
+        logout();
+      } else {
+        Alert.alert(
+          'ERROR',
+          'Something went wrong, Unable to Fetch banner images',
+          [
+            {
+              text: 'OK',
+            },
+          ],
+        );
+      }
     }
   };
 
   const handleWebLink = uri => {
-    console.log(uri, '72');
     navigation.navigate('WebViewScreen', {
       uri,
     });
@@ -87,7 +90,7 @@ export default function Home({navigation}) {
   });
 
   useEffect(() => {
-    if (!isReady) {
+    if (!isReady || !bannerImages) {
       return;
     }
     const interval = setInterval(() => {
@@ -142,12 +145,20 @@ export default function Home({navigation}) {
       }));
 
       setCategoriesData(categories);
-    } catch (err) {
-      Alert.alert('ERROR', 'Something went wrong, Unable to Fetch Categories', [
-        {
-          text: 'OK',
-        },
-      ]);
+    } catch (error) {
+      if (error.response.status === 401) {
+        logout();
+      } else {
+        Alert.alert(
+          'ERROR',
+          'Something went wrong, Unable to Fetch Categories',
+          [
+            {
+              text: 'OK',
+            },
+          ],
+        );
+      }
     } finally {
       setIsCategoryLoding(false);
     }
@@ -222,12 +233,16 @@ export default function Home({navigation}) {
         };
       });
       setUserAdsData(prevData => [...prevData, ...ads]);
-    } catch (err) {
-      Alert.alert('ERROR', 'Something went wrong, Unable to Fetch Ads Home', [
-        {
-          text: 'OK',
-        },
-      ]);
+    } catch (error) {
+      if (error.response.status === 401) {
+        logout();
+      } else {
+        Alert.alert('ERROR', 'Something went wrong, Unable to Fetch Ads Home', [
+          {
+            text: 'OK',
+          },
+        ]);
+      }
     } finally {
       setFlatlistLoading(false);
     }
@@ -545,7 +560,7 @@ export default function Home({navigation}) {
               }}
             />
             <View style={styles.dotWrapper}>
-              {bannerImages.map((e, index) => {
+              {bannerImages?.map((e, index) => {
                 return (
                   <View
                     key={index}

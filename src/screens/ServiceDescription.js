@@ -13,7 +13,6 @@ import {
 } from 'react-native';
 import React, {useState} from 'react';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
-import Moment from 'moment';
 
 const {width, height} = Dimensions.get('window');
 

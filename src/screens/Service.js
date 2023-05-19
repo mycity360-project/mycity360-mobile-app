@@ -10,14 +10,16 @@ import {
   Pressable,
   Alert,
 } from 'react-native';
-import {React, useState, useEffect} from 'react';
+import {React, useState, useEffect, useContext} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {http} from '../shared/lib';
 import {ActivityIndicator} from 'react-native-paper';
+import {AuthContext} from '../context/AuthContext';
 
 export default function Home({navigation}) {
   const [servicesData, setServicesData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const {logout} = useContext(AuthContext);
 
   const getServices = async () => {
     try {
@@ -38,15 +40,19 @@ export default function Home({navigation}) {
         serviceID: service.id,
       }));
       setServicesData(services);
+    } catch (error) {
+      if (error.response.status === 401) {
+        logout();
+      } else {
+        Alert.alert('ERROR', 'Something went wrong, we are working on it', [
+          {
+            text: 'OK',
+            onPress: () => navigation.goBack(),
+          },
+        ]);
+      }
+    } finally {
       setIsLoading(false);
-    } catch (err) {
-      setIsLoading(false);
-      Alert.alert('ERROR', 'Something went wrong, we are working on it', [
-        {
-          text: 'OK',
-          onPress: () => navigation.goBack(),
-        },
-      ]);
     }
   };
 

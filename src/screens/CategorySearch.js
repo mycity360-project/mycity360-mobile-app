@@ -10,10 +10,11 @@ import {
   FlatList,
   Image,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useContext} from 'react';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import {http} from '../shared/lib';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {AuthContext} from '../context/AuthContext';
 
 export default function CategorySearch({navigation, route}) {
   const [isLoading, setIsLoading] = useState(false);
@@ -25,6 +26,7 @@ export default function CategorySearch({navigation, route}) {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [showNoAdsFoundMsg, setShowNoAdsFoundMsg] = useState(false);
+  const {logout} = useContext(AuthContext);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', async () => {
@@ -112,16 +114,20 @@ export default function CategorySearch({navigation, route}) {
       });
 
       setAdsData([...adsData, ...ads]);
-    } catch (err) {
-      Alert.alert(
-        'ERROR',
-        'Something went wrong, Unable to Fetch Ads CategorySearch',
-        [
-          {
-            text: 'OK',
-          },
-        ],
-      );
+    } catch (error) {
+      if (error.response.status === 401) {
+        logout();
+      } else {
+        Alert.alert(
+          'ERROR',
+          'Something went wrong, Unable to Fetch Ads CategorySearch',
+          [
+            {
+              text: 'OK',
+            },
+          ],
+        );
+      }
     }
   };
 

@@ -10,6 +10,7 @@ import {
   Text,
   Alert,
   ActivityIndicator,
+  Platform,
 } from 'react-native';
 import React, {useState, useRef} from 'react';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
@@ -18,6 +19,7 @@ import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import {MAX_IMAGE_ALLOWED} from '../shared/constants/env';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {http} from '../shared/lib';
+import {request, PERMISSIONS} from 'react-native-permissions';
 const {width, height} = Dimensions.get('window');
 
 export default function UploadAdPhotos({navigation, route}) {
@@ -28,37 +30,6 @@ export default function UploadAdPhotos({navigation, route}) {
   const [id, setId] = useState(1);
   const ref = useRef();
   const AdData = route.params.AdData;
-  console.log(JSON.stringify(AdData), '31');
-  const buttonView = (name, iconName, open) => {
-    return (
-      <TouchableOpacity
-        style={{
-          width: '20%',
-          height: '15%',
-          padding: 5,
-          backgroundColor: '#ececec',
-          alignItems: 'center',
-          justifyContent: 'center',
-          borderWidth: 0.1,
-          marginRight: 15,
-          elevation: 5,
-          shadowOffset: 5,
-        }}
-        onPress={() => open()}>
-        <MaterialIcon
-          name={iconName}
-          size={30}
-          color={'#222'}
-          style={{flex: 1}}
-        />
-        <Text
-          allowFontScaling={false}
-          style={{color: '#222', flex: 1, fontSize: 16}}>
-          {name}
-        </Text>
-      </TouchableOpacity>
-    );
-  };
 
   const removeFromArray = idToRemove => {
     const imagesUpdated = images.filter(item => {
@@ -74,10 +45,13 @@ export default function UploadAdPhotos({navigation, route}) {
     }
   };
 
+  const askForPermission = permission => {
+    return request(permission);
+  };
+
   const openCamera = () => {
     const options = {
       storageOptions: {path: 'images', mediaType: 'photo'},
-      saveToPhotos: true,
       maxWidth: 500,
       maxHeight: 500,
       quality: 0.7,
@@ -396,8 +370,61 @@ export default function UploadAdPhotos({navigation, route}) {
           : ''}
 
         <View style={{flex: 1, flexDirection: 'row', marginTop: '3%'}}>
-          {buttonView('Camera', 'camera', openCamera)}
-          {buttonView('Gallery', 'folder-open', openGallery)}
+          <TouchableOpacity
+            style={styles.btn}
+            onPress={async () => {
+              let resp = '';
+              if (Platform.OS === 'ios') {
+                resp = await askForPermission(PERMISSIONS.IOS.CAMERA);
+              } else {
+                resp = await askForPermission(PERMISSIONS.ANDROID.CAMERA);
+              }
+              console.log(resp);
+
+              if (resp === 'granted') {
+                openCamera();
+              }
+            }}>
+            <MaterialIcon
+              name={'camera'}
+              size={30}
+              color={'#222'}
+              style={{flex: 1}}
+            />
+            <Text
+              allowFontScaling={false}
+              style={{color: '#222', flex: 1, fontSize: 16}}>
+              Camera
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.btn}
+            onPress={async () => {
+              let resp = '';
+              if (Platform.OS === 'ios') {
+                resp = await askForPermission(PERMISSIONS.IOS.PHOTO_LIBRARY);
+              } else {
+                resp = await askForPermission(
+                  PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE,
+                );
+              }
+
+              if (resp === 'granted') {
+                openGallery();
+              }
+            }}>
+            <MaterialIcon
+              name={'folder-open'}
+              size={30}
+              color={'#222'}
+              style={{flex: 1}}
+            />
+            <Text
+              allowFontScaling={false}
+              style={{color: '#222', flex: 1, fontSize: 16}}>
+              Gallery
+            </Text>
+          </TouchableOpacity>
         </View>
         <CustomButton
           btnTitle="Publish Ad"
@@ -412,6 +439,18 @@ const styles = StyleSheet.create({
   container: {flex: 1},
   wrapper: {width: width, height: height * 0.3},
   removeImageBtn: {position: 'absolute', right: 30, top: 10},
+  btn: {
+    width: '20%',
+    height: '15%',
+    padding: 5,
+    backgroundColor: '#ececec',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 0.1,
+    marginRight: 15,
+    elevation: 5,
+    shadowOffset: 5,
+  },
   dotWrapper: {
     flexDirection: 'row',
     position: 'absolute',
