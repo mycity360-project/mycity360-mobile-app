@@ -228,7 +228,7 @@ export default function Home({navigation}) {
           subCategoryID: ad.category.id,
           locationName: ad.area?.location?.name,
           areaName: ad.area?.name,
-          isPrice: ad.category.is_price,
+          isPrice: ad.category?.is_price,
           key: `${userAdsData.length + index}`,
         };
       });
@@ -671,17 +671,11 @@ export default function Home({navigation}) {
             </View>
           </View>
 
-          <View
-            style={[
-              styles.featuredAdsSection,
-              // showBanner ? {flex: 2.8} : {flex: 4},
-              {flex: 6},
-            ]}>
+          <View style={[styles.featuredAdsSection, {flex: 6}]}>
             <FlatList
               data={formatData(userAdsData, numColumns)}
               ListHeaderComponentStyle={{
                 flex: 1,
-                // marginBottom: '2%',
                 backgroundColor: '#FFF',
               }}
               renderItem={({item}) => <Item item={item} />}

@@ -68,6 +68,7 @@ export default function YourAds({navigation, route}) {
         subCategoryID: ad.category.id,
         locationName: ad.area?.location?.name,
         areaName: ad.area?.name,
+        isPrice: ad.category?.is_price,
         key: `${yourAdsData.length + index}`,
       }));
 
@@ -166,7 +167,7 @@ export default function YourAds({navigation, route}) {
           navigation.navigate('AdDescription', {
             adDetails: {
               id: item.id,
-              title: item.name,
+              title: item.title,
               price: item.price,
               description: item.description,
               location: item.locationName,
@@ -176,6 +177,7 @@ export default function YourAds({navigation, route}) {
               userID: item.userID,
               phone: item.phone,
               categoryID: item.subCategoryID,
+              isPrice: item.isPrice,
               showCallNowBtn: false,
               showDeleteBtn: true,
             },
