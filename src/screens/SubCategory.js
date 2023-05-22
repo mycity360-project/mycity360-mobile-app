@@ -18,6 +18,7 @@ export default function SubCategory({navigation, route}) {
   const [subcategoryData, setSubCategoryData] = useState([]);
   const {categoryID, categoryName, isPrice} = route.params;
   const {logout} = useContext(AuthContext);
+
   const getSubCategories = async () => {
     try {
       setIsLoading(true);
@@ -30,12 +31,22 @@ export default function SubCategory({navigation, route}) {
           },
         },
       );
-      const subCategories = subCategoriesRespData.results.map(category => ({
-        id: category.id.toString(),
-        name: category.name,
-      }));
-
-      setSubCategoryData(subCategories);
+      if (
+        subCategoriesRespData.results &&
+        subCategoriesRespData.results.length > 0
+      ) {
+        const subCategories = subCategoriesRespData.results.map(category => ({
+          id: category.id.toString(),
+          name: category.name,
+        }));
+        setSubCategoryData(subCategories);
+      } else {
+        navigation.replace('QuestionsScreen', {
+          categoryID: categoryID,
+          subCategoryID: categoryID,
+          isPrice: isPrice,
+        });
+      }
     } catch (error) {
       if (error.response.status === 401) {
         logout();
