@@ -199,15 +199,20 @@ export default function YourAds({navigation, route}) {
 
         <View style={{width: '70%', height: '90%', paddingLeft: 5}}>
           <Text
+            numberOfLines={2}
             allowFontScaling={false}
             style={{fontSize: 16, color: '#111', fontWeight: 500}}>
             {item.title}
           </Text>
-          <Text allowFontScaling={false} style={{fontSize: 16, color: '#111'}}>
+          <Text
+            allowFontScaling={false}
+            style={{fontSize: 16, color: '#111', fontWeight: 500}}>
             ₹ {item.price}
           </Text>
-          <Text allowFontScaling={false} style={{fontSize: 16, color: '#111'}}>
-            {item.description}
+          <Text
+            allowFontScaling={false}
+            style={{fontSize: 16, color: '#111', fontWeight: 500}}>
+            Ad ID:{item.id}
           </Text>
         </View>
       </TouchableOpacity>
