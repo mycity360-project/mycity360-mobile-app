@@ -7,9 +7,9 @@ const SplashScreen = () => {
   return (
     <View style={styles.container}>
       <ImageBackground
-        source={require('../assets/images/splash.jpeg')}
+        source={require('../assets/images/splash.png')}
         style={styles.image}
-        resizeMode="cover"
+        resizeMode="contain"
       />
     </View>
   );
@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
   },
   image: {
-    width: '100%',
+    width: '90%',
     height: '100%',
   },
 });
