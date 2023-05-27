@@ -204,11 +204,13 @@ export default function YourAds({navigation, route}) {
             style={{fontSize: 16, color: '#111', fontWeight: 500}}>
             {item.title}
           </Text>
-          <Text
-            allowFontScaling={false}
-            style={{fontSize: 16, color: '#111', fontWeight: 500}}>
-            ₹ {item.price}
-          </Text>
+          {item.isPrice && (
+            <Text
+              allowFontScaling={false}
+              style={{fontSize: 16, fontWeight: 500, color: '#111'}}>
+              ₹ {item.price}
+            </Text>
+          )}
           <Text
             allowFontScaling={false}
             style={{fontSize: 16, color: '#111', fontWeight: 500}}>

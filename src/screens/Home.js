@@ -38,7 +38,7 @@ export default function Home({navigation}) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const flatListRef = useRef(null);
   const [isReady, setIsReady] = useState(false);
-  const [isScrolling, setIsScrolling] = useState(false);
+  // const [isScrolling, setIsScrolling] = useState(false);
   const [bannerImages, setBannerImages] = useState([]);
   const [showBanner, setShowBanner] = useState(false);
 
@@ -94,15 +94,15 @@ export default function Home({navigation}) {
       return;
     }
     const interval = setInterval(() => {
-      if (!isScrolling) {
-        const nextIndex = (currentIndex + 1) % bannerImages.length;
-        setCurrentIndex(nextIndex);
-        flatListRef.current?.scrollToIndex({index: nextIndex, animated: true});
-      }
-    }, 10000);
+      // if (!isScrolling) {
+      const nextIndex = (currentIndex + 1) % bannerImages.length;
+      setCurrentIndex(nextIndex);
+      flatListRef.current?.scrollToIndex({index: nextIndex, animated: true});
+      // }
+    }, 5000);
 
     return () => clearInterval(interval);
-  }, [currentIndex, bannerImages, isReady, isScrolling]);
+  }, [currentIndex, bannerImages, isReady]);
 
   useEffect(() => {
     if (flatListRef.current && isReady) {
@@ -299,10 +299,11 @@ export default function Home({navigation}) {
           justifyContent: 'center',
         }}>
         <Image
+          resizeMode="contain"
           source={{
             uri: item.icon,
-            width: 45,
-            height: 45,
+            width: 60,
+            height: 60,
           }}
         />
       </View>
@@ -419,16 +420,31 @@ export default function Home({navigation}) {
                 {item.title}
               </Text>
               <View
-                style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-                {item.isPrice && (
-                  <Text
-                    allowFontScaling={false}
-                    style={{fontSize: 14, fontWeight: 600, color: '#111'}}>
-                    ₹ {item.price}
-                  </Text>
-                )}
+                style={{
+                  flex: 1,
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                }}>
+                <View style={{flex: 1}}>
+                  {item.isPrice && (
+                    <Text
+                      allowFontScaling={false}
+                      style={{
+                        fontSize: 14,
+                        fontWeight: 600,
+                        color: '#111',
+                      }}>
+                      ₹ {item.price}
+                    </Text>
+                  )}
+                </View>
 
-                <View style={{flexDirection: 'row', marginBottom: 5}}>
+                <View
+                  style={{
+                    flex: 1,
+                    flexDirection: 'row',
+                    justifyContent: 'flex-end',
+                  }}>
                   <MaterialIcon name="location-pin" size={16} color={'#666'} />
                   <Text
                     allowFontScaling={false}
@@ -440,7 +456,7 @@ export default function Home({navigation}) {
                     }}>
                     {item.locationName === item.areaName
                       ? item.locationName
-                      : `${item.areaName} , ${item.locationName}`}
+                      : `${item.areaName},\n${item.locationName}`}
                   </Text>
                 </View>
               </View>
@@ -527,20 +543,21 @@ export default function Home({navigation}) {
               data={bannerImages}
               ref={flatListRef}
               keyExtractor={item => item.key}
-              onMomentumScrollBegin={() => setIsScrolling(true)}
-              onMomentumScrollEnd={event => {
-                if (isScrolling) {
-                  const x = event.nativeEvent.contentOffset.x;
-                  let index = Math.round(x / width);
-                  const len = bannerImages.length - 1;
-                  if (index === len && currentIndex === len) {
-                    index = 0;
-                    flatListRef.current?.scrollToIndex({index});
-                  }
-                  setCurrentIndex(index);
-                  setIsScrolling(false);
-                }
-              }}
+              scrollEnabled={false}
+              // onMomentumScrollBegin={() => setIsScrolling(true)}
+              // onMomentumScrollEnd={event => {
+              //   if (isScrolling) {
+              //     const x = event.nativeEvent.contentOffset.x;
+              //     let index = Math.round(x / width);
+              //     const len = bannerImages.length - 1;
+              //     if (index === len && currentIndex === len) {
+              //       index = 0;
+              //       flatListRef.current?.scrollToIndex({index});
+              //     }
+              //     setCurrentIndex(index);
+              //     setIsScrolling(false);
+              //   }
+              // }}
               getItemLayout={getBannerLayout}
               onLayout={() => setIsReady(true)}
               horizontal={true}
@@ -548,14 +565,13 @@ export default function Home({navigation}) {
               pagingEnabled={true}
               renderItem={({item, index}) => {
                 return (
-                  <TouchableOpacity
-                    onPress={() => handleWebLink(item.redirectUrl)}>
+                  <Pressable onPress={() => handleWebLink(item.redirectUrl)}>
                     <Image
                       source={{uri: item.image}}
                       resizeMode="cover"
                       style={styles.wrapper}
                     />
-                  </TouchableOpacity>
+                  </Pressable>
                 );
               }}
             />
@@ -769,7 +785,6 @@ const styles = StyleSheet.create({
   bannerSection: {
     alignItems: 'center',
     justifyContent: 'center',
-    // marginTop: '2%',
   },
   wrapper: {width: width, height: '100%'},
   dotWrapper: {
