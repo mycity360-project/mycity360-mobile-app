@@ -131,11 +131,14 @@ export default function Home({navigation}) {
     try {
       setIsCategoryLoding(true);
       const token = await AsyncStorage.getItem('token');
-      const categoriesRespData = await http.get('category/user/', {
-        headers: {
-          Authorization: `Bearer ${token}`,
+      const categoriesRespData = await http.get(
+        'category/user/?page_size=100',
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
-      });
+      );
       const categories = categoriesRespData.results.map(category => ({
         id: category.id.toString(),
         name: category.name,
