@@ -547,20 +547,6 @@ export default function Home({navigation}) {
               ref={flatListRef}
               keyExtractor={item => item.key}
               scrollEnabled={false}
-              // onMomentumScrollBegin={() => setIsScrolling(true)}
-              // onMomentumScrollEnd={event => {
-              //   if (isScrolling) {
-              //     const x = event.nativeEvent.contentOffset.x;
-              //     let index = Math.round(x / width);
-              //     const len = bannerImages.length - 1;
-              //     if (index === len && currentIndex === len) {
-              //       index = 0;
-              //       flatListRef.current?.scrollToIndex({index});
-              //     }
-              //     setCurrentIndex(index);
-              //     setIsScrolling(false);
-              //   }
-              // }}
               getItemLayout={getBannerLayout}
               onLayout={() => setIsReady(true)}
               horizontal={true}
@@ -789,6 +775,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+
   wrapper: {width: width, height: '100%'},
   dotWrapper: {
     flexDirection: 'row',

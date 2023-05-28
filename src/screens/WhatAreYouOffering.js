@@ -36,7 +36,6 @@ export default function WhatAreYouOffering({navigation, route}) {
           borderRightColor: '#999',
           borderBottomWidth: 0.5,
           borderBottomColor: '#999',
-          // backgroundColor: item.bgcolor,
         },
       ]}
       onPress={() =>
@@ -48,10 +47,11 @@ export default function WhatAreYouOffering({navigation, route}) {
       }>
       <View style={{alignItems: 'center', justifyContent: 'center'}}>
         <Image
+          resizeMode="contain"
           source={{
             uri: item.icon,
-            width: 45,
-            height: 45,
+            width: 60,
+            height: 60,
           }}
         />
         <Text

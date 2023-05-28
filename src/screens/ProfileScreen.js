@@ -7,6 +7,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   View,
+  Platform,
 } from 'react-native';
 import {Title, TouchableRipple, Text, Caption} from 'react-native-paper';
 import {AuthContext} from '../context/AuthContext';
@@ -296,9 +297,15 @@ export default function ProfileScreen() {
               if (Platform.OS === 'ios') {
                 resp = await askForPermission(PERMISSIONS.IOS.PHOTO_LIBRARY);
               } else {
-                resp = await askForPermission(
-                  PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE,
-                );
+                if (Platform.Version >= 33) {
+                  resp = await askForPermission(
+                    PERMISSIONS.ANDROID.READ_MEDIA_IMAGES,
+                  );
+                } else {
+                  resp = await askForPermission(
+                    PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE,
+                  );
+                }
               }
 
               if (resp === 'granted') {
