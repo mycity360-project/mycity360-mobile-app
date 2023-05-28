@@ -15,6 +15,12 @@
     "release:minor": "npm version minor",
     "release:patch": "npm version patch"
   },
+  "reactNativePermissionsIOS": [
+    "Camera",
+    "MediaLibrary",
+    "PhotoLibrary",
+    "PhotoLibraryAddOnly"
+  ],
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.17.11",
     "@react-native-community/cli": "^11.3.0",
