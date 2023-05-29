@@ -32,6 +32,7 @@ export default function Home({navigation}) {
       });
       const services = servicesRespData.map(service => ({
         key: service.id.toString(),
+        code: service.code,
         title: service.name,
         icon: service.icon,
         description: service.description,
@@ -61,7 +62,7 @@ export default function Home({navigation}) {
   }, []);
 
   const numColumns = 3;
-  const CARD_HEIGHT = 65;
+  const CARD_HEIGHT = 90;
   const getServiceCardLayout = (_, index) => ({
     length: CARD_HEIGHT,
     offset: CARD_HEIGHT * index,
@@ -87,24 +88,27 @@ export default function Home({navigation}) {
       disabled={item.empty ? true : false}
       onPress={() =>
         navigation.navigate('ServiceDescription', {
-          title: item.title,
-          description: item.description,
-          phone: item.phone,
-          images: item.images,
-          serviceID: item.serviceID,
+          serviceDetails: {
+            title: item.title,
+            description: item.description,
+            phone: item.phone,
+            images: item.images,
+            serviceID: item.serviceID,
+            code: item.code,
+          },
         })
       }>
       {item.empty ? (
         ''
       ) : (
-        <View style={{flex: 1.5}}>
+        <View style={{flex: 2}}>
           <View
             style={{
               flexGrow: 1,
               alignItems: 'center',
               justifyContent: 'center',
             }}>
-            <Image source={{uri: item.icon, width: 45, height: 45}} />
+            <Image source={{uri: item.icon, width: 55, height: 55}} />
           </View>
           <View
             style={{
@@ -115,7 +119,7 @@ export default function Home({navigation}) {
             <Text
               allowFontScaling={false}
               style={{
-                fontSize: 16,
+                fontSize: 14,
                 color: '#111',
               }}>
               {item.title}

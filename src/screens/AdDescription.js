@@ -76,18 +76,21 @@ export default function AdDescription({route, navigation}) {
           },
         },
       );
-      console.log(answersRespData, '71');
+
       const answers = answersRespData.results.map(answer => ({
         question: answer.question.label,
         answer: answer.answer,
       }));
+
       setAnswerData(answers);
       setIsQuesAnsAvailable(answers.length ? true : false);
     } catch (error) {
       if (error.response.status === 401) {
         logout();
       } else {
-        Alert.alert('ERROR', 'Something Went Wrong', [{text: 'OK'}]);
+        Alert.alert('ERROR', 'Something Went Wrong in getting Description', [
+          {text: 'OK'},
+        ]);
       }
     } finally {
       setIsLoading(false);
@@ -182,16 +185,21 @@ export default function AdDescription({route, navigation}) {
           </TouchableOpacity>
         </View>
         <View style={styles.adInfoSection}>
-          {adDetails.isPrice && (
-            <View style={styles.infoSectionTop}>
+          <View style={styles.infoSectionTop}>
+            {adDetails.isPrice && (
               <Text allowFontScaling={false} style={styles.priceText}>
                 ₹ {adDetails.price}
               </Text>
-              <Text allowFontScaling={false} style={styles.adID}>
-                Ad ID: {adDetails.id}
-              </Text>
-            </View>
-          )}
+            )}
+            <Text
+              allowFontScaling={false}
+              style={[
+                styles.adID,
+                {textAlign: adDetails.isPrice ? 'right' : 'left'},
+              ]}>
+              Ad ID: {adDetails.code}
+            </Text>
+          </View>
 
           <Text allowFontScaling={false} style={styles.infoSectionMiddle}>
             {adDetails.title}
@@ -268,7 +276,7 @@ export default function AdDescription({route, navigation}) {
             style={styles.button}
             onPress={() => {
               Alert.alert('Warning', 'Are you sure, you want to delete ?', [
-                {text: 'OK', onPress: () => deleteAdHandler()},
+                {text: 'OK', onPress: () => deleteAdHandler},
                 {text: 'Cancel'},
               ]);
             }}>
@@ -301,8 +309,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
-  priceText: {fontSize: 20, fontWeight: 600, color: '#111'},
-  adID: {fontSize: 14, color: '#111', fontWeight: 500},
+  priceText: {flex: 1, fontSize: 20, fontWeight: 600, color: '#111'},
+  adID: {
+    flex: 1,
+    fontSize: 14,
+    color: '#111',
+    fontWeight: 500,
+  },
   infoSectionMiddle: {
     flex: 1,
     fontSize: 16,

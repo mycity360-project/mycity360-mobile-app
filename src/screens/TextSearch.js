@@ -98,6 +98,7 @@ export default function TextSearch({navigation, route}) {
       const ads = adsRespData?.results?.map((ad, index) => {
         return {
           id: ad.id,
+          code: ad.code,
           title: ad.name,
           createdOn: ad.created_date,
           description: ad.description,
@@ -108,6 +109,7 @@ export default function TextSearch({navigation, route}) {
           subCategoryID: ad.category.id,
           locationName: ad.area?.location?.name,
           areaName: ad.area?.name,
+          isPrice: ad.category?.is_price,
           key: `${adsData.length + index}`,
         };
       });
@@ -157,7 +159,9 @@ export default function TextSearch({navigation, route}) {
           navigation.navigate('AdDescription', {
             adDetails: {
               id: item.id,
-              title: item.name,
+              code: item.code,
+              isPrice: item.isPrice,
+              title: item.title,
               price: item.price,
               description: item.description,
               location: item.locationName,
@@ -192,11 +196,15 @@ export default function TextSearch({navigation, route}) {
             style={{fontSize: 16, color: '#111', fontWeight: 500}}>
             {item.title}
           </Text>
-          <Text allowFontScaling={false} style={{fontSize: 16, color: '#111'}}>
-            ₹ {item.price}
-          </Text>
-          <Text allowFontScaling={false} style={{fontSize: 16, color: '#111'}}>
-            {item.description}
+          {item.isPrice && (
+            <Text
+              allowFontScaling={false}
+              style={{fontSize: 16, fontWeight: 500, color: '#111'}}>
+              ₹ {item.price}
+            </Text>
+          )}
+          <Text allowFontScaling={false} style={{fontSize: 14, color: '#111'}}>
+            Ad ID : {item.code}
           </Text>
         </View>
       </TouchableOpacity>

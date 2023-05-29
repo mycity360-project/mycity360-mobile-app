@@ -17,21 +17,29 @@ import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 const {width, height} = Dimensions.get('window');
 
 export default function ServiceDescription({route, navigation}) {
-  const {title, description, phone, images, serviceID} = route.params;
+  const {serviceDetails} = route.params;
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  const openDialer = () => {
+  const openDialer = phoneNumber => {
     Platform.OS === 'ios'
-      ? Linking.openURL(`telprompt:${phone}`)
-      : Linking.openURL(`tel:${phone}`);
+      ? Linking.openURL(`telprompt:${phoneNumber}`)
+      : Linking.openURL(`tel:${phoneNumber}`);
   };
-
+  const renderEmptyComponent = () => (
+    <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+      <Image
+        source={require('../assets/images/noimage.png')}
+        style={styles.wrapper}
+        resizeMode="cover"
+      />
+    </View>
+  );
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.adHeaderSection}>
         <View style={styles.adImgSection}>
           <FlatList
-            data={images}
+            data={serviceDetails.images}
             keyExtractor={item => item.id}
             onScroll={event => {
               const x = event.nativeEvent.contentOffset.x;
@@ -40,6 +48,7 @@ export default function ServiceDescription({route, navigation}) {
             horizontal={true}
             showsHorizontalScrollIndicator={false}
             pagingEnabled={true}
+            ListEmptyComponent={renderEmptyComponent}
             renderItem={({item, index}) => {
               return (
                 <Image
@@ -52,7 +61,7 @@ export default function ServiceDescription({route, navigation}) {
           />
 
           <View style={styles.dotWrapper}>
-            {images?.map((e, index) => {
+            {serviceDetails.images?.map((e, index) => {
               return (
                 <View
                   key={index}
@@ -79,9 +88,14 @@ export default function ServiceDescription({route, navigation}) {
           </TouchableOpacity>
         </View>
         <View style={styles.adInfoSection}>
-          <Text allowFontScaling={false} style={styles.title}>
-            {title}
-          </Text>
+          <View style={styles.infoSectionTop}>
+            <Text allowFontScaling={false} style={styles.title}>
+              {serviceDetails.title}
+            </Text>
+            <Text allowFontScaling={false} style={styles.adID}>
+              Service ID: {serviceDetails.code}
+            </Text>
+          </View>
         </View>
       </View>
 
@@ -92,18 +106,14 @@ export default function ServiceDescription({route, navigation}) {
           Description
         </Text>
         <Text allowFontScaling={false} style={{color: '#111'}}>
-          {description}
-        </Text>
-      </View>
-
-      <View style={styles.otherDetailsSection}>
-        <Text allowFontScaling={false} style={styles.otherDetailsText}>
-          Service ID: {serviceID}
+          {serviceDetails.description}
         </Text>
       </View>
 
       <View style={styles.footer}>
-        <TouchableOpacity style={styles.button} onPress={openDialer}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => openDialer(ServiceDescription.phone)}>
           <Text allowFontScaling={false} style={styles.buttonText}>
             Call Now
           </Text>
@@ -127,21 +137,27 @@ const styles = StyleSheet.create({
     marginTop: '2%',
     backgroundColor: '#FFF',
   },
-  title: {fontSize: 16, fontWeight: 500, color: '#222'},
+  infoSectionTop: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  title: {flex: 1, fontSize: 16, fontWeight: 500, color: '#111'},
+  adID: {
+    flex: 1,
+    fontSize: 14,
+    color: '#111',
+    fontWeight: 500,
+    textAlign: 'right',
+  },
+
   adDescriptionSection: {
     flex: 2,
     padding: 5,
     marginTop: '2%',
     backgroundColor: '#FFF',
   },
-  otherDetailsSection: {
-    flex: 0.2,
-    justifyContent: 'center',
-    padding: 5,
-    marginTop: '2%',
-    backgroundColor: '#FFF',
-  },
-  otherDetailsText: {fontSize: 14, color: '#111', fontWeight: 500},
+
   footer: {
     flex: 0.5,
     justifyContent: 'center',

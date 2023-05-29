@@ -58,6 +58,7 @@ export default function YourAds({navigation, route}) {
       setShowNoAdsFoundMsg(Math.ceil(yourAdsRespData.count) ? false : true);
       const ads = yourAdsRespData.results?.map((ad, index) => ({
         id: ad.id,
+        code: ad.code,
         title: ad.name,
         createdOn: ad.created_date,
         description: ad.description,
@@ -167,6 +168,7 @@ export default function YourAds({navigation, route}) {
           navigation.navigate('AdDescription', {
             adDetails: {
               id: item.id,
+              code: item.code,
               title: item.title,
               price: item.price,
               description: item.description,
@@ -213,8 +215,8 @@ export default function YourAds({navigation, route}) {
           )}
           <Text
             allowFontScaling={false}
-            style={{fontSize: 16, color: '#111', fontWeight: 500}}>
-            Ad ID:{item.id}
+            style={{fontSize: 14, color: '#111', fontWeight: 500}}>
+            Ad ID : {item.code}
           </Text>
         </View>
       </TouchableOpacity>

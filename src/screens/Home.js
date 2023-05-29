@@ -38,7 +38,6 @@ export default function Home({navigation}) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const flatListRef = useRef(null);
   const [isReady, setIsReady] = useState(false);
-  // const [isScrolling, setIsScrolling] = useState(false);
   const [bannerImages, setBannerImages] = useState([]);
   const [showBanner, setShowBanner] = useState(false);
 
@@ -94,11 +93,9 @@ export default function Home({navigation}) {
       return;
     }
     const interval = setInterval(() => {
-      // if (!isScrolling) {
       const nextIndex = (currentIndex + 1) % bannerImages.length;
       setCurrentIndex(nextIndex);
       flatListRef.current?.scrollToIndex({index: nextIndex, animated: true});
-      // }
     }, 5000);
 
     return () => clearInterval(interval);
@@ -221,6 +218,7 @@ export default function Home({navigation}) {
       const ads = userAdsRespData?.results?.map((ad, index) => {
         return {
           id: ad.id,
+          code: ad.code,
           title: ad.name,
           createdOn: ad.created_date,
           description: ad.description,
@@ -380,6 +378,7 @@ export default function Home({navigation}) {
               navigation.navigate('AdDescription', {
                 adDetails: {
                   id: item.id,
+                  code: item.code,
                   title: item.title,
                   price: item.price,
                   description: item.description,

@@ -99,6 +99,7 @@ export default function CategorySearch({navigation, route}) {
       const ads = adsRespData?.results?.map((ad, index) => {
         return {
           id: ad.id,
+          code: ad.code,
           title: ad.name,
           createdOn: ad.created_date,
           description: ad.description,
@@ -109,6 +110,7 @@ export default function CategorySearch({navigation, route}) {
           subCategoryID: ad.category.id,
           locationName: ad.area?.location?.name,
           areaName: ad.area?.name,
+          isPrice: ad.category?.is_price,
           key: `${adsData.length + index}`,
         };
       });
@@ -155,7 +157,8 @@ export default function CategorySearch({navigation, route}) {
           navigation.navigate('AdDescription', {
             adDetails: {
               id: item.id,
-              title: item.name,
+              code: item.code,
+              title: item.title,
               price: item.price,
               description: item.description,
               location: item.locationName,
@@ -165,6 +168,7 @@ export default function CategorySearch({navigation, route}) {
               userID: item.userID,
               phone: item.phone,
               categoryID: item.subCategoryID,
+              isPrice: item.isPrice,
               showCallNowBtn: true,
               showDeleteBtn: false,
             },
@@ -190,11 +194,17 @@ export default function CategorySearch({navigation, route}) {
             style={{fontSize: 16, color: '#111', fontWeight: 500}}>
             {item.title}
           </Text>
-          <Text allowFontScaling={false} style={{fontSize: 16, color: '#111'}}>
-            ₹ {item.price}
-          </Text>
-          <Text allowFontScaling={false} style={{fontSize: 16, color: '#111'}}>
-            {item.description}
+          {item.isPrice && (
+            <Text
+              allowFontScaling={false}
+              style={{fontSize: 16, color: '#111', fontWeight: 500}}>
+              ₹ {item.price}
+            </Text>
+          )}
+          <Text
+            allowFontScaling={false}
+            style={{fontSize: 14, color: '#111', fontWeight: 500}}>
+            Ad ID : {item.code}
           </Text>
         </View>
       </TouchableOpacity>
