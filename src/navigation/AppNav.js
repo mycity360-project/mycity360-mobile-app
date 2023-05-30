@@ -20,16 +20,16 @@ export default function AppNav() {
   if (userToken === null || userToken === '') {
     return (
       <NavigationContainer>
-        <AuthStack />
         <InternetConnection />
+        <AuthStack />
       </NavigationContainer>
     );
   }
 
   return (
     <NavigationContainer>
-      <AppStack />
       <InternetConnection />
+      <AppStack />
     </NavigationContainer>
   );
 }
