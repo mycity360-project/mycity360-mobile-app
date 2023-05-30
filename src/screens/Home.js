@@ -60,7 +60,7 @@ export default function Home({navigation}) {
       setBannerImages(images);
       setShowBanner(images.length ? true : false);
     } catch (error) {
-      if (error.response.status === 401) {
+      if (error.response?.status === 401) {
         logout();
       } else {
         Alert.alert(
@@ -146,7 +146,7 @@ export default function Home({navigation}) {
 
       setCategoriesData(categories);
     } catch (error) {
-      if (error.response.status === 401) {
+      if (error.response?.status === 401) {
         logout();
       } else {
         Alert.alert(
@@ -235,7 +235,7 @@ export default function Home({navigation}) {
       });
       setUserAdsData(prevData => [...prevData, ...ads]);
     } catch (error) {
-      if (error.response.status === 401) {
+      if (error.response?.status === 401) {
         logout();
       } else {
         Alert.alert('ERROR', 'Something went wrong, Unable to Fetch Ads Home', [

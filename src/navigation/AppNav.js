@@ -4,7 +4,7 @@ import AuthStack from './AuthStack';
 import AppStack from './AppStack';
 import {AuthContext} from '../context/AuthContext';
 import {ActivityIndicator, View} from 'react-native';
-
+import InternetConnection from '../shared/components/InternetConnection';
 export default function AppNav() {
   const {isLoading, userToken = null} = useContext(AuthContext);
 
@@ -21,6 +21,7 @@ export default function AppNav() {
     return (
       <NavigationContainer>
         <AuthStack />
+        <InternetConnection />
       </NavigationContainer>
     );
   }
@@ -28,6 +29,7 @@ export default function AppNav() {
   return (
     <NavigationContainer>
       <AppStack />
+      <InternetConnection />
     </NavigationContainer>
   );
 }
