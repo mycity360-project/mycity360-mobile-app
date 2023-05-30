@@ -276,7 +276,7 @@ export default function AdDescription({route, navigation}) {
             style={styles.button}
             onPress={() => {
               Alert.alert('Warning', 'Are you sure, you want to delete ?', [
-                {text: 'OK', onPress: () => deleteAdHandler},
+                {text: 'OK', onPress: () => deleteAdHandler()},
                 {text: 'Cancel'},
               ]);
             }}>
