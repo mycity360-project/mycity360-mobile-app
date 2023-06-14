@@ -147,13 +147,12 @@ export default function QuestionsScreen({navigation, route}) {
             )}
           </Text>
           <TouchableOpacity
+            style={{borderBottomWidth: 1, padding: 5}}
             onPress={() => {
               setSelectedDropdownItemId(item.id);
               setModalVisible(true);
             }}>
-            <Text
-              allowFontScaling={false}
-              style={{borderBottomWidth: 1, padding: 5}}>
+            <Text allowFontScaling={false}>
               {answerData[item.id] || item.placeholder}
             </Text>
             {selectedDropdownItemId === item.id && (

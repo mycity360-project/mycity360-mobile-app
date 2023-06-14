@@ -148,6 +148,7 @@ export default function IncludeSomeDetails({navigation, route}) {
                   borderWidth: 0.5,
                   textAlignVertical: 'top',
                   marginTop: '1%',
+                  height: 80,
                 }}
               />
             </View>
