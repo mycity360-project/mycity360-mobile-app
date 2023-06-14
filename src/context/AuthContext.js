@@ -3,6 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {http} from '../shared/lib';
 import {BACKEND_CLIENT_ID} from '../shared/constants/env';
 import {Alert} from 'react-native';
+
 export const AuthContext = createContext();
 
 export const AuthProvider = ({children}) => {

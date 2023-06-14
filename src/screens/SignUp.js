@@ -16,10 +16,11 @@ import CustomButton from '../shared/components/CustomButton';
 import DropDown from '../shared/components/DropDown';
 import {useNavigation} from '@react-navigation/native';
 import {http} from '../shared/lib';
-import {BACKEND_CLIENT_ID} from '../shared/constants/env';
+import {BACKEND_URL, BACKEND_CLIENT_ID} from '../shared/constants/env';
 import {AuthContext} from '../context/AuthContext';
 import * as Yup from 'yup';
 import {Formik} from 'formik';
+import CheckBox from '../shared/components/Checkbox';
 
 export default function SignUp() {
   const navigation = useNavigation();
@@ -36,8 +37,10 @@ export default function SignUp() {
   const [mobileNumber, setMobileNumber] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [isChecked, setIsChecked] = useState(false);
   const [showLocationError, setShowLocationError] = useState(false);
   const [showAreaError, setShowAreaError] = useState(false);
+  const [showTermsCondError, setShowTermsCondError] = useState(false);
   const lastNameRef = useRef();
   const mobileRef = useRef();
   const emailRef = useRef();
@@ -152,6 +155,12 @@ export default function SignUp() {
     nextInput.current?.focus();
   };
 
+  const handleTextClick = () => {
+    navigation.navigate('WebViewScreen', {
+      uri: `https://docs.google.com/gview?embedded=true&url=${BACKEND_URL}/media/tc/tc.pdf`,
+    });
+  };
+
   const signUpValidationSchema = Yup.object().shape({
     firstName: Yup.string().required('First Name Required'),
     lastName: Yup.string().required('Last Name Required'),
@@ -192,10 +201,13 @@ export default function SignUp() {
         if (selectedLocation == '') {
           setShowLocationError(true);
         } else if (selectedArea == '') {
-          setShowAreaError(true);
-        } else {
           setShowLocationError(false);
+          setShowAreaError(true);
+        } else if (!isChecked) {
           setShowAreaError(false);
+          setShowTermsCondError(true);
+        } else {
+          setShowTermsCondError(false);
           handleOnSignUpPress();
         }
       }}
@@ -369,12 +381,10 @@ export default function SignUp() {
                   isDisabled={false}
                   selectedValue={selectedLocation}
                 />
-                {showLocationError ? (
+                {showLocationError && (
                   <Text allowFontScaling={false} style={styles.error}>
                     Please Select Location
                   </Text>
-                ) : (
-                  ''
                 )}
                 <DropDown
                   placeholder="Select Area"
@@ -383,12 +393,21 @@ export default function SignUp() {
                   selectedDataHandler={area => setArea(area)}
                   selectedValue={selectedArea}
                 />
-                {showAreaError ? (
+                {showAreaError && (
                   <Text allowFontScaling={false} style={styles.error}>
                     Please Select Area
                   </Text>
-                ) : (
-                  ''
+                )}
+                <CheckBox
+                  onPress={() => setIsChecked(!isChecked)}
+                  isChecked={isChecked}
+                  handleTextClick={handleTextClick}
+                  title={'I Agree to Terms & Conditions'}
+                />
+                {showTermsCondError && (
+                  <Text allowFontScaling={false} style={styles.error}>
+                    Please Accept Terms & Conditions.
+                  </Text>
                 )}
                 <CustomButton
                   btnTitle={'Sign Up'}
