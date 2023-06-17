@@ -107,6 +107,7 @@ export default function Login() {
             <TextInput
               allowFontScaling={false}
               placeholder="Enter Email / Mobile Number"
+              placeholderTextColor="grey"
               style={styles.input}
               autoCapitalize="none"
               onChangeText={mail => {
@@ -132,6 +133,7 @@ export default function Login() {
             <TextInput
               allowFontScaling={false}
               placeholder="Enter Password"
+              placeholderTextColor="grey"
               style={styles.input}
               autoCapitalize="none"
               secureTextEntry={true}
@@ -214,7 +216,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     padding: 10,
     elevation: 5, //Android Only
-    shadowRadius: 5, // IOS Only
+    shadowRadius: 14, // IOS Only
   },
   logoName: {
     color: '#FA8C00',

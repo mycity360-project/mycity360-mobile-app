@@ -235,6 +235,7 @@ export default function SignUp() {
                 <View style={styles.nameInputContainer}>
                   <TextInput
                     allowFontScaling={false}
+                    placeholderTextColor="grey"
                     style={[
                       styles.nameInput,
                       styles.inputCommon,
@@ -255,6 +256,7 @@ export default function SignUp() {
                   <TextInput
                     allowFontScaling={false}
                     placeholder="Last Name"
+                    placeholderTextColor="grey"
                     style={[
                       styles.nameInput,
                       styles.inputCommon,
@@ -284,6 +286,7 @@ export default function SignUp() {
                 <TextInput
                   allowFontScaling={false}
                   placeholder="Enter Mobile Number"
+                  placeholderTextColor="grey"
                   style={[styles.input, styles.inputCommon]}
                   keyboardType="numeric"
                   value={values.mobileNumber}
@@ -304,6 +307,7 @@ export default function SignUp() {
                 <TextInput
                   allowFontScaling={false}
                   placeholder="Enter you email"
+                  placeholderTextColor="grey"
                   style={[styles.input, styles.inputCommon]}
                   autoCapitalize={'none'}
                   keyboardType="email-address"
@@ -326,6 +330,7 @@ export default function SignUp() {
                   allowFontScaling={false}
                   style={[styles.input, styles.inputCommon]}
                   placeholder="Enter your password"
+                  placeholderTextColor="grey"
                   secureTextEntry={true}
                   autoCapitalize={'none'}
                   onBlur={() => {
@@ -358,6 +363,7 @@ export default function SignUp() {
                   allowFontScaling={false}
                   style={[styles.input, styles.inputCommon]}
                   placeholder="Confirm password"
+                  placeholderTextColor="grey"
                   secureTextEntry={true}
                   autoCapitalize={'none'}
                   onBlur={() => {
@@ -376,6 +382,7 @@ export default function SignUp() {
                 )}
                 <DropDown
                   placeholder="Select Location"
+                  placeholderTextColor="grey"
                   dataArray={locationData}
                   selectedDataHandler={location => setLocation(location)}
                   isDisabled={false}
@@ -388,6 +395,7 @@ export default function SignUp() {
                 )}
                 <DropDown
                   placeholder="Select Area"
+                  placeholderTextColor="grey"
                   dataArray={areaData}
                   isDisabled={isDisabled}
                   selectedDataHandler={area => setArea(area)}
