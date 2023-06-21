@@ -1,5 +1,5 @@
 import {StyleSheet, View, TextInput, SafeAreaView, Text} from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import CustomButton from '../shared/components/CustomButton';
 import {AuthContext} from '../context/AuthContext';
 import {useContext} from 'react';
@@ -8,32 +8,12 @@ import {BACKEND_CLIENT_ID} from '../shared/constants/env';
 
 export default function VerifyOtp({route}) {
   const {userid, is_email_verified, is_phone_verified} = route.params;
+  // console.log(is_email_verified, is_phone_verified);
   const {isVerified} = useContext(AuthContext);
   const [enteredOtp, setEnteredOtp] = useState('');
   const [enteredEmailOtp, setEnteredEmailOtp] = useState('');
-  const [systemSetting, setSystemSetting] = useState({});
   const [isError, setIsError] = useState(false);
   const [serverError, setServerError] = useState('');
-
-  useEffect(() => {
-    getSystemConfig();
-  }, []);
-
-  const getSystemConfig = async () => {
-    let data = await http.get('system-config/', {
-      headers: {
-        clientid: BACKEND_CLIENT_ID,
-        Authorization: 'Bearer nvmOKbrr1VCudtV21IGlISpDCPdtsj',
-      },
-    });
-
-    // console.log(data);
-    var systemSettings = {};
-    for (const ele of data) {
-      systemSettings[ele.key] = ele.value === 'true' ? true : false;
-    }
-    setSystemSetting({...systemSettings});
-  };
 
   const verifyOtp = async (phone_otp, email_otp) => {
     const url = `user/${userid}/verify-otp/`;
@@ -68,7 +48,7 @@ export default function VerifyOtp({route}) {
     <SafeAreaView style={styles.container}>
       <View style={styles.header} />
       <View style={styles.formContainer}>
-        {!is_phone_verified && systemSetting.phone_verification_required && (
+        {!is_phone_verified && (
           <TextInput
             allowFontScaling={false}
             style={styles.input}
@@ -77,7 +57,7 @@ export default function VerifyOtp({route}) {
             onChangeText={otp => setEnteredOtp(otp)}
           />
         )}
-        {!is_email_verified && systemSetting.email_verification_required && (
+        {!is_email_verified && (
           <TextInput
             allowFontScaling={false}
             style={styles.input}

@@ -53,9 +53,11 @@ export const AuthProvider = ({children}) => {
       } else {
         response.showVerifyOtpScreen = true;
         response.userid = userid;
+        response.is_phone_verified = respData.is_phone_verified;
+        response.is_email_verified = respData.is_email_verified;
         setIsLoading(false);
-        return response;
       }
+      return response;
     } catch (error) {
       setIsLoading(false);
       if (error.response.status === 500) {
