@@ -518,6 +518,7 @@ export default function Home({navigation}) {
           <View style={[styles.bannerSection, {height: screenHeight * 0.33}]}>
             <CustomCarousel
               data={bannerImages}
+              disablePagination={true}
               renderItem={({item, index}) => {
                 console.log(item);
                 return (
