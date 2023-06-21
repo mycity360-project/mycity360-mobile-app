@@ -5,6 +5,7 @@ import {
   ActivityIndicator,
   TouchableOpacity,
   Alert,
+  SafeAreaView,
 } from 'react-native';
 import React, {useState, useEffect, useContext} from 'react';
 import DropDown from '../shared/components/DropDown';
@@ -118,7 +119,7 @@ export default function Location({navigation}) {
       <ActivityIndicator size={'large'} />
     </View>
   ) : (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity
           onPress={() => {
@@ -127,7 +128,9 @@ export default function Location({navigation}) {
           <MaterialIcon name="close" color={'#444'} size={32} />
         </TouchableOpacity>
 
-        <Text style={styles.headingText}>Set Location</Text>
+        <Text allowFontScaling={false} style={styles.headingText}>
+          Set Location
+        </Text>
       </View>
       <View style={{flex: 9}}>
         <DropDown
@@ -138,7 +141,9 @@ export default function Location({navigation}) {
           selectedValue={selectedLocation}
         />
         {showLocationError ? (
-          <Text style={styles.error}>Please Select Location</Text>
+          <Text allowFontScaling={false} style={styles.error}>
+            Please Select Location
+          </Text>
         ) : (
           ''
         )}
@@ -150,7 +155,9 @@ export default function Location({navigation}) {
           selectedValue={selectedArea}
         />
         {showAreaError ? (
-          <Text style={styles.error}>Please Select Area</Text>
+          <Text allowFontScaling={false} style={styles.error}>
+            Please Select Area
+          </Text>
         ) : (
           ''
         )}
@@ -159,7 +166,7 @@ export default function Location({navigation}) {
           onpress={() => updateLocationHandler()}
         />
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 

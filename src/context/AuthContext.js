@@ -3,6 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {http} from '../shared/lib';
 import {BACKEND_CLIENT_ID} from '../shared/constants/env';
 import {Alert} from 'react-native';
+
 export const AuthContext = createContext();
 
 export const AuthProvider = ({children}) => {
@@ -18,12 +19,12 @@ export const AuthProvider = ({children}) => {
       },
     });
     user = {...user, localUserArea: user.area};
-    setUserToken(token);
     setUserInfo(user);
     AsyncStorage.setItem('tokenInfo', JSON.stringify(respData));
     AsyncStorage.setItem('token', token);
     AsyncStorage.setItem('userInfo', JSON.stringify(user));
     AsyncStorage.setItem('userID', JSON.stringify(userid));
+    setUserToken(token);
   };
 
   const login = async (username, password) => {
@@ -71,20 +72,17 @@ export const AuthProvider = ({children}) => {
     setIsLoading(true);
     setUserToken(null);
     setUserInfo(null);
-    AsyncStorage.removeItem('token');
-    AsyncStorage.removeItem('tokenInfo');
-    AsyncStorage.removeItem('userInfo');
-    AsyncStorage.removeItem('userID');
+    await AsyncStorage.clear();
     setIsLoading(false);
   };
 
   const isVerified = async respData => {
     try {
       setIsLoading(true);
-      onTokenAvailable(respData, respData.access_token, respData.user_id);
+      await onTokenAvailable(respData, respData.access_token, respData.user_id);
       setIsLoading(false);
-    } catch (e) {
-      // Alert.alert('Error', 'Something Went Wrong', [{text: 'OK'}]);
+    } catch (error) {
+      Alert.alert('Error', 'Something Went Wrong', [{text: 'OK'}]);
     }
   };
   const isLoggedIn = async () => {

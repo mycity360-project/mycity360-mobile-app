@@ -1,121 +1,204 @@
 /* eslint-disable react-native/no-inline-styles */
 import {
   Image,
-  Pressable,
+  TouchableOpacity,
   StyleSheet,
   Text,
   View,
   Linking,
   Platform,
+  SafeAreaView,
+  Dimensions,
+  FlatList,
 } from 'react-native';
-import React from 'react';
+import React, {useState} from 'react';
+import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
+
+const {width, height} = Dimensions.get('window');
 
 export default function ServiceDescription({route, navigation}) {
-  const {title, description, phone} = route.params;
+  const {serviceDetails} = route.params;
+  const [currentIndex, setCurrentIndex] = useState(0);
 
-  const openDialer = contactNumber => {
+  const openDialer = phoneNumber => {
     Platform.OS === 'ios'
-      ? Linking.openURL(`telprompt:${contactNumber}`)
-      : Linking.openURL(`tel:${contactNumber}`);
+      ? Linking.openURL(`telprompt:${phoneNumber}`)
+      : Linking.openURL(`tel:${phoneNumber}`);
   };
-
+  const renderEmptyComponent = () => (
+    <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+      <Image
+        source={require('../assets/images/noimage.png')}
+        style={styles.wrapper}
+        resizeMode="cover"
+      />
+    </View>
+  );
   return (
-    <View style={styles.container}>
-      <View style={styles.headerSection}>
-        <View style={styles.imgSection}>
-          {/* <Image
-            source={require('../assets/images/mobile.png')}
-            style={{height: '90%', resizeMode: 'contain'}}
-          /> */}
-        </View>
-        <View style={styles.infoSection}>
-          <View style={styles.infoSectionTop}>
-            <Text style={styles.title}>{title}</Text>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.adHeaderSection}>
+        <View style={styles.adImgSection}>
+          <FlatList
+            data={serviceDetails.images}
+            keyExtractor={item => item.id}
+            onScroll={event => {
+              const x = event.nativeEvent.contentOffset.x;
+              setCurrentIndex((x / width).toFixed(0));
+            }}
+            horizontal={true}
+            showsHorizontalScrollIndicator={false}
+            pagingEnabled={true}
+            ListEmptyComponent={renderEmptyComponent}
+            renderItem={({item, index}) => {
+              return (
+                <Image
+                  source={{uri: item.image}}
+                  resizeMode="contain"
+                  style={styles.wrapper}
+                />
+              );
+            }}
+          />
+
+          <View style={styles.dotWrapper}>
+            {serviceDetails.images?.map((e, index) => {
+              return (
+                <View
+                  key={index}
+                  style={[
+                    styles.dotCommon,
+                    parseInt(currentIndex) === index
+                      ? styles.dotActive
+                      : styles.dotNotActive,
+                  ]}
+                />
+              );
+            })}
           </View>
-
-          <Text numberOfLines={1} style={styles.infoSectionBottom}>
-            {title}
-          </Text>
+          <TouchableOpacity
+            style={{
+              position: 'absolute',
+              top: 10,
+              left: 15,
+            }}
+            onPress={() => {
+              navigation.goBack();
+            }}>
+            <MaterialIcon name="arrow-back" size={24} color={'#222'} />
+          </TouchableOpacity>
+        </View>
+        <View style={styles.adInfoSection}>
+          <View style={styles.infoSectionTop}>
+            <Text allowFontScaling={false} style={styles.title}>
+              {serviceDetails.title}
+            </Text>
+            <Text allowFontScaling={false} style={styles.adID}>
+              Service ID: {serviceDetails.code}
+            </Text>
+          </View>
         </View>
       </View>
 
-      <View style={styles.detailsSection}>
-        <Text style={{fontSize: 16, fontWeight: 600, color: '#111'}}>
-          Details
-        </Text>
-        <View style={{fontSize: 14, marginLeft: '20%'}}>
-          <Text>Key Points of Service </Text>
-        </View>
-      </View>
-
-      <View style={styles.descriptionSection}>
-        <Text style={{fontSize: 16, fontWeight: 600, color: '#111'}}>
+      <View style={styles.adDescriptionSection}>
+        <Text
+          allowFontScaling={false}
+          style={{fontSize: 16, fontWeight: 600, color: '#111'}}>
           Description
         </Text>
-        <Text>{description} </Text>
-      </View>
-
-      <View style={styles.otherDetailsSection}>
-        <Text style={styles.otherDetailsText}>Service ID: 323452</Text>
-        <Text style={styles.otherDetailsText}>Report</Text>
+        <Text allowFontScaling={false} style={{color: '#111'}}>
+          {serviceDetails.description}
+        </Text>
       </View>
 
       <View style={styles.footer}>
-        <Pressable style={styles.callButton} onPress={() => openDialer(phone)}>
-          <Text style={styles.callButtonText}>Call Now</Text>
-        </Pressable>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => openDialer(ServiceDescription.phone)}>
+          <Text allowFontScaling={false} style={styles.buttonText}>
+            Call Now
+          </Text>
+        </TouchableOpacity>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {flex: 1},
-  headerSection: {flex: 4},
-  imgSection: {
+  container: {flex: 1, backgroundColor: '#F5F5F5'},
+  adHeaderSection: {flex: 2, paddingTop: 5},
+  adImgSection: {
     flex: 3,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  infoSection: {flex: 1, padding: 5},
+  adInfoSection: {
+    flex: 1,
+    padding: 5,
+    marginTop: '2%',
+    backgroundColor: '#FFF',
+  },
   infoSectionTop: {
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
-  title: {fontSize: 20, fontWeight: 600, color: '#111'},
-  // infoSectionMiddle: {
-  //   flex: 1,
-  //   fontSize: 16,
-  //   width: '90%',
-  //   color: '#000',
-  // },
-
-  detailsSection: {flex: 1, padding: 5},
-  descriptionSection: {flex: 2, padding: 5},
-  otherDetailsSection: {
-    flex: 0.2,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    padding: 5,
+  title: {flex: 1, fontSize: 16, fontWeight: 500, color: '#111'},
+  adID: {
+    flex: 1,
+    fontSize: 14,
+    color: '#111',
+    fontWeight: 500,
+    textAlign: 'right',
   },
-  otherDetailsText: {fontSize: 14, color: '#111', fontWeight: 500},
+
+  adDescriptionSection: {
+    flex: 2,
+    padding: 5,
+    marginTop: '2%',
+    backgroundColor: '#FFF',
+  },
+
   footer: {
-    flex: 0.7,
+    flex: 0.5,
     justifyContent: 'center',
     alignItems: 'center',
+    marginTop: '2%',
+    backgroundColor: '#FFF',
   },
-  callButton: {
+  button: {
     backgroundColor: '#FA8C00',
     width: '70%',
     height: '60%',
     justifyContent: 'center',
     borderRadius: 10,
   },
-  callButtonText: {
+  buttonText: {
     fontSize: 20,
     textAlign: 'center',
     color: '#111',
     fontWeight: 500,
+  },
+
+  wrapper: {width: width, height: height * 0.3},
+
+  dotWrapper: {
+    flexDirection: 'row',
+    position: 'absolute',
+    alignSelf: 'center',
+    bottom: 20,
+  },
+  dotCommon: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    marginLeft: 5,
+    borderWidth: 1,
+    borderColor: '#222',
+  },
+  dotActive: {
+    backgroundColor: '#FA8C00',
+  },
+  dotNotActive: {
+    backgroundColor: '#fff',
   },
 });

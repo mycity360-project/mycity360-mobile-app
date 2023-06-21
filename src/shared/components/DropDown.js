@@ -1,28 +1,32 @@
 /* eslint-disable react-native/no-inline-styles */
-import {StyleSheet, Text, View, TouchableOpacity, FlatList} from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  FlatList,
+  ScrollView,
+} from 'react-native';
 import {React, useState} from 'react';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 
-export default function DropDown(props) {
-  const {
-    placeholder,
-    dataArray,
-    selectedDataHandler,
-    isDisabled,
-    selectedValue,
-  } = props;
+export default function DropDown({
+  placeholder,
+  dataArray,
+  selectedDataHandler,
+  isDisabled,
+  selectedValue,
+}) {
+  const [isClicked, setIsClicked] = useState(false);
   const [selected, setSelected] = useState(
     selectedValue === '' ? `${placeholder}` : selectedValue.value,
   );
-  const [isClicked, setIsClicked] = useState(false);
-  const [data] = useState(dataArray);
+
   return (
     <View style={styles.container}>
       <TouchableOpacity
         style={styles.dropdownSelector}
-        onPress={() => {
-          setIsClicked(!isClicked);
-        }}
+        onPress={() => setIsClicked(!isClicked)}
         disabled={isDisabled}>
         <Text style={{color: '#222'}}>{selected}</Text>
         {isClicked ? (
@@ -31,10 +35,10 @@ export default function DropDown(props) {
           <MaterialIcon name="arrow-drop-down" size={25} color={'#222'} />
         )}
       </TouchableOpacity>
-      {isClicked ? (
+      {isClicked && (
         <View style={styles.dropdownArea}>
           <FlatList
-            data={data}
+            data={dataArray}
             renderItem={({item}) => {
               return (
                 <TouchableOpacity
@@ -48,10 +52,9 @@ export default function DropDown(props) {
                 </TouchableOpacity>
               );
             }}
-            extraData={{data}}
           />
         </View>
-      ) : null}
+      )}
     </View>
   );
 }

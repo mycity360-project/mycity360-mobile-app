@@ -10,14 +10,16 @@ import {
   Pressable,
   Alert,
 } from 'react-native';
-import {React, useState, useEffect} from 'react';
+import {React, useState, useEffect, useContext} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {http} from '../shared/lib';
 import {ActivityIndicator} from 'react-native-paper';
+import {AuthContext} from '../context/AuthContext';
 
 export default function Home({navigation}) {
   const [servicesData, setServicesData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const {logout} = useContext(AuthContext);
 
   const getServices = async () => {
     try {
@@ -30,21 +32,28 @@ export default function Home({navigation}) {
       });
       const services = servicesRespData.map(service => ({
         key: service.id.toString(),
+        code: service.code,
         title: service.name,
         icon: service.icon,
         description: service.description,
         phone: service.phone,
+        images: service.images,
+        serviceID: service.id,
       }));
       setServicesData(services);
+    } catch (error) {
+      if (error.response.status === 401) {
+        logout();
+      } else {
+        Alert.alert('ERROR', 'Something went wrong, we are working on it', [
+          {
+            text: 'OK',
+            onPress: () => navigation.goBack(),
+          },
+        ]);
+      }
+    } finally {
       setIsLoading(false);
-    } catch (err) {
-      setIsLoading(false);
-      Alert.alert('ERROR', 'Something went wrong, we are working on it', [
-        {
-          text: 'OK',
-          onPress: () => navigation.goBack(),
-        },
-      ]);
     }
   };
 
@@ -53,7 +62,7 @@ export default function Home({navigation}) {
   }, []);
 
   const numColumns = 3;
-  const CARD_HEIGHT = 65;
+  const CARD_HEIGHT = 90;
   const getServiceCardLayout = (_, index) => ({
     length: CARD_HEIGHT,
     offset: CARD_HEIGHT * index,
@@ -79,33 +88,38 @@ export default function Home({navigation}) {
       disabled={item.empty ? true : false}
       onPress={() =>
         navigation.navigate('ServiceDescription', {
-          title: item.title,
-          description: item.description,
-          phone: item.phone,
+          serviceDetails: {
+            title: item.title,
+            description: item.description,
+            phone: item.phone,
+            images: item.images,
+            serviceID: item.serviceID,
+            code: item.code,
+          },
         })
       }>
       {item.empty ? (
-        // <View></View>
         ''
       ) : (
-        <View style={{flex: 1}}>
+        <View style={{flex: 2}}>
           <View
             style={{
-              flex: 1.3,
+              flexGrow: 1,
               alignItems: 'center',
               justifyContent: 'center',
             }}>
-            <Image source={{uri: item.icon, width: 45, height: 45}} />
+            <Image source={{uri: item.icon, width: 55, height: 55}} />
           </View>
           <View
             style={{
-              flex: 0.7,
+              flexGrow: 1,
               alignItems: 'center',
               justifyContent: 'center',
             }}>
             <Text
+              allowFontScaling={false}
               style={{
-                fontSize: 16,
+                fontSize: 14,
                 color: '#111',
               }}>
               {item.title}
@@ -135,7 +149,11 @@ export default function Home({navigation}) {
               justifyContent: 'center',
               alignItems: 'center',
             }}>
-            <Text style={{fontSize: 20, color: '#111'}}>Ads</Text>
+            <Text
+              allowFontScaling={false}
+              style={{fontSize: 20, color: '#111'}}>
+              Ads
+            </Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => navigation.navigate('Service')}
@@ -148,7 +166,11 @@ export default function Home({navigation}) {
               justifyContent: 'center',
               alignItems: 'center',
             }}>
-            <Text style={{fontSize: 20, color: '#111'}}>Services</Text>
+            <Text
+              allowFontScaling={false}
+              style={{fontSize: 20, color: '#111'}}>
+              Services
+            </Text>
           </TouchableOpacity>
         </View>
       </View>

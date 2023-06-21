@@ -1,4 +1,4 @@
-import {StyleSheet, View, TextInput} from 'react-native';
+import {StyleSheet, View, TextInput, SafeAreaView} from 'react-native';
 import React, {useState} from 'react';
 import CustomButton from '../shared/components/CustomButton';
 import {AuthContext} from '../context/AuthContext';
@@ -25,15 +25,19 @@ export default function VerifyOtp({route}) {
 
       const resp = await http.post(url, data, config);
       return resp;
-    } catch (err) {}
+    } catch (error) {
+      const msg =
+        error?.response?.data?.detail ||
+        'Something Went Wrong, We are working on it. Please try after Some time';
+      Alert.alert('ERROR', `${msg}`, [{text: 'OK'}]);
+    }
   };
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        {/* <CustomButton btnType="back" onpress={() => navigation.goBack()} /> */}
-      </View>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.header}></View>
       <View style={styles.formContainer}>
         <TextInput
+          allowFontScaling={false}
           style={styles.input}
           placeholder="Enter Mobile OTP"
           keyboardType="numeric"
@@ -47,7 +51,7 @@ export default function VerifyOtp({route}) {
           }}
         />
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 

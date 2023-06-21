@@ -11,21 +11,22 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from 'react-native';
-import {React, useContext, useState} from 'react';
+import {React, useContext, useState, useRef} from 'react';
 import CustomButton from '../shared/components/CustomButton';
 import {AuthContext} from '../context/AuthContext';
 import {useNavigation} from '@react-navigation/native';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 export default function Login() {
-  const {login} = useContext(AuthContext);
-
-  const [email, setEmail] = useState(null);
-  const [phone, setPhone] = useState('');
-  const [password, setPassword] = useState(null);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [isEmailError, setEmailError] = useState(false);
   const [isPhoneError, setPhoneError] = useState(false);
   const [ispasswordError, setPasswordError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  const {login} = useContext(AuthContext);
+  const passwordRef = useRef();
   const navigation = useNavigation();
 
   const errors = {
@@ -40,23 +41,26 @@ export default function Login() {
     var emailRegex =
       /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
 
-    if (password === '' || password.length < 8) {
-      setIsLoading(false);
-      setPasswordError(true);
-      return;
-    }
-
     if (email.length === 10 && !email.match(phoneRegex)) {
       setEmailError(false);
-      setIsLoading(false);
       setPhoneError(true);
+      setIsLoading(false);
       return;
     }
 
     if (email.length !== 10 && !email.match(emailRegex)) {
       setPhoneError(false);
-      setIsLoading(false);
       setEmailError(true);
+      setIsLoading(false);
+      return;
+    }
+
+    if (password === '' || password.length < 8) {
+      setEmailError(false);
+      setPhoneError(false);
+      setPasswordError(true);
+      setIsLoading(false);
+
       return;
     }
 
@@ -74,7 +78,10 @@ export default function Login() {
     </View>
   ) : (
     <SafeAreaView style={styles.container}>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <KeyboardAwareScrollView
+        enableOnAndroid={true}
+        scrollEnabled={false}
+        contentContainerStyle={{flexGrow: 1}}>
         <View style={styles.innerContainer}>
           <View style={styles.headerSection} />
           <View style={styles.logoSection}>
@@ -82,10 +89,13 @@ export default function Login() {
               source={require('../assets/images/logo.png')}
               style={{width: 75, height: 75}}
             />
-            <Text style={styles.logoName}>MyCity360</Text>
+            <Text allowFontScaling={false} style={styles.logoName}>
+              MyCity360
+            </Text>
           </View>
           <View style={styles.loginFormSection}>
             <Text
+              allowFontScaling={false}
               style={{
                 fontSize: 24,
                 fontWeight: '400',
@@ -95,25 +105,35 @@ export default function Login() {
               Login
             </Text>
             <TextInput
+              allowFontScaling={false}
               placeholder="Enter Email / Mobile Number"
+              placeholderTextColor="grey"
               style={styles.input}
               autoCapitalize="none"
               onChangeText={mail => {
                 setEmail(mail);
               }}
+              returnKeyType="next"
+              onSubmitEditing={() => passwordRef.current.focus()}
             />
             {isEmailError ? (
-              <Text style={styles.error}>{errors.email}</Text>
+              <Text allowFontScaling={false} style={styles.error}>
+                {errors.email}
+              </Text>
             ) : (
               ''
             )}
             {isPhoneError ? (
-              <Text style={styles.error}>{errors.phone}</Text>
+              <Text allowFontScaling={false} style={styles.error}>
+                {errors.phone}
+              </Text>
             ) : (
               ''
             )}
             <TextInput
+              allowFontScaling={false}
               placeholder="Enter Password"
+              placeholderTextColor="grey"
               style={styles.input}
               autoCapitalize="none"
               secureTextEntry={true}
@@ -121,12 +141,17 @@ export default function Login() {
               onChangeText={value => {
                 setPassword(value);
               }}
+              onSubmitEditing={loginHandler}
+              ref={passwordRef}
             />
             {ispasswordError ? (
-              <Text style={styles.error}>{errors.password}</Text>
+              <Text allowFontScaling={false} style={styles.error}>
+                {errors.password}
+              </Text>
             ) : (
               ''
             )}
+
             <CustomButton
               btnTitle="Login"
               onpress={() => {
@@ -135,6 +160,7 @@ export default function Login() {
               style={styles.loginBtn}
               icon="arrow-forward"
             />
+
             <View
               style={{
                 flex: 0.1,
@@ -143,9 +169,12 @@ export default function Login() {
                 flexDirection: 'row',
                 gap: 5,
               }}>
-              <Text style={{fontSize: 16}}>Need an account?</Text>
+              <Text allowFontScaling={false} style={{fontSize: 16}}>
+                Need an account?
+              </Text>
               <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
                 <Text
+                  allowFontScaling={false}
                   style={{
                     fontSize: 16,
                     color: '#FA8C00',
@@ -156,7 +185,7 @@ export default function Login() {
             </View>
           </View>
         </View>
-      </TouchableWithoutFeedback>
+      </KeyboardAwareScrollView>
     </SafeAreaView>
   );
 }
@@ -187,7 +216,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     padding: 10,
     elevation: 5, //Android Only
-    shadowRadius: 5, // IOS Only
+    shadowRadius: 14, // IOS Only
   },
   logoName: {
     color: '#FA8C00',

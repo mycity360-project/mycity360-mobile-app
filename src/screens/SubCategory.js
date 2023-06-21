@@ -7,14 +7,17 @@ import {
   SafeAreaView,
   ActivityIndicator,
 } from 'react-native';
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {http} from '../shared/lib';
+import {AuthContext} from '../context/AuthContext';
+
 export default function SubCategory({navigation, route}) {
   const [isLoading, setIsLoading] = useState(false);
   const [subcategoryData, setSubCategoryData] = useState([]);
-  const {categoryID, categoryName} = route.params;
+  const {categoryID, categoryName, isPrice} = route.params;
+  const {logout} = useContext(AuthContext);
 
   const getSubCategories = async () => {
     try {
@@ -28,14 +31,37 @@ export default function SubCategory({navigation, route}) {
           },
         },
       );
-      const subCategories = subCategoriesRespData.results.map(category => ({
-        id: category.id.toString(),
-        name: category.name,
-      }));
-
-      setSubCategoryData(subCategories);
-      setIsLoading(false);
-    } catch (err) {
+      if (
+        subCategoriesRespData.results &&
+        subCategoriesRespData.results.length > 0
+      ) {
+        const subCategories = subCategoriesRespData.results.map(category => ({
+          id: category.id.toString(),
+          name: category.name,
+        }));
+        setSubCategoryData(subCategories);
+      } else {
+        navigation.replace('QuestionsScreen', {
+          categoryID: categoryID,
+          subCategoryID: categoryID,
+          isPrice: isPrice,
+        });
+      }
+    } catch (error) {
+      if (error.response.status === 401) {
+        logout();
+      } else {
+        Alert.alert(
+          'ERROR',
+          'Something went wrong, Unable to Fetch Sub Categories',
+          [
+            {
+              text: 'OK',
+            },
+          ],
+        );
+      }
+    } finally {
       setIsLoading(false);
     }
   };
@@ -61,12 +87,15 @@ export default function SubCategory({navigation, route}) {
           justifyContent: 'center',
         }}
         onPress={() =>
-          navigation.navigate('IncludeSomeDetails', {
+          navigation.navigate('QuestionsScreen', {
             categoryID: categoryID,
             subCategoryID: item.id,
+            isPrice: isPrice,
           })
         }>
-        <Text style={{fontSize: 16, color: '#222', marginLeft: 10}}>
+        <Text
+          allowFontScaling={false}
+          style={{fontSize: 16, color: '#222', marginLeft: 10}}>
           {item.name}
         </Text>
       </TouchableOpacity>
@@ -86,7 +115,9 @@ export default function SubCategory({navigation, route}) {
           <MaterialIcon name="arrow-back" color={'#333'} size={28} />
         </TouchableOpacity>
 
-        <Text style={styles.headingText}>{categoryName}</Text>
+        <Text allowFontScaling={false} style={styles.headingText}>
+          {categoryName}
+        </Text>
       </View>
       <View style={styles.subCategorySection}>
         <FlatList
