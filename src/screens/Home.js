@@ -38,9 +38,6 @@ export default function Home({navigation}) {
   const [searchText, setSearchText] = useState('');
   const {userInfo, logout} = useContext(AuthContext);
   const [showNoAdsFoundMsg, setShowNoAdsFoundMsg] = useState(false);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const flatListRef = useRef(null);
-  const [isReady, setIsReady] = useState(false);
   const [bannerImages, setBannerImages] = useState([]);
   const [showBanner, setShowBanner] = useState(false);
 
@@ -84,31 +81,6 @@ export default function Home({navigation}) {
       uri,
     });
   };
-
-  const getBannerLayout = (data, index) => ({
-    length: width,
-    offset: width * index,
-    index,
-  });
-
-  useEffect(() => {
-    if (!isReady || !bannerImages) {
-      return;
-    }
-    const interval = setInterval(() => {
-      const nextIndex = (currentIndex + 1) % bannerImages.length;
-      setCurrentIndex(nextIndex);
-      flatListRef.current?.scrollToIndex({index: nextIndex, animated: true});
-    }, 5000);
-
-    return () => clearInterval(interval);
-  }, [currentIndex, bannerImages, isReady]);
-
-  useEffect(() => {
-    if (flatListRef.current && isReady) {
-      flatListRef.current.scrollToIndex({index: currentIndex, animated: true});
-    }
-  }, [currentIndex, isReady]);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', async () => {
@@ -544,44 +516,6 @@ export default function Home({navigation}) {
         </View>
         {showBanner && (
           <View style={[styles.bannerSection, {height: screenHeight * 0.33}]}>
-            {/* <FlatList
-              data={bannerImages}
-              ref={flatListRef}
-              keyExtractor={item => item.key}
-              scrollEnabled={false}
-              getItemLayout={getBannerLayout}
-              onLayout={() => setIsReady(true)}
-              horizontal={true}
-              showsHorizontalScrollIndicator={false}
-              pagingEnabled={true}
-              renderItem={({item, index}) => {
-                return (
-                  <Pressable onPress={() => handleWebLink(item.redirectUrl)}>
-                    <Image
-                      source={{uri: item.image}}
-                      resizeMode="cover"
-                      style={styles.wrapper}
-                    />
-                  </Pressable>
-                );
-              }}
-            /> */}
-            {/* <View style={styles.dotWrapper}>
-              {bannerImages?.map((e, index) => {
-                return (
-                  <View
-                    key={index}
-                    style={[
-                      styles.dotCommon,
-                      parseInt(currentIndex, 10) === index
-                        ? styles.dotActive
-                        : styles.dotNotActive,
-                    ]}
-                  />
-                );
-              })}
-            </View> */}
-
             <CustomCarousel
               data={bannerImages}
               renderItem={({item, index}) => {
