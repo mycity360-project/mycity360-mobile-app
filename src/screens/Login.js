@@ -6,8 +6,6 @@ import {
   TextInput,
   SafeAreaView,
   Text,
-  TouchableWithoutFeedback,
-  Keyboard,
   TouchableOpacity,
   ActivityIndicator,
 } from 'react-native';
@@ -16,6 +14,8 @@ import CustomButton from '../shared/components/CustomButton';
 import {AuthContext} from '../context/AuthContext';
 import {useNavigation} from '@react-navigation/native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import { http } from '../shared/lib';
+import { BACKEND_CLIENT_ID } from '../shared/constants/env';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -64,10 +64,27 @@ export default function Login() {
       return;
     }
 
-    const response = await login(email, password);
-    if (response?.showVerifyOtpScreen) {
-      setIsLoading(false);
-      navigation.navigate('VerifyOtp', {userid: response.userid});
+    const url = 'user/login/';
+    const config = {
+      headers: {
+        clientid: BACKEND_CLIENT_ID,
+      },
+    };
+    const data = {
+      email: email,
+      password: password,
+    };
+
+    let respData = await http.post(url, data, config);
+
+    if (respData?.access_token) {
+      await login(data.email, data.password);
+    } else {
+      navigation.navigate('VerifyOtp', {
+        userid: respData.id,
+        is_email_verified: respData.is_email_verified,
+        is_phone_verified: respData.is_phone_verified,
+      });
     }
     setIsLoading(false);
   };

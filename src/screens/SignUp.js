@@ -131,13 +131,22 @@ export default function SignUp() {
         },
       };
 
-      const resp = await http.post('user/signup/', data, config);
+      const {id, is_phone_verified, is_email_verified} = await http.post(
+        'user/signup/',
+        data,
+        config,
+      );
 
-      const user_id = resp.id;
-      if (user_id) {
-        resp.is_phone_verified
+      console.log(is_phone_verified, is_email_verified);
+
+      if (id) {
+        is_phone_verified && is_email_verified
           ? await login(email, password)
-          : navigation.navigate('VerifyOtp', {userid: user_id});
+          : navigation.navigate('VerifyOtp', {
+              userid: id,
+              is_phone_verified,
+              is_email_verified,
+            });
       } else {
         throw new Error('Not able to get UserId Something went wrong');
       }
@@ -198,9 +207,9 @@ export default function SignUp() {
         confirmPassword: confirmPassword,
       }}
       onSubmit={() => {
-        if (selectedLocation == '') {
+        if (selectedLocation === '') {
           setShowLocationError(true);
-        } else if (selectedArea == '') {
+        } else if (selectedArea === '') {
           setShowLocationError(false);
           setShowAreaError(true);
         } else if (!isChecked) {
