@@ -13,6 +13,7 @@ import {
   Alert,
   TextInput,
   Dimensions,
+  ImageBackground,
 } from 'react-native';
 import {React, useEffect, useState, useRef, memo, useContext} from 'react';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
@@ -20,6 +21,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {http} from '../shared/lib';
 import {useIsFocused} from '@react-navigation/native';
 import {AuthContext} from '../context/AuthContext';
+import CustomCarousel from 'carousel-with-pagination-rn';
+
 const {width, height} = Dimensions.get('window');
 const screenHeight = height;
 export default function Home({navigation}) {
@@ -35,9 +38,6 @@ export default function Home({navigation}) {
   const [searchText, setSearchText] = useState('');
   const {userInfo, logout} = useContext(AuthContext);
   const [showNoAdsFoundMsg, setShowNoAdsFoundMsg] = useState(false);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const flatListRef = useRef(null);
-  const [isReady, setIsReady] = useState(false);
   const [bannerImages, setBannerImages] = useState([]);
   const [showBanner, setShowBanner] = useState(false);
 
@@ -81,31 +81,6 @@ export default function Home({navigation}) {
       uri,
     });
   };
-
-  const getBannerLayout = (data, index) => ({
-    length: width,
-    offset: width * index,
-    index,
-  });
-
-  useEffect(() => {
-    if (!isReady || !bannerImages) {
-      return;
-    }
-    const interval = setInterval(() => {
-      const nextIndex = (currentIndex + 1) % bannerImages.length;
-      setCurrentIndex(nextIndex);
-      flatListRef.current?.scrollToIndex({index: nextIndex, animated: true});
-    }, 5000);
-
-    return () => clearInterval(interval);
-  }, [currentIndex, bannerImages, isReady]);
-
-  useEffect(() => {
-    if (flatListRef.current && isReady) {
-      flatListRef.current.scrollToIndex({index: currentIndex, animated: true});
-    }
-  }, [currentIndex, isReady]);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', async () => {
@@ -541,43 +516,24 @@ export default function Home({navigation}) {
         </View>
         {showBanner && (
           <View style={[styles.bannerSection, {height: screenHeight * 0.33}]}>
-            <FlatList
+            <CustomCarousel
               data={bannerImages}
-              ref={flatListRef}
-              keyExtractor={item => item.key}
-              scrollEnabled={false}
-              getItemLayout={getBannerLayout}
-              onLayout={() => setIsReady(true)}
-              horizontal={true}
-              showsHorizontalScrollIndicator={false}
-              pagingEnabled={true}
+              disablePagination={true}
               renderItem={({item, index}) => {
+                console.log(item);
                 return (
-                  <Pressable onPress={() => handleWebLink(item.redirectUrl)}>
-                    <Image
-                      source={{uri: item.image}}
-                      resizeMode="cover"
-                      style={styles.wrapper}
-                    />
-                  </Pressable>
+                  <View style={{flex: 1}}>
+                    <Pressable onPress={() => handleWebLink(item.redirectUrl)}>
+                      <Image
+                        source={{uri: item.image}}
+                        resizeMode="cover"
+                        style={styles.wrapper}
+                      />
+                    </Pressable>
+                  </View>
                 );
               }}
             />
-            <View style={styles.dotWrapper}>
-              {bannerImages?.map((e, index) => {
-                return (
-                  <View
-                    key={index}
-                    style={[
-                      styles.dotCommon,
-                      parseInt(currentIndex, 10) === index
-                        ? styles.dotActive
-                        : styles.dotNotActive,
-                    ]}
-                  />
-                );
-              })}
-            </View>
           </View>
         )}
       </View>
