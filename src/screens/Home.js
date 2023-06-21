@@ -13,6 +13,7 @@ import {
   Alert,
   TextInput,
   Dimensions,
+  ImageBackground,
 } from 'react-native';
 import {React, useEffect, useState, useRef, memo, useContext} from 'react';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
@@ -20,6 +21,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {http} from '../shared/lib';
 import {useIsFocused} from '@react-navigation/native';
 import {AuthContext} from '../context/AuthContext';
+import CustomCarousel from 'carousel-with-pagination-rn';
+
 const {width, height} = Dimensions.get('window');
 const screenHeight = height;
 export default function Home({navigation}) {
@@ -541,7 +544,7 @@ export default function Home({navigation}) {
         </View>
         {showBanner && (
           <View style={[styles.bannerSection, {height: screenHeight * 0.33}]}>
-            <FlatList
+            {/* <FlatList
               data={bannerImages}
               ref={flatListRef}
               keyExtractor={item => item.key}
@@ -562,8 +565,8 @@ export default function Home({navigation}) {
                   </Pressable>
                 );
               }}
-            />
-            <View style={styles.dotWrapper}>
+            /> */}
+            {/* <View style={styles.dotWrapper}>
               {bannerImages?.map((e, index) => {
                 return (
                   <View
@@ -577,7 +580,25 @@ export default function Home({navigation}) {
                   />
                 );
               })}
-            </View>
+            </View> */}
+
+            <CustomCarousel
+              data={bannerImages}
+              renderItem={({item, index}) => {
+                console.log(item);
+                return (
+                  <View style={{flex: 1}}>
+                    <Pressable onPress={() => handleWebLink(item.redirectUrl)}>
+                      <Image
+                        source={{uri: item.image}}
+                        resizeMode="cover"
+                        style={styles.wrapper}
+                      />
+                    </Pressable>
+                  </View>
+                );
+              }}
+            />
           </View>
         )}
       </View>
