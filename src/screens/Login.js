@@ -8,6 +8,7 @@ import {
   Text,
   TouchableOpacity,
   ActivityIndicator,
+  Alert,
 } from 'react-native';
 import {React, useContext, useState, useRef} from 'react';
 import CustomButton from '../shared/components/CustomButton';
@@ -25,7 +26,7 @@ export default function Login() {
   const [ispasswordError, setPasswordError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const {login} = useContext(AuthContext);
+  const {onTokenAvailable} = useContext(AuthContext);
   const passwordRef = useRef();
   const navigation = useNavigation();
 
@@ -74,18 +75,31 @@ export default function Login() {
       email: email,
       password: password,
     };
-
-    let respData = await http.post(url, data, config);
-
-    if (respData?.access_token) {
-      await login(data.email, data.password);
-    } else {
-      navigation.navigate('VerifyOtp', {
-        userid: respData.id,
-        is_email_verified: respData.is_email_verified,
-        is_phone_verified: respData.is_phone_verified,
-      });
+    try {
+      let respData = await http.post(url, data, config);
+      if (respData?.access_token) {
+        await onTokenAvailable(
+          respData,
+          respData.access_token,
+          respData.user_id,
+        );
+      } else {
+        navigation.navigate('VerifyOtp', {
+          userid: respData.id,
+          is_email_verified: respData.is_email_verified,
+          is_phone_verified: respData.is_phone_verified,
+        });
+      }
+    } catch (error) {
+      if (error.response.status === 500) {
+        Alert.alert('ERROR', 'User not exist ', [{text: 'OK'}]);
+      } else if (error.response.status === 400) {
+        Alert.alert('ERROR', 'Check Your username OR password', [{text: 'OK'}]);
+      } else {
+        Alert.alert('ERROR', 'Something Went Wrong', [{text: 'OK'}]);
+      }
     }
+
     setIsLoading(false);
   };
 

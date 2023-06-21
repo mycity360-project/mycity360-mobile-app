@@ -112,6 +112,7 @@ export const AuthProvider = ({children}) => {
         isVerified,
         userInfo,
         setUserInfo,
+        onTokenAvailable,
       }}>
       {children}
     </AuthContext.Provider>
