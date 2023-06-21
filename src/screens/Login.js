@@ -14,8 +14,8 @@ import CustomButton from '../shared/components/CustomButton';
 import {AuthContext} from '../context/AuthContext';
 import {useNavigation} from '@react-navigation/native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import { http } from '../shared/lib';
-import { BACKEND_CLIENT_ID } from '../shared/constants/env';
+import {http} from '../shared/lib';
+import {BACKEND_CLIENT_ID} from '../shared/constants/env';
 
 export default function Login() {
   const [email, setEmail] = useState('');
