@@ -295,7 +295,9 @@ export default function ProfileScreen() {
             onPress={async () => {
               let resp = '';
               if (Platform.OS === 'ios') {
-                resp = await askForPermission(PERMISSIONS.IOS.PHOTO_LIBRARY);
+                resp = await askForPermission(
+                  PERMISSIONS.IOS.PHOTO_LIBRARY_ADD_ONLY,
+                );
               } else {
                 if (Platform.Version >= 33) {
                   resp = await askForPermission(
