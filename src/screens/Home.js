@@ -13,7 +13,6 @@ import {
   Alert,
   TextInput,
   Dimensions,
-  ImageBackground,
 } from 'react-native';
 import {React, useEffect, useState, useRef, memo, useContext} from 'react';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
