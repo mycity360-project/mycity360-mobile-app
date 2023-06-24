@@ -18,8 +18,8 @@ import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {http} from '../shared/lib';
 import {BACKEND_CLIENT_ID} from '../shared/constants/env';
 
-export default function Login() {
-  const [email, setEmail] = useState('');
+export default function Login({route}) {
+  const [email, setEmail] = useState(route.params?.email || '');
   const [password, setPassword] = useState('');
   const [isEmailError, setEmailError] = useState(false);
   const [isPhoneError, setPhoneError] = useState(false);
@@ -61,7 +61,6 @@ export default function Login() {
       setPhoneError(false);
       setPasswordError(true);
       setIsLoading(false);
-
       return;
     }
 
@@ -140,6 +139,7 @@ export default function Login() {
               placeholder="Enter Email / Mobile Number"
               placeholderTextColor="grey"
               style={styles.input}
+              value={email}
               autoCapitalize="none"
               onChangeText={mail => {
                 setEmail(mail);
@@ -162,6 +162,7 @@ export default function Login() {
               placeholder="Enter Password"
               placeholderTextColor="grey"
               style={styles.input}
+              value={password}
               autoCapitalize="none"
               secureTextEntry={true}
               returnKeyType="send"
