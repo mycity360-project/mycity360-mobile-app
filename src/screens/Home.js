@@ -519,7 +519,7 @@ export default function Home({navigation}) {
               data={bannerImages}
               disablePagination={true}
               renderItem={({item, index}) => {
-                console.log(item);
+                // console.log(item);
                 return (
                   <View style={{flex: 1}}>
                     <Pressable onPress={() => handleWebLink(item.redirectUrl)}>

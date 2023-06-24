@@ -385,7 +385,6 @@ export default function SignUp() {
                 />
                 {errors.confirmPassword && touched.confirmPassword && (
                   <Text allowFontScaling={false} style={styles.error}>
-                    {' '}
                     {errors.confirmPassword}
                   </Text>
                 )}

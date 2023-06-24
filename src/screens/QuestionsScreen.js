@@ -17,9 +17,9 @@ import {http} from '../shared/lib';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ModalView from '../shared/components/ModalView';
 import {AuthContext} from '../context/AuthContext';
+
 export default function QuestionsScreen({navigation, route}) {
   const {isPrice, ...AdData} = route.params;
-
   const [isLoading, setIsLoading] = useState(false);
   const [questionData, setQuestionData] = useState([]);
   const [answerData, setAnswerData] = useState({});

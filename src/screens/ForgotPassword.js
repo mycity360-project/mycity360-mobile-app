@@ -18,86 +18,51 @@ import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {http} from '../shared/lib';
 import {BACKEND_CLIENT_ID} from '../shared/constants/env';
 
-export default function Login() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+export default function ForgotPassword({route}) {
+  const [email, setEmail] = useState(route.params.email);
   const [isEmailError, setEmailError] = useState(false);
   const [isPhoneError, setPhoneError] = useState(false);
-  const [ispasswordError, setPasswordError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
   const {onTokenAvailable} = useContext(AuthContext);
-  const passwordRef = useRef();
   const navigation = useNavigation();
 
   const errors = {
-    password: 'Password must be atleast 8 characters',
     phone: 'Please enter valid phone number',
     email: 'Please enter the valid email',
   };
 
-  const loginHandler = async () => {
+  const forgotPasswordHadler = async () => {
     setIsLoading(true);
     var phoneRegex = /^\d{10}$/;
     var emailRegex =
       /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
 
-    if (email?.length === 10 && !email.match(phoneRegex)) {
+    if (email.length === 10 && !email.match(phoneRegex)) {
       setEmailError(false);
       setPhoneError(true);
       setIsLoading(false);
       return;
     }
 
-    if (email?.length !== 10 && !email.match(emailRegex)) {
+    if (email.length !== 10 && !email.match(emailRegex)) {
       setPhoneError(false);
       setEmailError(true);
       setIsLoading(false);
       return;
     }
 
-    if (password === '' || password?.length < 8) {
-      setEmailError(false);
-      setPhoneError(false);
-      setPasswordError(true);
-      setIsLoading(false);
-
-      return;
-    }
-
-    const url = 'user/login/';
-    const config = {
-      headers: {
-        clientid: BACKEND_CLIENT_ID,
-      },
-    };
+    const url = 'user/forgot-password/';
     const data = {
-      email: email,
-      password: password,
+      key: email,
     };
     try {
-      let respData = await http.post(url, data, config);
-      if (respData?.access_token) {
-        await onTokenAvailable(
-          respData,
-          respData.access_token,
-          respData.user_id,
-        );
-      } else {
-        navigation.navigate('VerifyOtp', {
-          userid: respData.id,
-          is_email_verified: respData.is_email_verified,
-          is_phone_verified: respData.is_phone_verified,
-        });
-      }
+      let respData = await http.post(url, data);
+      navigation.navigate('ResetPassword', respData);
     } catch (error) {
-      if (error.response.status === 500) {
-        Alert.alert('ERROR', 'User not exist ', [{text: 'OK'}]);
-      } else if (error.response.status === 400) {
-        Alert.alert('ERROR', 'Check Your username OR password', [{text: 'OK'}]);
-      } else {
-        Alert.alert('ERROR', 'Something Went Wrong', [{text: 'OK'}]);
-      }
+      const msg =
+        error?.response?.data?.detail ||
+        'Something Went Wrong, We are working on it. Please try after Some time';
+      Alert.alert('ERROR', `${msg}`, [{text: 'OK'}]);
     }
 
     setIsLoading(false);
@@ -124,7 +89,7 @@ export default function Login() {
               MyCity360
             </Text>
           </View>
-          <View style={styles.loginFormSection}>
+          <View style={styles.formSection}>
             <Text
               allowFontScaling={false}
               style={{
@@ -133,7 +98,7 @@ export default function Login() {
                 color: '#FF8C00',
                 textAlign: 'center',
               }}>
-              Login
+              Forgot Password
             </Text>
             <TextInput
               allowFontScaling={false}
@@ -141,11 +106,11 @@ export default function Login() {
               placeholderTextColor="grey"
               style={styles.input}
               autoCapitalize="none"
+              value={email}
               onChangeText={mail => {
                 setEmail(mail);
               }}
               returnKeyType="next"
-              onSubmitEditing={() => passwordRef.current.focus()}
             />
             {isEmailError && (
               <Text allowFontScaling={false} style={styles.error}>
@@ -157,74 +122,15 @@ export default function Login() {
                 {errors.phone}
               </Text>
             )}
-            <TextInput
-              allowFontScaling={false}
-              placeholder="Enter Password"
-              placeholderTextColor="grey"
-              style={styles.input}
-              autoCapitalize="none"
-              secureTextEntry={true}
-              returnKeyType="send"
-              onChangeText={value => {
-                setPassword(value);
-              }}
-              onSubmitEditing={loginHandler}
-              ref={passwordRef}
-            />
-            {ispasswordError && (
-              <Text allowFontScaling={false} style={styles.error}>
-                {errors.password}
-              </Text>
-            )}
 
             <CustomButton
-              btnTitle="Login"
+              btnTitle="Next"
               onpress={() => {
-                loginHandler();
+                forgotPasswordHadler();
               }}
-              style={styles.loginBtn}
+              style={styles.nextBtn}
               icon="arrow-forward"
             />
-
-            <View
-              style={{
-                flex: 0.02,
-                alignItems: 'flex-start',
-                justifyContent: 'center',
-                flexDirection: 'row',
-                gap: 5,
-              }}>
-              <Text allowFontScaling={false} style={{fontSize: 16}}>
-                Need an account?
-              </Text>
-              <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
-                <Text
-                  allowFontScaling={false}
-                  style={{
-                    fontSize: 16,
-                    color: '#FA8C00',
-                  }}>
-                  Sign Up
-                </Text>
-              </TouchableOpacity>
-            </View>
-            <TouchableOpacity
-              style={{
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-              onPress={() =>
-                navigation.navigate('ForgotPassword', {email: email})
-              }>
-              <Text
-                allowFontScaling={false}
-                style={{
-                  fontSize: 16,
-                  color: '#FA8C00',
-                }}>
-                Forgot Password?
-              </Text>
-            </TouchableOpacity>
           </View>
         </View>
       </KeyboardAwareScrollView>
@@ -242,12 +148,13 @@ const styles = StyleSheet.create({
   },
   headerSection: {flex: 0.5},
   logoSection: {
-    flex: 1,
+    flex: 0.2,
     alignItems: 'center',
   },
-  loginFormSection: {
-    flex: 5,
+  formSection: {
+    flex: 6,
     justifyContent: 'center',
+    // backgroundColor: '#999',
   },
 
   input: {
@@ -265,7 +172,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     padding: 5,
   },
-  loginBtn: {
+  nextBtn: {
     marginTop: '2%',
   },
   error: {
