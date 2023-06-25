@@ -20,7 +20,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {http} from '../shared/lib';
 import {useIsFocused} from '@react-navigation/native';
 import {AuthContext} from '../context/AuthContext';
-import CustomCarousel from 'carousel-with-pagination-rn';
+// import CustomCarousel from 'carousel-with-pagination-rn';
+// import Carousel from 'react-native-snap-carousel';
+import {SwiperFlatList} from 'react-native-swiper-flatlist';
 
 const {width, height} = Dimensions.get('window');
 const screenHeight = height;
@@ -522,10 +524,13 @@ export default function Home({navigation}) {
         </View>
         {showBanner && (
           <View style={[styles.bannerSection, {height: screenHeight * 0.33}]}>
-            <CustomCarousel
+            <SwiperFlatList
+              autoplay
+              autoplayDelay={5}
+              autoplayLoop
+              showPagination={true}
+              paginationActiveColor={'#FA8C00'}
               data={bannerImages}
-              disablePagination={true}
-              ref={carouselRef}
               renderItem={({item, index}) => {
                 return (
                   <View style={{flex: 1}}>
@@ -551,7 +556,7 @@ export default function Home({navigation}) {
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.innerContainer}>
           <View style={styles.header}>
-            <View style={styles.locationSection}>
+            {/* <View style={styles.locationSection}>
               <Text
                 allowFontScaling={false}
                 style={{
@@ -576,7 +581,7 @@ export default function Home({navigation}) {
                   {userInfo.localUserArea.name}
                 </Text>
               </TouchableOpacity>
-            </View>
+            </View> */}
             <View style={styles.btnSection}>
               <TouchableOpacity
                 onPress={() => navigation.navigate('Home')}
@@ -614,26 +619,54 @@ export default function Home({navigation}) {
               </TouchableOpacity>
             </View>
             <View style={styles.searchBarSection}>
-              <TextInput
-                allowFontScaling={false}
-                returnKeyType="search"
-                placeholder="Find Mobile, Cars ....."
-                style={styles.inputBox}
-                value={searchText}
-                onChangeText={search => {
-                  setSearchText(search);
-                }}
-              />
-              <TouchableOpacity
-                style={styles.searchBtn}
-                onPress={() =>
-                  navigation.navigate('TextSearch', {
-                    areaID: userInfo.localUserArea.id,
-                    text: searchText,
-                  })
-                }>
-                <MaterialIcon name="search" size={26} color={'#FFF'} />
-              </TouchableOpacity>
+              <View style={{flex: 0.85, flexDirection: 'row'}}>
+                <TextInput
+                  allowFontScaling={false}
+                  returnKeyType="search"
+                  placeholder="Find Mobile, Cars ....."
+                  style={styles.inputBox}
+                  value={searchText}
+                  onChangeText={search => {
+                    setSearchText(search);
+                  }}
+                />
+                <TouchableOpacity
+                  style={styles.searchBtn}
+                  onPress={() =>
+                    navigation.navigate('TextSearch', {
+                      areaID: userInfo.localUserArea.id,
+                      text: searchText,
+                    })
+                  }>
+                  <MaterialIcon name="search" size={26} color={'#FFF'} />
+                </TouchableOpacity>
+              </View>
+              <View
+                style={{
+                  flex: 0.15,
+                  flexDirection: 'row',
+                  justifyContent: 'center',
+                }}>
+                <TouchableOpacity
+                  onPress={() => navigation.navigate('Location')}>
+                  <MaterialIcon
+                    name="location-pin"
+                    color={'#222'}
+                    size={24}
+                    style={{alignSelf: 'center'}}
+                  />
+                  <Text
+                    allowFontScaling={false}
+                    style={{
+                      color: '#222',
+                      fontWeight: 500,
+                      textDecorationLine: 'underline',
+                      fontSize: 12,
+                    }}>
+                    {userInfo.localUserArea.name}
+                  </Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
 
@@ -691,17 +724,19 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   searchBarSection: {
-    flex: 1.1,
+    flex: 1,
     flexDirection: 'row',
-    marginHorizontal: '8%',
-    borderColor: '#FA8C00',
-    borderWidth: 1,
-    borderRadius: 11,
+    marginHorizontal: '2%',
   },
   inputBox: {
     width: '80%',
     height: '100%',
     padding: 5,
+    borderColor: '#FA8C00',
+    borderWidth: 1,
+    borderRadius: 11,
+    borderBottomRightRadius: 0,
+    borderTopRightRadius: 0,
   },
   searchBtn: {
     width: '20%',
