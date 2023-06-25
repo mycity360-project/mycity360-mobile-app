@@ -88,13 +88,14 @@ export default function ResetPassword({route, navigation}) {
           key: route.params.email,
         };
         await http.post(url, data);
+        setLastOTPSentTime(new Date().getTime());
+        Alert.alert('Resend OTP', 'OTP Sent Successfully');
       } catch (error) {
         const msg =
           error?.response?.data?.detail ||
           'Something Went Wrong, We are working on it. Please try after Some time';
         Alert.alert('ERROR', `${msg}`, [{text: 'OK'}]);
       }
-      setLastOTPSentTime(new Date().getTime());
     }
   };
 
