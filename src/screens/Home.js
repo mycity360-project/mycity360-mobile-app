@@ -39,6 +39,7 @@ export default function Home({navigation}) {
   const [showNoAdsFoundMsg, setShowNoAdsFoundMsg] = useState(false);
   const [bannerImages, setBannerImages] = useState([]);
   const [showBanner, setShowBanner] = useState(false);
+  const carouselRef = useRef(null);
 
   const getBannerImages = async () => {
     try {
@@ -81,6 +82,15 @@ export default function Home({navigation}) {
     });
   };
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      carouselRef.current?.showNextItem();
+    }, 10000); // 1000 milliseconds = 10 seconds
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', async () => {
       setPage(1);
@@ -327,26 +337,23 @@ export default function Home({navigation}) {
     return ads;
   };
 
-  const Item = memo(({item}) => {
+  const Item = memo(({item, index}) => {
     return (
-      <View
-        style={{
-          width: '50%',
-          backgroundColor: '#FFF',
-          paddingHorizontal: '1%',
-        }}>
-        {item.empty ? (
-          ''
-        ) : (
+      <View style={styles.featuredAdsSection}>
+        {item.empty || (
           <Pressable
             style={{
               height: CARD_HEIGHT,
               padding: '2%',
-              width: '98%',
+              width: '96%',
               marginBottom: '1%',
               borderWidth: 2,
               borderColor: '#CCC',
               borderRadius: 5,
+              alignSelf: 'center',
+              ...((index + 1) % 2 === 0
+                ? {marginRight: '1.5%'}
+                : {marginLeft: '1.5%'}),
             }}
             onPress={() =>
               navigation.navigate('AdDescription', {
@@ -518,8 +525,8 @@ export default function Home({navigation}) {
             <CustomCarousel
               data={bannerImages}
               disablePagination={true}
+              ref={carouselRef}
               renderItem={({item, index}) => {
-                // console.log(item);
                 return (
                   <View style={{flex: 1}}>
                     <Pressable onPress={() => handleWebLink(item.redirectUrl)}>
@@ -558,7 +565,7 @@ export default function Home({navigation}) {
                   flexDirection: 'row',
                 }}
                 onPress={() => navigation.navigate('Location')}>
-                <MaterialIcon name="location-pin" color={'#222'} size={16} />
+                <MaterialIcon name="location-pin" color={'#222'} size={15} />
                 <Text
                   allowFontScaling={false}
                   style={{
@@ -630,14 +637,14 @@ export default function Home({navigation}) {
             </View>
           </View>
 
-          <View style={[styles.featuredAdsSection, {flex: 6}]}>
+          <View style={{flex: 6}}>
             <FlatList
               data={formatData(userAdsData, numColumns)}
               ListHeaderComponentStyle={{
                 flex: 1,
                 backgroundColor: '#FFF',
               }}
-              renderItem={({item}) => <Item item={item} />}
+              renderItem={({item, index}) => <Item item={item} index={index} />}
               getItemLayout={getAdCardLayout}
               ListHeaderComponent={renderHeader}
               numColumns={numColumns}
@@ -665,31 +672,31 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    flex: 1,
+    flex: 1.1,
     backgroundColor: '#FFF',
     padding: '1%',
   },
   locationSection: {
-    flex: 0.7,
+    flex: 0.5,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: '1%',
   },
   btnSection: {
-    flex: 1.3,
+    flex: 1.2,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    marginBottom: 4,
   },
   searchBarSection: {
-    flex: 1,
+    flex: 1.1,
     flexDirection: 'row',
     marginHorizontal: '8%',
     borderColor: '#FA8C00',
     borderWidth: 1,
     borderRadius: 11,
-    backgroundColor: '#FFF',
   },
   inputBox: {
     width: '80%',
@@ -729,26 +736,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-
+  featuredAdsSection: {
+    paddingTop: 4,
+    width: '50%',
+    backgroundColor: '#FFF',
+  },
   wrapper: {width: width, height: '100%'},
-  dotWrapper: {
-    flexDirection: 'row',
-    position: 'absolute',
-    alignSelf: 'center',
-    bottom: 10,
-  },
-  dotCommon: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
-    marginLeft: 5,
-    borderWidth: 1,
-    borderColor: '#222',
-  },
-  dotActive: {
-    backgroundColor: '#FA8C00',
-  },
-  dotNotActive: {
-    backgroundColor: '#fff',
-  },
 });

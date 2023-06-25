@@ -97,9 +97,9 @@ export default function Login({route}) {
       } else {
         Alert.alert('ERROR', 'Something Went Wrong', [{text: 'OK'}]);
       }
+    } finally {
+      setIsLoading(false);
     }
-
-    setIsLoading(false);
   };
 
   return isLoading ? (

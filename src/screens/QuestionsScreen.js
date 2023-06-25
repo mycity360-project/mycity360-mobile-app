@@ -117,11 +117,12 @@ export default function QuestionsScreen({navigation, route}) {
   const renderQuestion = ({item, index}) => {
     if (item.field === 'Text') {
       return (
-        <View style={{marginTop: 5}}>
+        <View style={{marginTop: 25}}>
           <Text allowFontScaling={false} style={styles.questionText}>
             {item.question}
             {item.isRequired && (
               <Text allowFontScaling={false} style={{color: 'red'}}>
+                {' '}
                 *
               </Text>
             )}
@@ -137,7 +138,7 @@ export default function QuestionsScreen({navigation, route}) {
       );
     } else if (item.field === 'Dropdown') {
       return (
-        <View style={{marginTop: 15}}>
+        <View style={{marginTop: 25}}>
           <Text allowFontScaling={false} style={styles.questionText}>
             {item.question}
             {item.isRequired && (
@@ -175,7 +176,7 @@ export default function QuestionsScreen({navigation, route}) {
       );
     } else if (item.field === 'Number') {
       return (
-        <View style={{marginTop: 15}}>
+        <View style={{marginTop: 25}}>
           <Text allowFontScaling={false} style={styles.questionText}>
             {item.question}
             {item.isRequired && (
@@ -198,7 +199,7 @@ export default function QuestionsScreen({navigation, route}) {
       return (
         <View
           style={{
-            marginTop: 15,
+            marginTop: 25,
             flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'space-between',
@@ -272,11 +273,11 @@ export default function QuestionsScreen({navigation, route}) {
           data={questionData}
           renderItem={renderQuestion}
           showsVerticalScrollIndicator={false}
-          ListFooterComponent={
+          ListHeaderComponent={
             <Text allowFontScaling={false}>
               <Text allowFontScaling={false} style={{color: 'red'}}>
                 *
-              </Text>{' '}
+              </Text>
               mark fields are required fields.
             </Text>
           }
@@ -308,7 +309,7 @@ const styles = StyleSheet.create({
   headingText: {fontSize: 18, color: '#111'},
   detailsFormSection: {
     flex: 10,
-    paddingHorizontal: 5,
+    paddingHorizontal: 20,
   },
-  questionText: {fontSize: 16, color: '#222'},
+  questionText: {fontSize: 16, fontWeight: 500, color: '#222'},
 });
