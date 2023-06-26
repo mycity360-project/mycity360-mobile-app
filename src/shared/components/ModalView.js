@@ -1,6 +1,5 @@
 import React, {useState} from 'react';
 import {
-  Alert,
   Modal,
   StyleSheet,
   Text,
@@ -29,7 +28,22 @@ export default function ModalView({title, data, visible, onSelect, onClose}) {
       <TouchableWithoutFeedback onPress={() => onClose()}>
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-            <Text style={{fontSize: 16, color: '#222'}}>{title}</Text>
+            <View
+              style={{
+                borderBottomColor: '#FA8C00',
+                borderBottomWidth: 1,
+              }}>
+              <Text
+                style={{
+                  fontSize: 16,
+                  color: '#222',
+                  alignSelf: 'center',
+                  padding: 4,
+                }}>
+                {title}
+              </Text>
+            </View>
+
             <FlatList
               data={data}
               keyExtractor={item => item.key}
@@ -44,7 +58,11 @@ export default function ModalView({title, data, visible, onSelect, onClose}) {
             <TouchableOpacity
               onPress={() => onClose()}
               style={{alignItems: 'flex-end', padding: 10}}>
-              <Text style={{color: '#222', fontWeight: 500}}>CANCEL</Text>
+              <Button
+                title="Cancel"
+                color="#FA8C00"
+                style={{color: '#222', fontWeight: 500}}
+              />
             </TouchableOpacity>
           </View>
         </View>
@@ -61,10 +79,10 @@ const styles = StyleSheet.create({
   },
   modalView: {
     padding: 5,
-    height: '50%',
+    height: '35%',
     backgroundColor: 'white',
     borderRadius: 10,
-    width: '85%',
+    width: '75%',
     elevation: 5,
   },
   itemList: {

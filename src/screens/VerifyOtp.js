@@ -1,4 +1,12 @@
-import {StyleSheet, View, TextInput, SafeAreaView, Text} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  TextInput,
+  SafeAreaView,
+  Text,
+  TouchableOpacity,
+  Alert,
+} from 'react-native';
 import React, {useState} from 'react';
 import CustomButton from '../shared/components/CustomButton';
 import {AuthContext} from '../context/AuthContext';
@@ -8,12 +16,12 @@ import {BACKEND_CLIENT_ID} from '../shared/constants/env';
 
 export default function VerifyOtp({route}) {
   const {userid, is_email_verified, is_phone_verified} = route.params;
-  // console.log(is_email_verified, is_phone_verified);
   const {isVerified} = useContext(AuthContext);
   const [enteredOtp, setEnteredOtp] = useState('');
   const [enteredEmailOtp, setEnteredEmailOtp] = useState('');
   const [isError, setIsError] = useState(false);
   const [serverError, setServerError] = useState('');
+  const [lastOTPSentTime, setLastOTPSentTime] = useState(new Date().getTime());
 
   const verifyOtp = async (phone_otp, email_otp) => {
     const url = `user/${userid}/verify-otp/`;
@@ -32,6 +40,8 @@ export default function VerifyOtp({route}) {
   };
 
   const handleButtonClick = async () => {
+    setServerError('');
+    setIsError(false);
     try {
       let data = await verifyOtp(enteredOtp, enteredEmailOtp);
       isVerified(data);
@@ -43,11 +53,34 @@ export default function VerifyOtp({route}) {
       setIsError(true);
     }
   };
+  const handleResendOTP = async () => {
+    const currentTime = new Date().getTime();
+    const timeSinceLastOTPSent = currentTime - lastOTPSentTime;
+
+    if (timeSinceLastOTPSent < 60000) {
+      Alert.alert('Resend OTP', 'You can resend OTP after 1 minute');
+    } else {
+      try {
+        const url = `user/${userid}/resend-otp/`;
+        await http.post(url);
+        setLastOTPSentTime(new Date().getTime());
+        Alert.alert('Resend OTP', 'OTP Sent Successfully');
+      } catch (error) {
+        console.log(JSON.stringify(error), '66');
+        const msg =
+          error?.response?.data?.detail ||
+          'Something Went Wrong, We are working on it. Please try after Some time';
+        Alert.alert('ERROR', `${msg}`, [{text: 'OK'}]);
+      }
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header} />
       <View style={styles.formContainer}>
+        <Text allowFontScaling={false} style={styles.formHeading}>
+          Verify OTP
+        </Text>
         {!is_phone_verified && (
           <TextInput
             allowFontScaling={false}
@@ -66,6 +99,22 @@ export default function VerifyOtp({route}) {
             onChangeText={otp => setEnteredEmailOtp(otp)}
           />
         )}
+
+        <TouchableOpacity
+          onPress={handleResendOTP}
+          style={{
+            alignSelf: 'center',
+            marginVertical: 10,
+          }}>
+          <Text
+            allowFontScaling={false}
+            style={{
+              fontSize: 14,
+              color: '#FF8C00',
+            }}>
+            Resend OTP
+          </Text>
+        </TouchableOpacity>
         <CustomButton
           btnTitle={'Verify'}
           onpress={async () => {
@@ -84,10 +133,15 @@ export default function VerifyOtp({route}) {
 
 const styles = StyleSheet.create({
   container: {flex: 1, backgroundColor: '#fff'},
-  header: {flex: -1},
   formContainer: {
     flex: 4,
     justifyContent: 'center',
+  },
+  formHeading: {
+    fontSize: 24,
+    color: '#FF8C00',
+    textAlign: 'center',
+    marginBottom: 5,
   },
 
   input: {

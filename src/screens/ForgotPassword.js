@@ -6,25 +6,19 @@ import {
   TextInput,
   SafeAreaView,
   Text,
-  TouchableOpacity,
   ActivityIndicator,
   Alert,
 } from 'react-native';
-import {React, useContext, useState, useRef} from 'react';
+import {React, useState} from 'react';
 import CustomButton from '../shared/components/CustomButton';
-import {AuthContext} from '../context/AuthContext';
-import {useNavigation} from '@react-navigation/native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {http} from '../shared/lib';
-import {BACKEND_CLIENT_ID} from '../shared/constants/env';
 
-export default function ForgotPassword({route}) {
+export default function ForgotPassword({route, navigation}) {
   const [email, setEmail] = useState(route.params.email);
   const [isEmailError, setEmailError] = useState(false);
   const [isPhoneError, setPhoneError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const {onTokenAvailable} = useContext(AuthContext);
-  const navigation = useNavigation();
 
   const errors = {
     phone: 'Please enter valid phone number',
@@ -110,6 +104,7 @@ export default function ForgotPassword({route}) {
               onChangeText={mail => {
                 setEmail(mail);
               }}
+              onSubmitEditing={forgotPasswordHadler}
               returnKeyType="next"
             />
             {isEmailError && (

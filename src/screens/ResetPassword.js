@@ -11,19 +11,14 @@ import {
   TouchableOpacity,
   Alert,
 } from 'react-native';
-import React, {useContext, useEffect, useState, useRef} from 'react';
+import React, {useContext, useState, useRef} from 'react';
 import CustomButton from '../shared/components/CustomButton';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import {useNavigation} from '@react-navigation/native';
 import {http} from '../shared/lib';
-import {BACKEND_URL, BACKEND_CLIENT_ID} from '../shared/constants/env';
-import {AuthContext} from '../context/AuthContext';
 import * as Yup from 'yup';
 import {Formik} from 'formik';
 
-export default function ResetPassword({route}) {
-  console.log(route.params, '25 reset');
-  const navigation = useNavigation();
+export default function ResetPassword({route, navigation}) {
   const [isLoading, setIsLoading] = useState(false);
   const [otp, setOtp] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -67,7 +62,7 @@ export default function ResetPassword({route}) {
           onPress: () => {
             navigation.reset({
               index: 0,
-              actions: [navigation.navigate('Login')],
+              routes: [{name: 'Login', params: route.params}],
             });
           },
         },
@@ -79,29 +74,28 @@ export default function ResetPassword({route}) {
       Alert.alert('ERROR', `${msg}`, [{text: 'OK'}]);
     }
   };
+
   const handleResendOTP = async () => {
     const currentTime = new Date().getTime();
     const timeSinceLastOTPSent = currentTime - lastOTPSentTime;
-    console.log(timeSinceLastOTPSent);
 
     if (timeSinceLastOTPSent < 60000) {
-      console.log('inside if');
       Alert.alert('Resend OTP', 'You can resend OTP after 1 minute');
     } else {
-      console.log('inside else');
       try {
         const url = 'user/forgot-password/';
         const data = {
           key: route.params.email,
         };
         await http.post(url, data);
+        setLastOTPSentTime(new Date().getTime());
+        Alert.alert('Resend OTP', 'OTP Sent Successfully');
       } catch (error) {
         const msg =
           error?.response?.data?.detail ||
           'Something Went Wrong, We are working on it. Please try after Some time';
         Alert.alert('ERROR', `${msg}`, [{text: 'OK'}]);
       }
-      setLastOTPSentTime(new Date().getTime());
     }
   };
 
@@ -239,6 +233,8 @@ export default function ResetPassword({route}) {
                     onChangeText={handleChange('confirmPassword')}
                     value={values.confirmPassword}
                     ref={confirmPasswordRef}
+                    returnKeyType="send"
+                    onSubmitEditing={resetPasswordHandler}
                   />
                   {errors.confirmPassword && touched.confirmPassword && (
                     <Text allowFontScaling={false} style={styles.error}>

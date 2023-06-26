@@ -429,7 +429,7 @@ export default function SignUp() {
                   btnTitle={'Sign Up'}
                   style={styles.registerBtn}
                   icon="arrow-forward"
-                  onpress={handleSubmit} //async () => await handleOnSignUpPress()
+                  onpress={handleSubmit}
                 />
                 <View
                   style={{

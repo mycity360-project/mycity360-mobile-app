@@ -20,7 +20,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {http} from '../shared/lib';
 import {useIsFocused} from '@react-navigation/native';
 import {AuthContext} from '../context/AuthContext';
-import CustomCarousel from 'carousel-with-pagination-rn';
+// import CustomCarousel from 'carousel-with-pagination-rn';
+// import Carousel from 'react-native-snap-carousel';
+import {SwiperFlatList} from 'react-native-swiper-flatlist';
 
 const {width, height} = Dimensions.get('window');
 const screenHeight = height;
@@ -39,6 +41,7 @@ export default function Home({navigation}) {
   const [showNoAdsFoundMsg, setShowNoAdsFoundMsg] = useState(false);
   const [bannerImages, setBannerImages] = useState([]);
   const [showBanner, setShowBanner] = useState(false);
+  const carouselRef = useRef(null);
 
   const getBannerImages = async () => {
     try {
@@ -81,6 +84,15 @@ export default function Home({navigation}) {
     });
   };
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      carouselRef.current?.showNextItem();
+    }, 10000); // 1000 milliseconds = 10 seconds
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', async () => {
       setPage(1);
@@ -327,26 +339,23 @@ export default function Home({navigation}) {
     return ads;
   };
 
-  const Item = memo(({item}) => {
+  const Item = memo(({item, index}) => {
     return (
-      <View
-        style={{
-          width: '50%',
-          backgroundColor: '#FFF',
-          paddingHorizontal: '1%',
-        }}>
-        {item.empty ? (
-          ''
-        ) : (
+      <View style={styles.featuredAdsSection}>
+        {item.empty || (
           <Pressable
             style={{
               height: CARD_HEIGHT,
               padding: '2%',
-              width: '98%',
+              width: '96%',
               marginBottom: '1%',
               borderWidth: 2,
               borderColor: '#CCC',
               borderRadius: 5,
+              alignSelf: 'center',
+              ...((index + 1) % 2 === 0
+                ? {marginRight: '1.5%'}
+                : {marginLeft: '1.5%'}),
             }}
             onPress={() =>
               navigation.navigate('AdDescription', {
@@ -515,11 +524,14 @@ export default function Home({navigation}) {
         </View>
         {showBanner && (
           <View style={[styles.bannerSection, {height: screenHeight * 0.33}]}>
-            <CustomCarousel
+            <SwiperFlatList
+              autoplay
+              autoplayDelay={5}
+              autoplayLoop
+              showPagination={true}
+              paginationActiveColor={'#FA8C00'}
               data={bannerImages}
-              disablePagination={true}
               renderItem={({item, index}) => {
-                // console.log(item);
                 return (
                   <View style={{flex: 1}}>
                     <Pressable onPress={() => handleWebLink(item.redirectUrl)}>
@@ -544,7 +556,7 @@ export default function Home({navigation}) {
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.innerContainer}>
           <View style={styles.header}>
-            <View style={styles.locationSection}>
+            {/* <View style={styles.locationSection}>
               <Text
                 allowFontScaling={false}
                 style={{
@@ -558,7 +570,7 @@ export default function Home({navigation}) {
                   flexDirection: 'row',
                 }}
                 onPress={() => navigation.navigate('Location')}>
-                <MaterialIcon name="location-pin" color={'#222'} size={16} />
+                <MaterialIcon name="location-pin" color={'#222'} size={15} />
                 <Text
                   allowFontScaling={false}
                   style={{
@@ -569,7 +581,7 @@ export default function Home({navigation}) {
                   {userInfo.localUserArea.name}
                 </Text>
               </TouchableOpacity>
-            </View>
+            </View> */}
             <View style={styles.btnSection}>
               <TouchableOpacity
                 onPress={() => navigation.navigate('Home')}
@@ -607,37 +619,65 @@ export default function Home({navigation}) {
               </TouchableOpacity>
             </View>
             <View style={styles.searchBarSection}>
-              <TextInput
-                allowFontScaling={false}
-                returnKeyType="search"
-                placeholder="Find Mobile, Cars ....."
-                style={styles.inputBox}
-                value={searchText}
-                onChangeText={search => {
-                  setSearchText(search);
-                }}
-              />
-              <TouchableOpacity
-                style={styles.searchBtn}
-                onPress={() =>
-                  navigation.navigate('TextSearch', {
-                    areaID: userInfo.localUserArea.id,
-                    text: searchText,
-                  })
-                }>
-                <MaterialIcon name="search" size={26} color={'#FFF'} />
-              </TouchableOpacity>
+              <View style={{flex: 0.85, flexDirection: 'row'}}>
+                <TextInput
+                  allowFontScaling={false}
+                  returnKeyType="search"
+                  placeholder="Find Mobile, Cars ....."
+                  style={styles.inputBox}
+                  value={searchText}
+                  onChangeText={search => {
+                    setSearchText(search);
+                  }}
+                />
+                <TouchableOpacity
+                  style={styles.searchBtn}
+                  onPress={() =>
+                    navigation.navigate('TextSearch', {
+                      areaID: userInfo.localUserArea.id,
+                      text: searchText,
+                    })
+                  }>
+                  <MaterialIcon name="search" size={26} color={'#FFF'} />
+                </TouchableOpacity>
+              </View>
+              <View
+                style={{
+                  flex: 0.15,
+                  flexDirection: 'row',
+                  justifyContent: 'center',
+                }}>
+                <TouchableOpacity
+                  onPress={() => navigation.navigate('Location')}>
+                  <MaterialIcon
+                    name="location-pin"
+                    color={'#222'}
+                    size={24}
+                    style={{alignSelf: 'center'}}
+                  />
+                  <Text
+                    allowFontScaling={false}
+                    style={{
+                      color: '#222',
+                      fontWeight: 500,
+                      textDecorationLine: 'underline',
+                      fontSize: 12,
+                    }}>
+                    {userInfo.localUserArea.name}
+                  </Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
 
-          <View style={[styles.featuredAdsSection, {flex: 6}]}>
+          <View style={{flex: 6}}>
             <FlatList
               data={formatData(userAdsData, numColumns)}
               ListHeaderComponentStyle={{
                 flex: 1,
                 backgroundColor: '#FFF',
               }}
-              renderItem={({item}) => <Item item={item} />}
+              renderItem={({item, index}) => <Item item={item} index={index} />}
               getItemLayout={getAdCardLayout}
               ListHeaderComponent={renderHeader}
               numColumns={numColumns}
@@ -665,36 +705,38 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    flex: 1,
+    flex: 1.1,
     backgroundColor: '#FFF',
     padding: '1%',
   },
   locationSection: {
-    flex: 0.7,
+    flex: 0.5,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: '1%',
   },
   btnSection: {
-    flex: 1.3,
+    flex: 1.2,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    marginBottom: 4,
   },
   searchBarSection: {
     flex: 1,
     flexDirection: 'row',
-    marginHorizontal: '8%',
-    borderColor: '#FA8C00',
-    borderWidth: 1,
-    borderRadius: 11,
-    backgroundColor: '#FFF',
+    marginHorizontal: '2%',
   },
   inputBox: {
     width: '80%',
     height: '100%',
     padding: 5,
+    borderColor: '#FA8C00',
+    borderWidth: 1,
+    borderRadius: 11,
+    borderBottomRightRadius: 0,
+    borderTopRightRadius: 0,
   },
   searchBtn: {
     width: '20%',
@@ -729,26 +771,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-
+  featuredAdsSection: {
+    paddingTop: 4,
+    width: '50%',
+    backgroundColor: '#FFF',
+  },
   wrapper: {width: width, height: '100%'},
-  dotWrapper: {
-    flexDirection: 'row',
-    position: 'absolute',
-    alignSelf: 'center',
-    bottom: 10,
-  },
-  dotCommon: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
-    marginLeft: 5,
-    borderWidth: 1,
-    borderColor: '#222',
-  },
-  dotActive: {
-    backgroundColor: '#FA8C00',
-  },
-  dotNotActive: {
-    backgroundColor: '#fff',
-  },
 });
