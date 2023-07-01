@@ -491,6 +491,7 @@ const styles = StyleSheet.create({
     marginHorizontal: '12%',
   },
   inputCommon: {
+    color: '#222',
     backgroundColor: '#efefef',
     borderRadius: 20,
     padding: 10,
