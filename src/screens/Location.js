@@ -140,12 +140,10 @@ export default function Location({navigation}) {
           isDisabled={false}
           selectedValue={selectedLocation}
         />
-        {showLocationError ? (
+        {showLocationError && (
           <Text allowFontScaling={false} style={styles.error}>
             Please Select Location
           </Text>
-        ) : (
-          ''
         )}
         <DropDown
           placeholder="Select Area"

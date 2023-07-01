@@ -439,7 +439,9 @@ export default function SignUp() {
                     flexDirection: 'row',
                     gap: 5,
                   }}>
-                  <Text allowFontScaling={false} style={{fontSize: 16}}>
+                  <Text
+                    allowFontScaling={false}
+                    style={{fontSize: 16, color: '#111'}}>
                     Already Registered?
                   </Text>
                   <TouchableOpacity

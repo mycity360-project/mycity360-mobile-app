@@ -316,7 +316,9 @@ export default function ProfileScreen() {
             }}
             style={{width: '100%', height: 50, flexDirection: 'row', gap: 5}}>
             <MaterialIcon name="folder-open" size={24} color={'#222'} />
-            <Text allowFontScaling={false} style={{fontSize: 18}}>
+            <Text
+              allowFontScaling={false}
+              style={{fontSize: 18, color: '#111'}}>
               Gallery
             </Text>
           </TouchableOpacity>

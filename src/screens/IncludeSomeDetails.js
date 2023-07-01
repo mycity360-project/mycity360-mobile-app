@@ -117,12 +117,10 @@ export default function IncludeSomeDetails({navigation, route}) {
                 style={{borderBottomWidth: 1, padding: 1, marginBottom: 20}}
               />
             </View>
-            {isTitleError ? (
+            {isTitleError && (
               <Text allowFontScaling={false} style={styles.error}>
                 {errors.title}
               </Text>
-            ) : (
-              ''
             )}
             <View style={{flex: 0.3, marginBottom: '8%'}}>
               <Text

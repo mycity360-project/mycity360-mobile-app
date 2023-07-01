@@ -195,7 +195,9 @@ export default function Login({route}) {
                 flexDirection: 'row',
                 gap: 5,
               }}>
-              <Text allowFontScaling={false} style={{fontSize: 16}}>
+              <Text
+                allowFontScaling={false}
+                style={{fontSize: 16, color: '#111'}}>
                 Need an account?
               </Text>
               <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>

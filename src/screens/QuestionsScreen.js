@@ -153,7 +153,7 @@ export default function QuestionsScreen({navigation, route}) {
               setSelectedDropdownItemId(item.id);
               setModalVisible(true);
             }}>
-            <Text allowFontScaling={false}>
+            <Text allowFontScaling={false} style={{color: '#111'}}>
               {answerData[item.id] || item.placeholder}
             </Text>
             {selectedDropdownItemId === item.id && (
