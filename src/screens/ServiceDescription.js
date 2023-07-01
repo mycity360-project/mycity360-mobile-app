@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import React, {useState} from 'react';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
+import {ScrollView} from 'react-native-gesture-handler';
 
 const {width, height} = Dimensions.get('window');
 
@@ -99,7 +100,7 @@ export default function ServiceDescription({route, navigation}) {
         </View>
       </View>
 
-      <View style={styles.adDescriptionSection}>
+      <ScrollView style={styles.adDescriptionSection}>
         <Text
           allowFontScaling={false}
           style={{fontSize: 16, fontWeight: 600, color: '#111'}}>
@@ -108,7 +109,7 @@ export default function ServiceDescription({route, navigation}) {
         <Text allowFontScaling={false} style={{color: '#111'}}>
           {serviceDetails.description}
         </Text>
-      </View>
+      </ScrollView>
 
       <View style={styles.footer}>
         <TouchableOpacity

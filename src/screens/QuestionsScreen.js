@@ -132,7 +132,7 @@ export default function QuestionsScreen({navigation, route}) {
             placeholder={item.placeholder}
             maxLength={item.answerLimit}
             onChangeText={answer => handleAnswer(item.id, answer)}
-            style={{borderBottomWidth: 1, padding: 1}}
+            style={{borderBottomWidth: 1, padding: 1, color: '#111'}}
           />
         </View>
       );
@@ -190,7 +190,7 @@ export default function QuestionsScreen({navigation, route}) {
             placeholder={item.placeholder}
             maxLength={item.answerLimit}
             keyboardType="numeric"
-            style={{borderBottomWidth: 1, padding: 1}}
+            style={{borderBottomWidth: 1, padding: 1, color: '#111'}}
             onChangeText={answer => handleAnswer(item.id, answer)}
           />
         </View>

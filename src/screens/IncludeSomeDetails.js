@@ -114,7 +114,12 @@ export default function IncludeSomeDetails({navigation, route}) {
                 onChangeText={title => {
                   setTitle(title);
                 }}
-                style={{borderBottomWidth: 1, padding: 1, marginBottom: 20}}
+                style={{
+                  borderBottomWidth: 1,
+                  padding: 1,
+                  marginBottom: 20,
+                  color: '#111',
+                }}
               />
             </View>
             {isTitleError && (
@@ -147,6 +152,7 @@ export default function IncludeSomeDetails({navigation, route}) {
                   textAlignVertical: 'top',
                   marginTop: '1%',
                   height: 80,
+                  color: '#111',
                 }}
               />
             </View>
@@ -191,7 +197,7 @@ export default function IncludeSomeDetails({navigation, route}) {
                   onChangeText={price => {
                     setPrice(price);
                   }}
-                  style={{borderBottomWidth: 1, padding: 1}}
+                  style={{borderBottomWidth: 1, padding: 1, color: '#111'}}
                 />
                 {isPriceError && (
                   <Text allowFontScaling={false} style={styles.error}>

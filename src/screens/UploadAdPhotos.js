@@ -338,7 +338,7 @@ export default function UploadAdPhotos({navigation, route}) {
             );
           })}
         </View>
-        {images.length ? (
+        {images.length && (
           <View
             style={{
               position: 'absolute',
@@ -351,8 +351,6 @@ export default function UploadAdPhotos({navigation, route}) {
               {parseInt(currentIndex) + 1}/{images.length}
             </Text>
           </View>
-        ) : (
-          ''
         )}
       </View>
       <View style={styles.cardButtonSection}>
@@ -361,13 +359,12 @@ export default function UploadAdPhotos({navigation, route}) {
           style={{color: '#222', textAlign: 'center', fontWeight: 500}}>
           * Select only {MAX_IMAGE_ALLOWED} images to Upload.
         </Text>
-        {maxImageExceed
-          ? Alert.alert(
-              'ERROR',
-              `* Please Select upto ${MAX_IMAGE_ALLOWED} images only.`,
-              [{text: 'OK'}],
-            )
-          : ''}
+        {maxImageExceed &&
+          Alert.alert(
+            'ERROR',
+            `* Please Select upto ${MAX_IMAGE_ALLOWED} images only.`,
+            [{text: 'OK'}],
+          )}
 
         <View style={{flex: 1, flexDirection: 'row', marginTop: '3%'}}>
           <TouchableOpacity

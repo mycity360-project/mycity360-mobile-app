@@ -158,6 +158,7 @@ const styles = StyleSheet.create({
     marginHorizontal: '12%',
     backgroundColor: '#EFEFEF',
     borderRadius: 20,
+    color: '#111',
     padding: 10,
     elevation: 5, //Android Only
     shadowRadius: 14, // IOS Only

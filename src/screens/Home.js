@@ -731,6 +731,7 @@ const styles = StyleSheet.create({
   inputBox: {
     width: '80%',
     height: '100%',
+    color: '#111',
     padding: 5,
     borderColor: '#FA8C00',
     borderWidth: 1,

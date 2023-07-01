@@ -283,6 +283,7 @@ const styles = StyleSheet.create({
   },
   inputBox: {
     width: '70%',
+    color: '#111',
   },
 
   searchBtn: {

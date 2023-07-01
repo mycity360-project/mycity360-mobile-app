@@ -287,6 +287,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#efefef',
     borderRadius: 20,
     padding: 10,
+    color: '#111',
     elevation: 5, //Android Only
     shadowRadius: 5, // IOS Only
   },
