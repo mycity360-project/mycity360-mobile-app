@@ -100,7 +100,9 @@ export default function ServiceDescription({route, navigation}) {
         </View>
       </View>
 
-      <ScrollView style={styles.adDescriptionSection}>
+      <ScrollView
+        style={styles.adDescriptionSection}
+        contentContainerStyle={{padding: 10}}>
         <Text
           allowFontScaling={false}
           style={{fontSize: 16, fontWeight: 600, color: '#111'}}>
@@ -126,16 +128,16 @@ export default function ServiceDescription({route, navigation}) {
 
 const styles = StyleSheet.create({
   container: {flex: 1, backgroundColor: '#F5F5F5'},
-  adHeaderSection: {flex: 2, paddingTop: 5},
+  adHeaderSection: {flex: 0.8},
   adImgSection: {
-    flex: 3,
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },
   adInfoSection: {
-    flex: 1,
+    flex: 0.15,
     padding: 5,
-    marginTop: '2%',
+    marginTop: '1%',
     backgroundColor: '#FFF',
   },
   infoSectionTop: {
@@ -153,14 +155,13 @@ const styles = StyleSheet.create({
   },
 
   adDescriptionSection: {
-    flex: 2,
-    padding: 5,
+    flex: 5,
     marginTop: '2%',
     backgroundColor: '#FFF',
   },
 
   footer: {
-    flex: 0.5,
+    flex: 0.2,
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: '2%',

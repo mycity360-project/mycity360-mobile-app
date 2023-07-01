@@ -48,7 +48,7 @@ export default function DropDown({
                     selectedDataHandler(item);
                     setIsClicked(false);
                   }}>
-                  <Text>{item.value}</Text>
+                  <Text style={{color: '#222'}}>{item.value}</Text>
                 </TouchableOpacity>
               );
             }}
