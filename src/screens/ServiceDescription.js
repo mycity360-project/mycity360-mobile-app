@@ -116,7 +116,7 @@ export default function ServiceDescription({route, navigation}) {
       <View style={styles.footer}>
         <TouchableOpacity
           style={styles.button}
-          onPress={() => openDialer(ServiceDescription.phone)}>
+          onPress={() => openDialer(serviceDetails.phone)}>
           <Text allowFontScaling={false} style={styles.buttonText}>
             Call Now
           </Text>

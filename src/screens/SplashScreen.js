@@ -2,8 +2,6 @@ import React from 'react';
 import {View, ImageBackground, StyleSheet, Dimensions} from 'react-native';
 
 const SplashScreen = () => {
-  const {width, height} = Dimensions.get('window');
-
   return (
     <View style={styles.container}>
       <ImageBackground
