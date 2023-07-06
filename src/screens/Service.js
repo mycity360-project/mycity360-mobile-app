@@ -98,9 +98,7 @@ export default function Home({navigation}) {
           },
         })
       }>
-      {item.empty ? (
-        ''
-      ) : (
+      {!item.empty && (
         <View style={{flex: 2}}>
           <View
             style={{
@@ -115,7 +113,7 @@ export default function Home({navigation}) {
           </View>
           <View
             style={{
-              flexGrow: 1,
+              flexGrow: 2,
               alignItems: 'center',
               justifyContent: 'center',
             }}>
