@@ -108,7 +108,10 @@ export default function Home({navigation}) {
               alignItems: 'center',
               justifyContent: 'center',
             }}>
-            <Image source={{uri: item.icon, width: 55, height: 55}} />
+            <Image
+              resizeMode="contain"
+              source={{uri: item.icon, width: 55, height: 55}}
+            />
           </View>
           <View
             style={{
