@@ -29,7 +29,7 @@ export default function UploadAdPhotos({navigation, route}) {
   const [isLoading, setIsLoading] = useState(false);
   const [id, setId] = useState(1);
   const ref = useRef();
-  const AdData = route.params.AdData;
+  const AdData = route.params?.AdData;
 
   const removeFromArray = idToRemove => {
     const imagesUpdated = images.filter(item => {
@@ -309,7 +309,7 @@ export default function UploadAdPhotos({navigation, route}) {
             return (
               <View>
                 <Image
-                  source={{uri: item.uri}}
+                  source={{uri: item?.uri}}
                   resizeMode="contain"
                   style={styles.wrapper}
                 />
@@ -338,7 +338,7 @@ export default function UploadAdPhotos({navigation, route}) {
             );
           })}
         </View>
-        {images.length && (
+        {images.length ? (
           <View
             style={{
               position: 'absolute',
@@ -351,7 +351,7 @@ export default function UploadAdPhotos({navigation, route}) {
               {parseInt(currentIndex) + 1}/{images.length}
             </Text>
           </View>
-        )}
+        ) : null}
       </View>
       <View style={styles.cardButtonSection}>
         <Text
