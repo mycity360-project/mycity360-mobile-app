@@ -242,6 +242,9 @@ export default function ProfileScreen() {
           </View>
         </TouchableRipple>
       </View>
+      <View style={{padding: 5}}>
+        <Text>Icons By Icons8. Visit https://icons8.com</Text>
+      </View>
       <Modal
         isVisible={showImagePicker}
         style={{

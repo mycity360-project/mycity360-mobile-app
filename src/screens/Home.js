@@ -79,9 +79,11 @@ export default function Home({navigation}) {
   };
 
   const handleWebLink = uri => {
-    navigation.navigate('WebViewScreen', {
-      uri,
-    });
+    if (uri) {
+      navigation.navigate('WebViewScreen', {
+        uri,
+      });
+    }
   };
 
   useEffect(() => {
