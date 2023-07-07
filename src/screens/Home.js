@@ -626,6 +626,7 @@ export default function Home({navigation}) {
                   allowFontScaling={false}
                   returnKeyType="search"
                   placeholder="Find Mobile, Cars ....."
+                  placeholderTextColor={'#222'}
                   style={styles.inputBox}
                   value={searchText}
                   onChangeText={search => {
