@@ -65,12 +65,12 @@ export default function UploadAdPhotos({navigation, route}) {
       } else if (response.customButton) {
         console.log('User tapped custom button: ', response.customButton);
       } else {
-        const resp = response.assets[0];
+        const resp = response?.assets?.[0];
 
         const source = {
           id: id,
-          uri: resp.uri,
-          type: resp.type,
+          uri: resp?.uri,
+          type: resp?.type,
         };
 
         const updatedImages = images;

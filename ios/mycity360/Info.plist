@@ -31,8 +31,6 @@
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Add Key</string>
-	<key>NSLocationAlwaysUsageDescription</key>
- 	<string>Add Key</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Add Key</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
