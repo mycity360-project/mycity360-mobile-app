@@ -70,8 +70,8 @@ export default function ProfileScreen() {
         console.log('User tapped custom button: ', response.customButton);
       } else {
         const source = {
-          uri: response.assets[0].uri,
-          type: response.assets[0].type,
+          uri: response?.assets?.[0]?.uri,
+          type: response?.assets?.[0].type,
         };
         setShowImagePicker(false);
         uploadImage(source);
