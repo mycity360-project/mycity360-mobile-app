@@ -11,7 +11,6 @@ import {
 } from 'react-native';
 
 export default function ModalView({title, data, visible, onSelect, onClose}) {
-  console.log(data, visible, onSelect);
   const handleSelect = value => {
     onSelect(value);
     onClose();
@@ -57,12 +56,19 @@ export default function ModalView({title, data, visible, onSelect, onClose}) {
             />
             <TouchableOpacity
               onPress={() => onClose()}
-              style={{alignItems: 'flex-end', padding: 10}}>
-              <Button
-                title="Cancel"
-                color="#FA8C00"
-                style={{color: '#222', fontWeight: 500}}
-              />
+              style={{
+                alignItems: 'flex-end',
+              }}>
+              <Text
+                style={{
+                  color: '#222',
+                  fontWeight: 500,
+                  backgroundColor: '#FA8C00',
+                  padding: 10,
+                  borderRadius: 5,
+                }}>
+                Cancel
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -78,7 +84,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modalView: {
-    padding: 5,
+    padding: 10,
     height: '35%',
     backgroundColor: 'white',
     borderRadius: 10,

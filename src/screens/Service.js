@@ -13,8 +13,8 @@ import {
 import {React, useState, useEffect, useContext} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {http} from '../shared/lib';
-import {ActivityIndicator} from 'react-native-paper';
 import {AuthContext} from '../context/AuthContext';
+import Loader from '../shared/components/Loader';
 
 export default function Home({navigation}) {
   const [servicesData, setServicesData] = useState([]);
@@ -131,11 +131,7 @@ export default function Home({navigation}) {
     </Pressable>
   );
 
-  return isLoading ? (
-    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-      <ActivityIndicator size={'large'} />
-    </View>
-  ) : (
+  return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <View style={styles.btnSection}>
@@ -189,6 +185,7 @@ export default function Home({navigation}) {
           showsVerticalScrollIndicator={false}
         />
       </View>
+      <Loader visible={isLoading} text="Loading Services.." />
     </SafeAreaView>
   );
 }

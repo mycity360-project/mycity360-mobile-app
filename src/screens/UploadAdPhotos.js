@@ -9,7 +9,6 @@ import {
   Dimensions,
   Text,
   Alert,
-  ActivityIndicator,
   Platform,
 } from 'react-native';
 import React, {useState, useRef} from 'react';
@@ -20,6 +19,7 @@ import {MAX_IMAGE_ALLOWED} from '../shared/constants/env';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {http} from '../shared/lib';
 import {request, PERMISSIONS} from 'react-native-permissions';
+import Loader from '../shared/components/Loader';
 const {width, height} = Dimensions.get('window');
 
 export default function UploadAdPhotos({navigation, route}) {
@@ -242,16 +242,15 @@ export default function UploadAdPhotos({navigation, route}) {
         Alert.alert('ERROR', 'Please Upload atleast 1 Image', [{text: 'OK'}]);
         return;
       }
-      console.log('267');
+
       let uploadedImgArr = [];
       for (const image of images) {
         let resp = await uploadImage(image);
         uploadedImgArr.push(resp);
       }
-      console.log(uploadedImgArr, '273');
 
       const adCreatedData = await createAdHandler(uploadedImgArr);
-      console.log(adCreatedData, '274');
+
       let answerArr = AdData.answers;
       let respArr = [];
       const userid = await AsyncStorage.getItem('userID');
@@ -263,8 +262,6 @@ export default function UploadAdPhotos({navigation, route}) {
       navigation.popToTop();
     } catch (error) {
       setIsLoading(false);
-      console.log(error, '286');
-      console.log(error.response, '287');
 
       Alert.alert(
         'ERROR',
@@ -279,11 +276,7 @@ export default function UploadAdPhotos({navigation, route}) {
     }
   };
 
-  return isLoading ? (
-    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-      <ActivityIndicator size={'large'} />
-    </View>
-  ) : (
+  return (
     <SafeAreaView style={styles.container}>
       <View
         style={[
@@ -436,6 +429,7 @@ export default function UploadAdPhotos({navigation, route}) {
           onpress={() => submitAdDataHandler()}
         />
       </View>
+      <Loader visible={isLoading} text={'Publishing Your Ad...'}/>
     </SafeAreaView>
   );
 }
