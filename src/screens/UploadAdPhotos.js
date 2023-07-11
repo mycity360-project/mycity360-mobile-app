@@ -54,7 +54,7 @@ export default function UploadAdPhotos({navigation, route}) {
       storageOptions: {path: 'images', mediaType: 'photo'},
       maxWidth: 500,
       maxHeight: 500,
-      quality: 0.7,
+      quality: 1,
     };
 
     launchCamera(options, response => {
@@ -93,7 +93,7 @@ export default function UploadAdPhotos({navigation, route}) {
       selectionLimit: 0,
       maxWidth: 500,
       maxHeight: 500,
-      quality: 0.7,
+      quality: 1,
     };
 
     launchImageLibrary(options, response => {
@@ -429,7 +429,7 @@ export default function UploadAdPhotos({navigation, route}) {
           onpress={() => submitAdDataHandler()}
         />
       </View>
-      <Loader visible={isLoading} text={'Publishing Your Ad...'}/>
+      <Loader visible={isLoading} text={'Publishing Your Ad...'} />
     </SafeAreaView>
   );
 }

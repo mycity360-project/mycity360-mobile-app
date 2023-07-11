@@ -7,7 +7,6 @@ import {
   SafeAreaView,
   TouchableWithoutFeedback,
   Keyboard,
-  ActivityIndicator,
   TouchableOpacity,
   Alert,
 } from 'react-native';
@@ -21,6 +20,7 @@ import {AuthContext} from '../context/AuthContext';
 import * as Yup from 'yup';
 import {Formik} from 'formik';
 import CheckBox from '../shared/components/Checkbox';
+import Loader from '../shared/components/Loader';
 
 export default function SignUp() {
   const navigation = useNavigation();
@@ -192,11 +192,7 @@ export default function SignUp() {
       .required('Please Enter Confirm Password'),
   });
 
-  return isLoading ? (
-    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-      <ActivityIndicator size={'large'} />
-    </View>
-  ) : (
+  return (
     <Formik
       initialValues={{
         firstName: firstName,
@@ -457,6 +453,7 @@ export default function SignUp() {
                   </TouchableOpacity>
                 </View>
               </View>
+              <Loader visible={isLoading} text="Signing Up...." />
             </View>
           </TouchableWithoutFeedback>
         </SafeAreaView>

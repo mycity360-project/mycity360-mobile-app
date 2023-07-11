@@ -7,7 +7,6 @@ import {
   SafeAreaView,
   Text,
   TouchableOpacity,
-  ActivityIndicator,
   Alert,
 } from 'react-native';
 import {React, useContext, useState, useRef} from 'react';
@@ -17,7 +16,7 @@ import {useNavigation} from '@react-navigation/native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {http} from '../shared/lib';
 import {BACKEND_CLIENT_ID} from '../shared/constants/env';
-
+import Loader from '../shared/components/Loader';
 export default function Login({route}) {
   const [email, setEmail] = useState(route.params?.email || '');
   const [password, setPassword] = useState('');
@@ -102,11 +101,7 @@ export default function Login({route}) {
     }
   };
 
-  return isLoading ? (
-    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-      <ActivityIndicator size={'large'} />
-    </View>
-  ) : (
+  return (
     <SafeAreaView style={styles.container}>
       <KeyboardAwareScrollView
         enableOnAndroid={true}
@@ -229,6 +224,7 @@ export default function Login({route}) {
               </Text>
             </TouchableOpacity>
           </View>
+          <Loader visible={isLoading} text="Logging you in.." />
         </View>
       </KeyboardAwareScrollView>
     </SafeAreaView>
