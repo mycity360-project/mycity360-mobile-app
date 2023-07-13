@@ -53,7 +53,7 @@ export default function Home({navigation}) {
         ]);
       }
     } finally {
-      // setIsLoading(false);
+      setIsLoading(false);
     }
   };
 
