@@ -1,8 +1,8 @@
 module.exports = {
-  BACKEND_URL: 'http://68.178.169.59',
-  BACKEND_CLIENT_ID: 'IwVuiUsLcQmZ9eTpzf6RYgPCUDxWjdmDPTWMCMRH',
+  BACKEND_URL: 'http://mycity360.in',
+  BACKEND_CLIENT_ID: 'ZX9R30Mlyzkbgf2sIGtBkatojvedcSjcIJnRtpJh',
   APP_TITLE: 'MyCity360',
   MAX_IMAGE_ALLOWED: 6,
   AD_TITLE_MAX_LENGTH: 100,
-  AD_DESC_MAX_LENGTH: 200,
+  AD_DESC_MAX_LENGTH: 10,
 };

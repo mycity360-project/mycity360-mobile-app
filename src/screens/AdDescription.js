@@ -11,19 +11,23 @@ import {
   Platform,
   Alert,
   ActivityIndicator,
+  SafeAreaView,
 } from 'react-native';
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import {http} from '../shared/lib';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Moment from 'moment';
+import {AuthContext} from '../context/AuthContext';
 const {width, height} = Dimensions.get('window');
 
 export default function AdDescription({route, navigation}) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answerData, setAnswerData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const adDetails = route.params.adDetails;
+  const [isQuesAnsAvailable, setIsQuesAnsAvailable] = useState(false);
+  const {logout} = useContext(AuthContext);
+  const {adDetails} = route.params;
   const {location, area} = adDetails;
 
   const openDialer = contactNumber => {
@@ -52,13 +56,17 @@ export default function AdDescription({route, navigation}) {
         btnText: 'OK',
       });
     } catch (error) {
-      Alert.alert('ERROR', 'Something Went Wrong', [{text: 'OK'}]);
+      if (error.response.status === 401) {
+        logout();
+      } else {
+        Alert.alert('ERROR', 'Something Went Wrong', [{text: 'OK'}]);
+      }
     }
   };
 
   const getAnswers = async () => {
     try {
-      // setIsLoading(true);
+      setIsLoading(true);
       const token = await AsyncStorage.getItem('token');
       const answersRespData = await http.get(
         `answer/?user_ad_id=${adDetails.id}`,
@@ -68,14 +76,24 @@ export default function AdDescription({route, navigation}) {
           },
         },
       );
+
       const answers = answersRespData.results.map(answer => ({
-        question: answer.question.question,
+        question: answer.question.label,
         answer: answer.answer,
       }));
+
       setAnswerData(answers);
-      // setIsLoading(false);
-    } catch (err) {
-      // setIsLoading(false);
+      setIsQuesAnsAvailable(answers.length ? true : false);
+    } catch (error) {
+      if (error.response.status === 401) {
+        logout();
+      } else {
+        Alert.alert('ERROR', 'Something Went Wrong in getting Description', [
+          {text: 'OK'},
+        ]);
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -83,12 +101,39 @@ export default function AdDescription({route, navigation}) {
     getAnswers();
   }, []);
 
+  const renderHeader = () => {
+    return (
+      <>
+        <View>
+          <Text
+            allowFontScaling={false}
+            style={{fontSize: 16, fontWeight: 600, color: '#111'}}>
+            Description
+          </Text>
+          <Text allowFontScaling={false} style={{color: '#111'}}>
+            {adDetails.description}
+          </Text>
+        </View>
+        {isQuesAnsAvailable && (
+          <Text
+            style={{
+              fontSize: 16,
+              fontWeight: 600,
+              color: '#111',
+              marginTop: 10,
+            }}>
+            Details
+          </Text>
+        )}
+      </>
+    );
+  };
   return isLoading ? (
     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
       <ActivityIndicator size={'large'} />
     </View>
   ) : (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <View style={styles.adHeaderSection}>
         <View style={styles.adImgSection}>
           <FlatList
@@ -119,7 +164,7 @@ export default function AdDescription({route, navigation}) {
                   key={index}
                   style={[
                     styles.dotCommon,
-                    parseInt(currentIndex) === index
+                    parseInt(currentIndex, 10) === index
                       ? styles.dotActive
                       : styles.dotNotActive,
                   ]}
@@ -141,102 +186,136 @@ export default function AdDescription({route, navigation}) {
         </View>
         <View style={styles.adInfoSection}>
           <View style={styles.infoSectionTop}>
-            <Text style={styles.priceText}>₹ {adDetails.price}</Text>
+            {adDetails.isPrice && (
+              <Text allowFontScaling={false} style={styles.priceText}>
+                ₹ {adDetails.price}
+              </Text>
+            )}
+            <Text
+              allowFontScaling={false}
+              style={[
+                styles.adID,
+                {textAlign: adDetails.isPrice ? 'right' : 'left'},
+              ]}>
+              Ad ID: {adDetails.code}
+            </Text>
           </View>
 
-          <Text numberOfLines={1} style={styles.infoSectionMiddle}>
+          <Text allowFontScaling={false} style={styles.infoSectionMiddle}>
             {adDetails.title}
           </Text>
           <View style={styles.infoSectionBottom}>
             <View style={styles.locationSection}>
               <MaterialIcon name="location-pin" size={18} color={'#444'} />
-              <Text style={styles.locationText}>
+              <Text allowFontScaling={false} style={styles.locationText}>
                 {location === area ? location : `${area} , ${location}`}
               </Text>
             </View>
-            <Text style={styles.dateAdded}>
+            <Text allowFontScaling={false} style={styles.dateAdded}>
               {Moment(adDetails.createdOn).format('DD MMM YYYY')}
             </Text>
           </View>
         </View>
       </View>
 
-      <View style={styles.adDescriptionSection}>
-        <Text style={{fontSize: 16, fontWeight: 600, color: '#111'}}>
-          Description
-        </Text>
-        <Text style={{color: '#111'}}>{adDetails.description}</Text>
-      </View>
-
-      <View style={styles.adQuesAnsSection}>
-        <Text style={{fontSize: 16, fontWeight: 600, color: '#111'}}>
-          Details
-        </Text>
-        <View>
-          <FlatList
-            data={answerData}
-            renderItem={({item}) => {
-              return (
-                <View style={{flexDirection: 'row', gap: 4}}>
-                  <Text style={{color: '#222', fontWeight: 500, fontSize: 14}}>
-                    {item.question} -
-                  </Text>
-                  <Text style={{color: '#111'}}>{item.answer}</Text>
-                </View>
-              );
-            }}
-          />
-        </View>
-      </View>
-
-      <View style={styles.otherDetailsSection}>
-        <Text style={styles.otherDetailsText}>Ad ID: {adDetails.id}</Text>
+      <View style={styles.descAndDetailSection}>
+        <FlatList
+          ListHeaderComponent={renderHeader}
+          data={[{id: 'column1'}, {id: 'column2'}]}
+          numColumns={2}
+          keyExtractor={item => item.id}
+          renderItem={({item}) => (
+            <View style={{flex: 1}}>
+              <FlatList
+                data={
+                  item.id === 'column1'
+                    ? answerData.slice(0, Math.ceil(answerData.length / 2))
+                    : answerData.slice(Math.ceil(answerData.length / 2))
+                }
+                renderItem={({item}) => (
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      flexWrap: 'wrap',
+                      gap: 2,
+                      width: '100%',
+                      padding: 2,
+                    }}>
+                    <Text
+                      allowFontScaling={false}
+                      style={{color: '#222', fontWeight: 900, fontSize: 12}}>
+                      {item.question} -
+                    </Text>
+                    <Text
+                      allowFontScaling={false}
+                      style={{color: '#111', fontSize: 12}}
+                      numberOfLines={2}
+                      ellipsizeMode="tail">
+                      {item.answer}
+                    </Text>
+                  </View>
+                )}
+              />
+            </View>
+          )}
+        />
       </View>
 
       <View style={styles.footer}>
-        {adDetails.showCallNowBtn ? (
+        {adDetails.showCallNowBtn && (
           <TouchableOpacity
             style={styles.button}
             onPress={() => openDialer(adDetails.phone)}>
-            <Text style={styles.buttonText}>Call Now</Text>
+            <Text allowFontScaling={false} style={styles.buttonText}>
+              Call Now
+            </Text>
           </TouchableOpacity>
-        ) : (
-          ''
         )}
-        {adDetails.showDeleteBtn ? (
+        {adDetails.showDeleteBtn && (
           <TouchableOpacity
             style={styles.button}
             onPress={() => {
-              Alert.alert('Warning', 'Are you sure , you want to delete ?', [
+              Alert.alert('Warning', 'Are you sure, you want to delete ?', [
                 {text: 'OK', onPress: () => deleteAdHandler()},
                 {text: 'Cancel'},
               ]);
             }}>
-            <Text style={styles.buttonText}>Delete Ad</Text>
+            <Text allowFontScaling={false} style={styles.buttonText}>
+              Delete Ad
+            </Text>
           </TouchableOpacity>
-        ) : (
-          ''
         )}
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {flex: 1},
-  adHeaderSection: {flex: 4, paddingTop: 5},
+  container: {flex: 1, backgroundColor: '#F5F5F5'},
+  adHeaderSection: {flex: 1, paddingTop: 5},
   adImgSection: {
-    flex: 3,
+    flex: 0.75,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  adInfoSection: {flex: 1, padding: 5},
+  adInfoSection: {
+    flex: 0.25,
+    padding: 5,
+    marginTop: '2%',
+    backgroundColor: '#FFF',
+  },
   infoSectionTop: {
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
-  priceText: {fontSize: 20, fontWeight: 600, color: '#111'},
+  priceText: {flex: 1, fontSize: 20, fontWeight: 600, color: '#111'},
+  adID: {
+    flex: 1,
+    fontSize: 14,
+    color: '#111',
+    fontWeight: 500,
+  },
   infoSectionMiddle: {
     flex: 1,
     fontSize: 16,
@@ -260,19 +339,19 @@ const styles = StyleSheet.create({
     fontWeight: 500,
     color: '#444',
   },
-  adQuesAnsSection: {flex: 2, padding: 5},
-  adDescriptionSection: {flex: 1, padding: 5},
-  otherDetailsSection: {
-    flex: 0.2,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  descAndDetailSection: {
+    flex: 1,
     padding: 5,
+    marginTop: '2%',
+    backgroundColor: '#FFF',
   },
-  otherDetailsText: {fontSize: 14, color: '#111', fontWeight: 500},
+
   footer: {
-    flex: 0.7,
+    flex: 0.2,
     justifyContent: 'center',
     alignItems: 'center',
+    marginTop: '2%',
+    backgroundColor: '#FFF',
   },
   button: {
     backgroundColor: '#FA8C00',
@@ -294,9 +373,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     position: 'absolute',
     alignSelf: 'center',
-    bottom: 10,
+    bottom: 20,
   },
-  dotCommon: {width: 12, height: 12, borderRadius: 6, marginLeft: 5},
+  dotCommon: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    marginLeft: 5,
+    borderWidth: 1,
+    borderColor: '#222',
+  },
   dotActive: {
     backgroundColor: '#FA8C00',
   },

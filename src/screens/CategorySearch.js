@@ -10,10 +10,11 @@ import {
   FlatList,
   Image,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useContext} from 'react';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import {http} from '../shared/lib';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {AuthContext} from '../context/AuthContext';
 
 export default function CategorySearch({navigation, route}) {
   const [isLoading, setIsLoading] = useState(false);
@@ -25,6 +26,7 @@ export default function CategorySearch({navigation, route}) {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [showNoAdsFoundMsg, setShowNoAdsFoundMsg] = useState(false);
+  const {logout} = useContext(AuthContext);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', async () => {
@@ -40,14 +42,18 @@ export default function CategorySearch({navigation, route}) {
   const renderFooter = () => {
     if (showNoAdsFoundMsg) {
       return (
-        <Text style={{fontSize: 14, color: '#222', textAlign: 'center'}}>
+        <Text
+          allowFontScaling={false}
+          style={{fontSize: 14, color: '#222', textAlign: 'center'}}>
           No Ads Found
         </Text>
       );
     }
     if (!showNoAdsFoundMsg && !hasMore) {
       return (
-        <Text style={{fontSize: 14, color: '#222', textAlign: 'center'}}>
+        <Text
+          allowFontScaling={false}
+          style={{fontSize: 14, color: '#222', textAlign: 'center'}}>
           No More Ads to Show
         </Text>
       );
@@ -93,6 +99,7 @@ export default function CategorySearch({navigation, route}) {
       const ads = adsRespData?.results?.map((ad, index) => {
         return {
           id: ad.id,
+          code: ad.code,
           title: ad.name,
           createdOn: ad.created_date,
           description: ad.description,
@@ -103,21 +110,26 @@ export default function CategorySearch({navigation, route}) {
           subCategoryID: ad.category.id,
           locationName: ad.area?.location?.name,
           areaName: ad.area?.name,
+          isPrice: ad.category?.is_price,
           key: `${adsData.length + index}`,
         };
       });
 
       setAdsData([...adsData, ...ads]);
-    } catch (err) {
-      Alert.alert(
-        'ERROR',
-        'Something went wrong, Unable to Fetch Ads CategorySearch',
-        [
-          {
-            text: 'OK',
-          },
-        ],
-      );
+    } catch (error) {
+      if (error.response.status === 401) {
+        logout();
+      } else {
+        Alert.alert(
+          'ERROR',
+          'Something went wrong, Unable to Fetch Ads CategorySearch',
+          [
+            {
+              text: 'OK',
+            },
+          ],
+        );
+      }
     }
   };
 
@@ -145,7 +157,8 @@ export default function CategorySearch({navigation, route}) {
           navigation.navigate('AdDescription', {
             adDetails: {
               id: item.id,
-              title: item.name,
+              code: item.code,
+              title: item.title,
               price: item.price,
               description: item.description,
               location: item.locationName,
@@ -155,6 +168,7 @@ export default function CategorySearch({navigation, route}) {
               userID: item.userID,
               phone: item.phone,
               categoryID: item.subCategoryID,
+              isPrice: item.isPrice,
               showCallNowBtn: true,
               showDeleteBtn: false,
             },
@@ -175,11 +189,23 @@ export default function CategorySearch({navigation, route}) {
         </View>
 
         <View style={{width: '70%', height: '90%', paddingLeft: 5}}>
-          <Text style={{fontSize: 16, color: '#111', fontWeight: 500}}>
+          <Text
+            allowFontScaling={false}
+            style={{fontSize: 16, color: '#111', fontWeight: 500}}>
             {item.title}
           </Text>
-          <Text style={{fontSize: 16, color: '#111'}}>₹ {item.price}</Text>
-          <Text style={{fontSize: 16, color: '#111'}}>{item.description}</Text>
+          {item.isPrice && (
+            <Text
+              allowFontScaling={false}
+              style={{fontSize: 16, color: '#111', fontWeight: 500}}>
+              ₹ {item.price}
+            </Text>
+          )}
+          <Text
+            allowFontScaling={false}
+            style={{fontSize: 14, color: '#111', fontWeight: 500}}>
+            Ad ID : {item.code}
+          </Text>
         </View>
       </TouchableOpacity>
     );
@@ -199,6 +225,7 @@ export default function CategorySearch({navigation, route}) {
             <MaterialIcon name="arrow-back" size={26} color={'#444'} />
           </TouchableOpacity>
           <TextInput
+            allowFontScaling={false}
             returnKeyType="search"
             placeholder="Find Mobile, Cars ....."
             style={styles.inputBox}
@@ -262,6 +289,7 @@ const styles = StyleSheet.create({
   },
   inputBox: {
     width: '70%',
+    color: '#111',
   },
 
   searchBtn: {

@@ -6,26 +6,27 @@ import {
   TextInput,
   SafeAreaView,
   Text,
-  TouchableWithoutFeedback,
-  Keyboard,
   TouchableOpacity,
-  ActivityIndicator,
+  Alert,
 } from 'react-native';
-import {React, useContext, useState} from 'react';
+import {React, useContext, useState, useRef} from 'react';
 import CustomButton from '../shared/components/CustomButton';
 import {AuthContext} from '../context/AuthContext';
 import {useNavigation} from '@react-navigation/native';
-
-export default function Login() {
-  const {login} = useContext(AuthContext);
-
-  const [email, setEmail] = useState(null);
-  const [phone, setPhone] = useState('');
-  const [password, setPassword] = useState(null);
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import {http} from '../shared/lib';
+import {BACKEND_CLIENT_ID} from '../shared/constants/env';
+import Loader from '../shared/components/Loader';
+export default function Login({route}) {
+  const [email, setEmail] = useState(route.params?.email || '');
+  const [password, setPassword] = useState('');
   const [isEmailError, setEmailError] = useState(false);
   const [isPhoneError, setPhoneError] = useState(false);
   const [ispasswordError, setPasswordError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  const {onTokenAvailable} = useContext(AuthContext);
+  const passwordRef = useRef();
   const navigation = useNavigation();
 
   const errors = {
@@ -40,41 +41,72 @@ export default function Login() {
     var emailRegex =
       /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
 
-    if (password === '' || password.length < 8) {
-      setIsLoading(false);
-      setPasswordError(true);
-      return;
-    }
-
-    if (email.length === 10 && !email.match(phoneRegex)) {
+    if (email?.length === 10 && !email.match(phoneRegex)) {
       setEmailError(false);
-      setIsLoading(false);
       setPhoneError(true);
+      setIsLoading(false);
       return;
     }
 
-    if (email.length !== 10 && !email.match(emailRegex)) {
+    if (email?.length !== 10 && !email.match(emailRegex)) {
       setPhoneError(false);
-      setIsLoading(false);
       setEmailError(true);
+      setIsLoading(false);
       return;
     }
 
-    const response = await login(email, password);
-    if (response?.showVerifyOtpScreen) {
+    if (password === '' || password?.length < 8) {
+      setEmailError(false);
+      setPhoneError(false);
+      setPasswordError(true);
       setIsLoading(false);
-      navigation.navigate('VerifyOtp', {userid: response.userid});
+      return;
     }
-    setIsLoading(false);
+
+    const url = 'user/login/';
+    const config = {
+      headers: {
+        clientid: BACKEND_CLIENT_ID,
+      },
+    };
+    const data = {
+      email: email,
+      password: password,
+    };
+    try {
+      let respData = await http.post(url, data, config);
+      if (respData?.access_token) {
+        await onTokenAvailable(
+          respData,
+          respData.access_token,
+          respData.user_id,
+        );
+      } else {
+        navigation.navigate('VerifyOtp', {
+          userid: respData.id,
+          is_email_verified: respData.is_email_verified,
+          is_phone_verified: respData.is_phone_verified,
+        });
+      }
+    } catch (error) {
+      if (error.response.status === 500) {
+        Alert.alert('ERROR', 'User not exist ', [{text: 'OK'}]);
+      } else if (error.response.status === 400) {
+        Alert.alert('ERROR', 'Check Your username OR password', [{text: 'OK'}]);
+      } else {
+        Alert.alert('ERROR', 'Something Went Wrong', [{text: 'OK'}]);
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  return isLoading ? (
-    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-      <ActivityIndicator size={'large'} />
-    </View>
-  ) : (
+  return (
     <SafeAreaView style={styles.container}>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <KeyboardAwareScrollView
+        enableOnAndroid={true}
+        scrollEnabled={false}
+        contentContainerStyle={{flexGrow: 1}}>
         <View style={styles.innerContainer}>
           <View style={styles.headerSection} />
           <View style={styles.logoSection}>
@@ -82,10 +114,13 @@ export default function Login() {
               source={require('../assets/images/logo.png')}
               style={{width: 75, height: 75}}
             />
-            <Text style={styles.logoName}>MyCity360</Text>
+            <Text allowFontScaling={false} style={styles.logoName}>
+              MyCity360
+            </Text>
           </View>
           <View style={styles.loginFormSection}>
             <Text
+              allowFontScaling={false}
               style={{
                 fontSize: 24,
                 fontWeight: '400',
@@ -95,38 +130,49 @@ export default function Login() {
               Login
             </Text>
             <TextInput
+              allowFontScaling={false}
               placeholder="Enter Email / Mobile Number"
+              placeholderTextColor="grey"
               style={styles.input}
+              value={email}
               autoCapitalize="none"
               onChangeText={mail => {
                 setEmail(mail);
               }}
+              returnKeyType="next"
+              onSubmitEditing={() => passwordRef.current.focus()}
             />
-            {isEmailError ? (
-              <Text style={styles.error}>{errors.email}</Text>
-            ) : (
-              ''
+            {isEmailError && (
+              <Text allowFontScaling={false} style={styles.error}>
+                {errors.email}
+              </Text>
             )}
-            {isPhoneError ? (
-              <Text style={styles.error}>{errors.phone}</Text>
-            ) : (
-              ''
+            {isPhoneError && (
+              <Text allowFontScaling={false} style={styles.error}>
+                {errors.phone}
+              </Text>
             )}
             <TextInput
+              allowFontScaling={false}
               placeholder="Enter Password"
+              placeholderTextColor="grey"
               style={styles.input}
+              value={password}
               autoCapitalize="none"
               secureTextEntry={true}
               returnKeyType="send"
               onChangeText={value => {
                 setPassword(value);
               }}
+              onSubmitEditing={loginHandler}
+              ref={passwordRef}
             />
-            {ispasswordError ? (
-              <Text style={styles.error}>{errors.password}</Text>
-            ) : (
-              ''
+            {ispasswordError && (
+              <Text allowFontScaling={false} style={styles.error}>
+                {errors.password}
+              </Text>
             )}
+
             <CustomButton
               btnTitle="Login"
               onpress={() => {
@@ -135,17 +181,23 @@ export default function Login() {
               style={styles.loginBtn}
               icon="arrow-forward"
             />
+
             <View
               style={{
-                flex: 0.1,
+                flex: 0.02,
                 alignItems: 'flex-start',
                 justifyContent: 'center',
                 flexDirection: 'row',
                 gap: 5,
               }}>
-              <Text style={{fontSize: 16}}>Need an account?</Text>
+              <Text
+                allowFontScaling={false}
+                style={{fontSize: 16, color: '#111'}}>
+                Need an account?
+              </Text>
               <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
                 <Text
+                  allowFontScaling={false}
                   style={{
                     fontSize: 16,
                     color: '#FA8C00',
@@ -154,9 +206,27 @@ export default function Login() {
                 </Text>
               </TouchableOpacity>
             </View>
+            <TouchableOpacity
+              style={{
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+              onPress={() =>
+                navigation.navigate('ForgotPassword', {email: email})
+              }>
+              <Text
+                allowFontScaling={false}
+                style={{
+                  fontSize: 16,
+                  color: '#FA8C00',
+                }}>
+                Forgot Password?
+              </Text>
+            </TouchableOpacity>
           </View>
+          <Loader visible={isLoading} text="Logging you in.." />
         </View>
-      </TouchableWithoutFeedback>
+      </KeyboardAwareScrollView>
     </SafeAreaView>
   );
 }
@@ -185,9 +255,10 @@ const styles = StyleSheet.create({
     marginHorizontal: '12%',
     backgroundColor: '#EFEFEF',
     borderRadius: 20,
+    color: '#111',
     padding: 10,
     elevation: 5, //Android Only
-    shadowRadius: 5, // IOS Only
+    shadowRadius: 14, // IOS Only
   },
   logoName: {
     color: '#FA8C00',

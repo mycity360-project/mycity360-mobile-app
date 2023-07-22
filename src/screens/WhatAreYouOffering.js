@@ -6,6 +6,7 @@ import {
   View,
   FlatList,
   Image,
+  SafeAreaView,
 } from 'react-native';
 import React from 'react';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
@@ -35,24 +36,26 @@ export default function WhatAreYouOffering({navigation, route}) {
           borderRightColor: '#999',
           borderBottomWidth: 0.5,
           borderBottomColor: '#999',
-          // backgroundColor: item.bgcolor,
         },
       ]}
       onPress={() =>
         navigation.navigate('SubCategory', {
           categoryID: item.id,
           categoryName: item.name,
+          isPrice: item.isPrice,
         })
       }>
       <View style={{alignItems: 'center', justifyContent: 'center'}}>
         <Image
+          resizeMode="contain"
           source={{
             uri: item.icon,
-            width: 45,
-            height: 45,
+            width: 60,
+            height: 60,
           }}
         />
         <Text
+          allowFontScaling={false}
           style={{
             fontSize: 12,
             color: '#111',
@@ -65,7 +68,7 @@ export default function WhatAreYouOffering({navigation, route}) {
   );
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity
           onPress={() => {
@@ -74,7 +77,9 @@ export default function WhatAreYouOffering({navigation, route}) {
           <MaterialIcon name="close" color={'#444'} size={32} />
         </TouchableOpacity>
 
-        <Text style={styles.headingText}>What Are You Offering ?</Text>
+        <Text allowFontScaling={false} style={styles.headingText}>
+          What Are You Offering ?
+        </Text>
       </View>
       <View style={styles.categoryListSection}>
         {/* Render catrgory cards */}
@@ -91,7 +96,7 @@ export default function WhatAreYouOffering({navigation, route}) {
           maxToRenderPerBatch={10}
         />
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 

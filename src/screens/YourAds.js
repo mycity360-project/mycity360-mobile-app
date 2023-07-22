@@ -9,11 +9,12 @@ import {
   Image,
   Alert,
 } from 'react-native';
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect, useRef, useContext} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {http} from '../shared/lib';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import {useIsFocused} from '@react-navigation/native';
+import {AuthContext} from '../context/AuthContext';
 
 export default function YourAds({navigation, route}) {
   const [yourAdsData, setYourAdsData] = useState([]);
@@ -25,6 +26,7 @@ export default function YourAds({navigation, route}) {
   const [hasMore, setHasMore] = useState(true);
   const [showNoAdsFoundMsg, setShowNoAdsFoundMsg] = useState(false);
   const pageSize = 10;
+  const {logout} = useContext(AuthContext);
 
   useEffect(() => {
     (async () => {
@@ -46,19 +48,17 @@ export default function YourAds({navigation, route}) {
       setFlatlistLoading(true);
       const token = await AsyncStorage.getItem('token');
       const userData = await AsyncStorage.getItem('userInfo');
-
-      const yourAdsRespData = await http.get(
-        `/user-ad/?user_id=${JSON.parse(userData).id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+      const url = `/user-ad/?user_id=${JSON.parse(userData).id}&page=${page}`;
+      const yourAdsRespData = await http.get(url, {
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
-      );
+      });
       setHasMore(page <= Math.ceil(yourAdsRespData.count) / pageSize);
       setShowNoAdsFoundMsg(Math.ceil(yourAdsRespData.count) ? false : true);
       const ads = yourAdsRespData.results?.map((ad, index) => ({
         id: ad.id,
+        code: ad.code,
         title: ad.name,
         createdOn: ad.created_date,
         description: ad.description,
@@ -69,21 +69,30 @@ export default function YourAds({navigation, route}) {
         subCategoryID: ad.category.id,
         locationName: ad.area?.location?.name,
         areaName: ad.area?.name,
+        isPrice: ad.category?.is_price,
         key: `${yourAdsData.length + index}`,
       }));
-      if (page === 1) setYourAdsData(ads);
-      else setYourAdsData([...yourAdsData, ...ads]);
-    } catch (err) {
-      Alert.alert(
-        'ERROR',
-        'Something went wrong, we are working on it YourAds',
-        [
-          {
-            text: 'OK',
-            onPress: () => navigation.goBack(),
-          },
-        ],
-      );
+
+      if (page === 1) {
+        setYourAdsData(ads);
+      } else {
+        setYourAdsData([...yourAdsData, ...ads]);
+      }
+    } catch (error) {
+      if (error.response.status === 401) {
+        logout();
+      } else {
+        Alert.alert(
+          'ERROR',
+          'Something went wrong, we are working on it YourAds',
+          [
+            {
+              text: 'OK',
+              onPress: () => navigation.goBack(),
+            },
+          ],
+        );
+      }
     } finally {
       setFlatlistLoading(false);
     }
@@ -100,14 +109,18 @@ export default function YourAds({navigation, route}) {
 
     if (showNoAdsFoundMsg) {
       return (
-        <Text style={{fontSize: 14, color: '#222', textAlign: 'center'}}>
+        <Text
+          allowFontScaling={false}
+          style={{fontSize: 14, color: '#222', textAlign: 'center'}}>
           No Ads Found.
         </Text>
       );
     } else {
       if (!hasMore) {
         return (
-          <Text style={{fontSize: 14, color: '#222', textAlign: 'center'}}>
+          <Text
+            allowFontScaling={false}
+            style={{fontSize: 14, color: '#222', textAlign: 'center'}}>
             No More Ads to Show
           </Text>
         );
@@ -155,7 +168,8 @@ export default function YourAds({navigation, route}) {
           navigation.navigate('AdDescription', {
             adDetails: {
               id: item.id,
-              title: item.name,
+              code: item.code,
+              title: item.title,
               price: item.price,
               description: item.description,
               location: item.locationName,
@@ -165,6 +179,7 @@ export default function YourAds({navigation, route}) {
               userID: item.userID,
               phone: item.phone,
               categoryID: item.subCategoryID,
+              isPrice: item.isPrice,
               showCallNowBtn: false,
               showDeleteBtn: true,
             },
@@ -185,11 +200,24 @@ export default function YourAds({navigation, route}) {
         </View>
 
         <View style={{width: '70%', height: '90%', paddingLeft: 5}}>
-          <Text style={{fontSize: 16, color: '#111', fontWeight: 500}}>
+          <Text
+            numberOfLines={2}
+            allowFontScaling={false}
+            style={{fontSize: 16, color: '#111', fontWeight: 500}}>
             {item.title}
           </Text>
-          <Text style={{fontSize: 16, color: '#111'}}>₹ {item.price}</Text>
-          <Text style={{fontSize: 16, color: '#111'}}>{item.description}</Text>
+          {item.isPrice && (
+            <Text
+              allowFontScaling={false}
+              style={{fontSize: 16, fontWeight: 500, color: '#111'}}>
+              ₹ {item.price}
+            </Text>
+          )}
+          <Text
+            allowFontScaling={false}
+            style={{fontSize: 14, color: '#111', fontWeight: 500}}>
+            Ad ID : {item.code}
+          </Text>
         </View>
       </TouchableOpacity>
     );
@@ -204,7 +232,9 @@ export default function YourAds({navigation, route}) {
           <MaterialIcon name="arrow-back" color={'#111'} size={28} />
         </TouchableOpacity>
 
-        <Text style={styles.headingText}>Your Ads</Text>
+        <Text allowFontScaling={false} style={styles.headingText}>
+          Your Ads
+        </Text>
       </View>
       <View style={styles.yourAdsSection}>
         <FlatList

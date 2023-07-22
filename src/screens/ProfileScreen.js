@@ -7,6 +7,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   View,
+  Platform,
 } from 'react-native';
 import {Title, TouchableRipple, Text, Caption} from 'react-native-paper';
 import {AuthContext} from '../context/AuthContext';
@@ -16,7 +17,7 @@ import {ActivityIndicator} from 'react-native';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import Modal from 'react-native-modal';
 import {http} from '../shared/lib';
-import {v4 as uuidv4} from 'uuid';
+import {request, PERMISSIONS} from 'react-native-permissions';
 
 export default function ProfileScreen() {
   const {logout} = useContext(AuthContext);
@@ -34,17 +35,25 @@ export default function ProfileScreen() {
       setProfileImage({uri: info.profile_image});
       setIsLoading(false);
     } catch (error) {
-      Alert.alert('ERROR', 'Something went wrong in loading Profile Image', [
-        {
-          text: 'OK',
-        },
-      ]);
+      if (error.response.status === 401) {
+        logout();
+      } else {
+        Alert.alert('ERROR', 'Something went wrong in loading Profile Image', [
+          {
+            text: 'OK',
+          },
+        ]);
+      }
     }
   };
 
   useEffect(() => {
     getInfo();
   }, []);
+
+  const askForPermission = permission => {
+    return request(permission);
+  };
 
   const openCamera = () => {
     const options = {
@@ -61,8 +70,8 @@ export default function ProfileScreen() {
         console.log('User tapped custom button: ', response.customButton);
       } else {
         const source = {
-          uri: response.assets[0].uri,
-          type: response.assets[0].type,
+          uri: response?.assets?.[0]?.uri,
+          type: response?.assets?.[0].type,
         };
         setShowImagePicker(false);
         uploadImage(source);
@@ -118,15 +127,22 @@ export default function ProfileScreen() {
       resp.localUserArea = localUserArea;
       await AsyncStorage.setItem('userInfo', JSON.stringify(resp));
       setProfileImage({uri: resp.profile_image});
-
-      setIsLoading(false);
     } catch (error) {
+      if (error.response.status === 401) {
+        logout();
+      } else {
+        Alert.alert(
+          'ERROR',
+          'Something went wrong, Profile Image not uploaded',
+          [
+            {
+              text: 'OK',
+            },
+          ],
+        );
+      }
+    } finally {
       setIsLoading(false);
-      Alert.alert('ERROR', 'Something went wrong, Profile Image not uploaded', [
-        {
-          text: 'OK',
-        },
-      ]);
     }
   };
 
@@ -183,7 +199,9 @@ export default function ProfileScreen() {
               size={styles.rowIcon.size}
               color={styles.rowIcon.color}
             />
-            <Text style={styles.rowText}>{userInfo?.area?.name}</Text>
+            <Text allowFontScaling={false} style={styles.rowText}>
+              {userInfo?.area?.name}
+            </Text>
           </View>
           <View style={styles.row}>
             <MaterialIcon
@@ -191,7 +209,9 @@ export default function ProfileScreen() {
               size={styles.rowIcon.size}
               color={styles.rowIcon.color}
             />
-            <Text style={styles.rowText}>{userInfo.phone}</Text>
+            <Text allowFontScaling={false} style={styles.rowText}>
+              {userInfo.phone}
+            </Text>
           </View>
           <View style={styles.row}>
             <MaterialIcon
@@ -199,7 +219,9 @@ export default function ProfileScreen() {
               size={styles.rowIcon.size}
               color={styles.rowIcon.color}
             />
-            <Text style={styles.rowText}>{userInfo.email}</Text>
+            <Text allowFontScaling={false} style={styles.rowText}>
+              {userInfo.email}
+            </Text>
           </View>
         </View>
       </View>
@@ -214,9 +236,14 @@ export default function ProfileScreen() {
               color={styles.menuItemIcon.color}
               size={styles.menuItemIcon.size}
             />
-            <Text style={styles.menuItemText}>Logout</Text>
+            <Text allowFontScaling={false} style={styles.menuItemText}>
+              Logout
+            </Text>
           </View>
         </TouchableRipple>
+      </View>
+      <View style={{padding: 5}}>
+        <Text>Icons By Icons8. Visit https://icons8.com</Text>
       </View>
       <Modal
         isVisible={showImagePicker}
@@ -248,16 +275,55 @@ export default function ProfileScreen() {
             borderBottomWidth: 0.4,
           }}>
           <TouchableOpacity
-            onPress={() => openCamera()}
+            onPress={async () => {
+              let resp = '';
+              if (Platform.OS === 'ios') {
+                resp = await askForPermission(PERMISSIONS.IOS.CAMERA);
+              } else {
+                resp = await askForPermission(PERMISSIONS.ANDROID.CAMERA);
+              }
+              console.log(resp);
+
+              if (resp === 'granted') {
+                openCamera();
+              }
+            }}
             style={{width: '100%', height: 40, flexDirection: 'row', gap: 5}}>
             <MaterialIcon name="photo-camera" size={24} color={'#222'} />
-            <Text style={{fontSize: 18}}>Camera</Text>
+            <Text allowFontScaling={false} style={{fontSize: 18}}>
+              Camera
+            </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => openGallery()}
+            onPress={async () => {
+              let resp = '';
+              if (Platform.OS === 'ios') {
+                resp = await askForPermission(
+                  PERMISSIONS.IOS.PHOTO_LIBRARY_ADD_ONLY,
+                );
+              } else {
+                if (Platform.Version >= 33) {
+                  resp = await askForPermission(
+                    PERMISSIONS.ANDROID.READ_MEDIA_IMAGES,
+                  );
+                } else {
+                  resp = await askForPermission(
+                    PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE,
+                  );
+                }
+              }
+
+              if (resp === 'granted') {
+                openGallery();
+              }
+            }}
             style={{width: '100%', height: 50, flexDirection: 'row', gap: 5}}>
             <MaterialIcon name="folder-open" size={24} color={'#222'} />
-            <Text style={{fontSize: 18}}>Gallery</Text>
+            <Text
+              allowFontScaling={false}
+              style={{fontSize: 18, color: '#111'}}>
+              Gallery
+            </Text>
           </TouchableOpacity>
         </View>
       </Modal>

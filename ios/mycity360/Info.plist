@@ -26,17 +26,17 @@
 	<true/>
 	<key>NSAppTransportSecurity</key>
 	<dict>
-		<key>NSExceptionDomains</key>
-		<dict>
-			<key>localhost</key>
-			<dict>
-				<key>NSExceptionAllowsInsecureHTTPLoads</key>
-				<true/>
-			</dict>
-		</dict>
+		<key>NSAllowsArbitraryLoads</key>
+    	<true/>
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<string>Add Key</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Add Key</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Add Key</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Add Key</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIRequiredDeviceCapabilities</key>

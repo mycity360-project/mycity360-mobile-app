@@ -12,6 +12,7 @@ import Location from '../screens/Location';
 import QuestionsScreen from '../screens/QuestionsScreen';
 import CustomNavigation from '../navigation/customNavigation';
 import WebViewScreen from '../screens/WebViewScreen';
+
 const RootStack = createNativeStackNavigator();
 
 export default function AppStack() {
