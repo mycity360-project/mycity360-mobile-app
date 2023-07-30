@@ -8,11 +8,14 @@ import {
   TouchableOpacity,
   View,
   Platform,
+  Linking,
+  Pressable,
 } from 'react-native';
 import {Title, TouchableRipple, Text, Caption} from 'react-native-paper';
 import {AuthContext} from '../context/AuthContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {ActivityIndicator} from 'react-native';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import Modal from 'react-native-modal';
@@ -226,7 +229,10 @@ export default function ProfileScreen() {
         </View>
       </View>
       <View style={styles.menuSection}>
-        <TouchableRipple onPress={() => {}}>
+        <TouchableRipple
+          onPress={() => {
+            Linking.openURL('whatsapp://send?phone=7015701734');
+          }}>
           <View style={styles.menuItems}>
             <MaterialIcon
               name="support-agent"
@@ -253,7 +259,40 @@ export default function ProfileScreen() {
             </Text>
           </View>
         </TouchableRipple>
+        <TouchableRipple
+          onPress={() => {
+            Linking.openURL('instagram://user?username=anurag_chachan');
+          }}>
+          <View style={styles.menuItems}>
+            <MaterialCommunityIcons
+              name="instagram"
+              color={styles.menuItemIcon.color}
+              size={styles.menuItemIcon.size}
+            />
+
+            <Text allowFontScaling={false} style={styles.menuItemText}>
+              Instagram
+            </Text>
+          </View>
+        </TouchableRipple>
+        <TouchableRipple
+          onPress={() => {
+            // Linking.openURL('');
+          }}>
+          <View style={styles.menuItems}>
+            <MaterialCommunityIcons
+              name="facebook"
+              color={styles.menuItemIcon.color}
+              size={styles.menuItemIcon.size}
+            />
+
+            <Text allowFontScaling={false} style={styles.menuItemText}>
+              Facebook
+            </Text>
+          </View>
+        </TouchableRipple>
       </View>
+
       <View style={{padding: 5}}>
         <Text>Icons By Icons8. Visit https://icons8.com</Text>
       </View>
