@@ -12,6 +12,7 @@ import {
   Alert,
   ActivityIndicator,
   SafeAreaView,
+  Pressable,
 } from 'react-native';
 import React, {useState, useEffect, useContext} from 'react';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
@@ -19,6 +20,7 @@ import {http} from '../shared/lib';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Moment from 'moment';
 import {AuthContext} from '../context/AuthContext';
+import ImageView from 'react-native-image-viewing';
 const {width, height} = Dimensions.get('window');
 
 export default function AdDescription({route, navigation}) {
@@ -26,6 +28,9 @@ export default function AdDescription({route, navigation}) {
   const [answerData, setAnswerData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isQuesAnsAvailable, setIsQuesAnsAvailable] = useState(false);
+  const [showImageViewer, setShowImageViewer] = useState(false);
+  const [imageViewIndex, setImageViewIndex] = useState(0);
+  const [imageViewData, setImageViewData] = useState([]);
   const {logout} = useContext(AuthContext);
   const {adDetails} = route.params;
   const {location, area} = adDetails;
@@ -128,6 +133,17 @@ export default function AdDescription({route, navigation}) {
       </>
     );
   };
+
+  const imageViewHandler = index => {
+    const imagesData = adDetails.images.map(item => {
+      return {
+        uri: item.image,
+      };
+    });
+    setImageViewData(imagesData);
+    setImageViewIndex(index);
+    setShowImageViewer(true);
+  };
   return isLoading ? (
     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
       <ActivityIndicator size={'large'} color={'#FA8C00'} />
@@ -148,11 +164,16 @@ export default function AdDescription({route, navigation}) {
             pagingEnabled={true}
             renderItem={({item, index}) => {
               return (
-                <Image
-                  source={{uri: item.image}}
-                  resizeMode="contain"
-                  style={styles.wrapper}
-                />
+                <Pressable
+                  onPress={() => {
+                    imageViewHandler(index);
+                  }}>
+                  <Image
+                    source={{uri: item.image}}
+                    resizeMode="contain"
+                    style={styles.wrapper}
+                  />
+                </Pressable>
               );
             }}
           />
@@ -184,6 +205,14 @@ export default function AdDescription({route, navigation}) {
             <MaterialIcon name="arrow-back" size={24} color={'#222'} />
           </TouchableOpacity>
         </View>
+        {showImageViewer && (
+          <ImageView
+            images={imageViewData}
+            imageIndex={imageViewIndex}
+            visible={showImageViewer}
+            onRequestClose={() => setShowImageViewer(false)}
+          />
+        )}
         <View style={styles.adInfoSection}>
           <View style={styles.infoSectionTop}>
             {adDetails.isPrice && (

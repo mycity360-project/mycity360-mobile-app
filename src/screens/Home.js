@@ -194,7 +194,7 @@ export default function Home({navigation}) {
       setFlatlistLoading(true);
       const token = await AsyncStorage.getItem('token');
       const userAdsRespData = await http.get(
-        `/user-ad/?is_active=True&page=${page}&area_id=${userInfo.localUserArea.id}`,
+        `/user-ad/?is_active=True&page=${page}&area_id=${userInfo.localUserArea.id}&is_home=true`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -218,10 +218,11 @@ export default function Home({navigation}) {
           locationName: ad.area?.location?.name,
           areaName: ad.area?.name,
           isPrice: ad.category?.is_price,
+
           key: `${userAdsData.length + index}`,
         };
       });
-      console.log(ads);
+      console.log(userAdsRespData);
       setUserAdsData(prevData => [...prevData, ...ads]);
     } catch (error) {
       if (error.response?.status === 401) {

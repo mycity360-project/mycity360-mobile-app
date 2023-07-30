@@ -226,6 +226,18 @@ export default function ProfileScreen() {
         </View>
       </View>
       <View style={styles.menuSection}>
+        <TouchableRipple onPress={() => {}}>
+          <View style={styles.menuItems}>
+            <MaterialIcon
+              name="support-agent"
+              color={styles.menuItemIcon.color}
+              size={styles.menuItemIcon.size}
+            />
+            <Text allowFontScaling={false} style={styles.menuItemText}>
+              Need Help?
+            </Text>
+          </View>
+        </TouchableRipple>
         <TouchableRipple
           onPress={() => {
             logout();
