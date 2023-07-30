@@ -253,7 +253,7 @@ export default function QuestionsScreen({navigation, route}) {
   };
   return isLoading ? (
     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-      <ActivityIndicator size={'large'} />
+      <ActivityIndicator size={'large'} color={'#FA8C00'} />
     </View>
   ) : (
     <SafeAreaView style={styles.container}>

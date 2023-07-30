@@ -52,6 +52,7 @@ export default function UploadAdPhotos({navigation, route}) {
   const openCamera = () => {
     const options = {
       storageOptions: {path: 'images', mediaType: 'photo'},
+      quality: 0.8,
     };
 
     launchCamera(options, response => {
@@ -88,6 +89,7 @@ export default function UploadAdPhotos({navigation, route}) {
     const options = {
       storageOptions: {path: 'images', mediaType: 'photo'},
       selectionLimit: 0,
+      quality: 0.8,
     };
 
     launchImageLibrary(options, response => {

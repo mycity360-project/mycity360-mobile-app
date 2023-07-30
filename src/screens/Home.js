@@ -221,6 +221,7 @@ export default function Home({navigation}) {
           key: `${userAdsData.length + index}`,
         };
       });
+      console.log(ads);
       setUserAdsData(prevData => [...prevData, ...ads]);
     } catch (error) {
       if (error.response?.status === 401) {
@@ -538,7 +539,7 @@ export default function Home({navigation}) {
                   <View style={{flex: 1}}>
                     <Pressable onPress={() => handleWebLink(item.redirectUrl)}>
                       <Image
-                        source={{uri: item.image}}
+                        source={{uri: item?.image}}
                         resizeMode="cover"
                         style={styles.wrapper}
                       />
