@@ -21,8 +21,16 @@ import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import Modal from 'react-native-modal';
 import {http} from '../shared/lib';
 import {request, PERMISSIONS} from 'react-native-permissions';
+import {
+  FACEBOOK_APP,
+  FACEBOOK_WEB,
+  INSTAGRAM_APP,
+  INSTAGRAM_WEB,
+  WHATSAPP_APP,
+  WHATSAPP_WEB,
+} from '../shared/constants/env';
 
-export default function ProfileScreen() {
+export default function ProfileScreen({navigation}) {
   const {logout} = useContext(AuthContext);
   const [userInfo, setUserInfo] = useState({});
   const [isLoading, setIsLoading] = useState(false);
@@ -231,7 +239,18 @@ export default function ProfileScreen() {
       <View style={styles.menuSection}>
         <TouchableRipple
           onPress={() => {
-            Linking.openURL('whatsapp://send?phone=7015701734');
+            // if (await Linking.canOpenURL(WHATSAPP_APP)) {
+            //   Linking.openURL(WHATSAPP_APP);
+            // } else {
+            // navigation.navigate('WebViewScreen', {
+            //   uri: WHATSAPP_WEB,
+            // });
+            // }
+            Linking.openURL(WHATSAPP_APP).catch(() => {
+              navigation.navigate('WebViewScreen', {
+                uri: WHATSAPP_WEB,
+              });
+            });
           }}>
           <View style={styles.menuItems}>
             <MaterialIcon
@@ -261,7 +280,11 @@ export default function ProfileScreen() {
         </TouchableRipple>
         <TouchableRipple
           onPress={() => {
-            Linking.openURL('instagram://user?username=anurag_chachan');
+            Linking.openURL(INSTAGRAM_APP).catch(() => {
+              navigation.navigate('WebViewScreen', {
+                uri: INSTAGRAM_WEB,
+              });
+            });
           }}>
           <View style={styles.menuItems}>
             <MaterialCommunityIcons
@@ -277,7 +300,18 @@ export default function ProfileScreen() {
         </TouchableRipple>
         <TouchableRipple
           onPress={() => {
-            // Linking.openURL('');
+            // if (await Linking.canOpenURL(FACEBOOK_APP)) {
+            //   Linking.openURL(FACEBOOK_APP);
+            // } else {
+            //   navigation.navigate('WebViewScreen', {
+            //     uri: FACEBOOK_WEB,
+            //   });
+            // }
+            Linking.openURL(FACEBOOK_APP).catch(() => {
+              navigation.navigate('WebViewScreen', {
+                uri: FACEBOOK_WEB,
+              });
+            });
           }}>
           <View style={styles.menuItems}>
             <MaterialCommunityIcons
@@ -285,7 +319,6 @@ export default function ProfileScreen() {
               color={styles.menuItemIcon.color}
               size={styles.menuItemIcon.size}
             />
-
             <Text allowFontScaling={false} style={styles.menuItemText}>
               Facebook
             </Text>
