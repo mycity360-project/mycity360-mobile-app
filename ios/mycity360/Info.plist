@@ -30,13 +30,13 @@
     	<true/>
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Add Key</string>
+	<string>MyCity360 uses location</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Add Key</string>
+	<string>MyCity360 uses photo library</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Add Key</string>
+	<string>MyCity360 uses photo library</string>
 	<key>NSCameraUsageDescription</key>
-	<string>Add Key</string>
+	<string>MyCity360 uses camera</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIRequiredDeviceCapabilities</key>
