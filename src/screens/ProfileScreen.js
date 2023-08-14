@@ -22,6 +22,7 @@ import Modal from 'react-native-modal';
 import {http} from '../shared/lib';
 import {request, PERMISSIONS} from 'react-native-permissions';
 import {
+  DEACTIVATE_ACCOUNT,
   FACEBOOK_APP,
   FACEBOOK_WEB,
   INSTAGRAM_APP,
@@ -239,47 +240,6 @@ export default function ProfileScreen({navigation}) {
       <View style={styles.menuSection}>
         <TouchableRipple
           onPress={() => {
-            // if (await Linking.canOpenURL(WHATSAPP_APP)) {
-            //   Linking.openURL(WHATSAPP_APP);
-            // } else {
-            // navigation.navigate('WebViewScreen', {
-            //   uri: WHATSAPP_WEB,
-            // });
-            // }
-            Linking.openURL(WHATSAPP_APP).catch(() => {
-              navigation.navigate('WebViewScreen', {
-                uri: WHATSAPP_WEB,
-              });
-            });
-          }}>
-          <View style={styles.menuItems}>
-            <MaterialIcon
-              name="support-agent"
-              color={styles.menuItemIcon.color}
-              size={styles.menuItemIcon.size}
-            />
-            <Text allowFontScaling={false} style={styles.menuItemText}>
-              Need Help?
-            </Text>
-          </View>
-        </TouchableRipple>
-        <TouchableRipple
-          onPress={() => {
-            logout();
-          }}>
-          <View style={styles.menuItems}>
-            <MaterialIcon
-              name="logout"
-              color={styles.menuItemIcon.color}
-              size={styles.menuItemIcon.size}
-            />
-            <Text allowFontScaling={false} style={styles.menuItemText}>
-              Logout
-            </Text>
-          </View>
-        </TouchableRipple>
-        <TouchableRipple
-          onPress={() => {
             Linking.openURL(INSTAGRAM_APP).catch(() => {
               navigation.navigate('WebViewScreen', {
                 uri: INSTAGRAM_WEB,
@@ -300,13 +260,6 @@ export default function ProfileScreen({navigation}) {
         </TouchableRipple>
         <TouchableRipple
           onPress={() => {
-            // if (await Linking.canOpenURL(FACEBOOK_APP)) {
-            //   Linking.openURL(FACEBOOK_APP);
-            // } else {
-            //   navigation.navigate('WebViewScreen', {
-            //     uri: FACEBOOK_WEB,
-            //   });
-            // }
             Linking.openURL(FACEBOOK_APP).catch(() => {
               navigation.navigate('WebViewScreen', {
                 uri: FACEBOOK_WEB,
@@ -324,6 +277,75 @@ export default function ProfileScreen({navigation}) {
             </Text>
           </View>
         </TouchableRipple>
+        <TouchableRipple
+          onPress={() => {
+            navigation.navigate('WebViewScreen', {
+              uri: DEACTIVATE_ACCOUNT,
+            });
+          }}>
+          <View style={styles.menuItems}>
+            <MaterialIcon
+              name="delete"
+              color={styles.menuItemIcon.color}
+              size={styles.menuItemIcon.size}
+            />
+            <Text allowFontScaling={false} style={styles.menuItemText}>
+              Deactivate Account
+            </Text>
+          </View>
+        </TouchableRipple>
+        <TouchableRipple
+          onPress={() => {
+            logout();
+          }}>
+          <View style={styles.menuItems}>
+            <MaterialIcon
+              name="logout"
+              color={styles.menuItemIcon.color}
+              size={styles.menuItemIcon.size}
+            />
+            <Text allowFontScaling={false} style={styles.menuItemText}>
+              Logout
+            </Text>
+          </View>
+        </TouchableRipple>
+      </View>
+      <View style={{flex: 0.5, padding: 15}}>
+        <Text style={{color: '#222', fontWeight: 700, fontSize: 16}}>
+          Need help?
+        </Text>
+        <Pressable
+          onPress={() => {
+            Linking.openURL(WHATSAPP_APP).catch(() => {
+              navigation.navigate('WebViewScreen', {
+                uri: WHATSAPP_WEB,
+              });
+            });
+          }}>
+          <View
+            style={
+              (styles.menuItems,
+              {
+                backgroundColor: '#ebebeb',
+                borderRadius: 5,
+                padding: 5,
+                flexDirection: 'row',
+                height: '50%',
+
+                marginTop: 10,
+                alignItems: 'center',
+              })
+            }>
+            <MaterialIcon
+              name="support-agent"
+              color={styles.menuItemIcon.color}
+              size={styles.menuItemIcon.size}
+            />
+            <Text allowFontScaling={false} style={styles.menuItemText}>
+              Ask us on Whatsapp
+            </Text>
+          </View>
+        </Pressable>
       </View>
 
       <View style={{padding: 5}}>
@@ -366,7 +388,6 @@ export default function ProfileScreen({navigation}) {
               } else {
                 resp = await askForPermission(PERMISSIONS.ANDROID.CAMERA);
               }
-              console.log(resp);
 
               if (resp === 'granted') {
                 openCamera();
@@ -420,7 +441,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   userInfoSection: {
-    flex: 0.5,
+    flex: 0.7,
     paddingHorizontal: 20,
   },
   userInfoHeader: {

@@ -53,6 +53,8 @@ export default function UploadAdPhotos({navigation, route}) {
     const options = {
       storageOptions: {path: 'images', mediaType: 'photo'},
       quality: 0.8,
+      maxWidth: 400,
+      maxHeight: 300,
     };
 
     launchCamera(options, response => {
@@ -90,6 +92,8 @@ export default function UploadAdPhotos({navigation, route}) {
       storageOptions: {path: 'images', mediaType: 'photo'},
       selectionLimit: 0,
       quality: 0.8,
+      maxWidth: 400,
+      maxHeight: 300,
     };
 
     launchImageLibrary(options, response => {

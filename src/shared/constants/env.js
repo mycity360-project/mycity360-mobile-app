@@ -11,4 +11,5 @@ module.exports = {
   FACEBOOK_WEB: 'https://www.facebook.com/profile.php?id=100090405783729',
   WHATSAPP_APP: 'whatsapp://send?phone=+918570077340',
   WHATSAPP_WEB: 'https://wa.me/+918570077340',
+  DEACTIVATE_ACCOUNT: 'http://mycity360.in/account-delete/',
 };

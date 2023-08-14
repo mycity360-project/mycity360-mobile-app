@@ -26,6 +26,7 @@ import {SwiperFlatList} from 'react-native-swiper-flatlist';
 
 const {width, height} = Dimensions.get('window');
 const screenHeight = height;
+const screenWidth = width;
 export default function Home({navigation}) {
   const [categoriesData, setCategoriesData] = useState([]);
   const [isCategoryLoding, setIsCategoryLoding] = useState(false);
@@ -527,7 +528,8 @@ export default function Home({navigation}) {
           )}
         </View>
         {showBanner && (
-          <View style={[styles.bannerSection, {height: screenHeight * 0.33}]}>
+          <View
+            style={[styles.bannerSection, {height: 250, width: screenWidth}]}>
             <SwiperFlatList
               autoplay
               autoplayDelay={5}
@@ -535,7 +537,7 @@ export default function Home({navigation}) {
               showPagination={true}
               paginationActiveColor={'#FA8C00'}
               data={bannerImages}
-              renderItem={({item, index}) => {
+              renderItem={({item}) => {
                 return (
                   <View style={{flex: 1}}>
                     <Pressable onPress={() => handleWebLink(item.redirectUrl)}>
@@ -623,7 +625,7 @@ export default function Home({navigation}) {
               </TouchableOpacity>
             </View>
             <View style={styles.searchBarSection}>
-              <View style={{flex: 0.85, flexDirection: 'row'}}>
+              <View style={{flex: 0.8, flexDirection: 'row'}}>
                 <TextInput
                   allowFontScaling={false}
                   returnKeyType="search"
@@ -764,7 +766,7 @@ const styles = StyleSheet.create({
     flex: 0.2,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: '-2%',
+    marginRight: '-1%',
     borderColor: '#999',
     borderRightWidth: 0.3,
     padding: 5,
@@ -782,5 +784,5 @@ const styles = StyleSheet.create({
     width: '50%',
     backgroundColor: '#FFF',
   },
-  wrapper: {width: width, height: '100%'},
+  wrapper: {width: screenWidth, height: '100%'},
 });
