@@ -537,6 +537,12 @@ export default function Home({navigation}) {
               showPagination={true}
               paginationActiveColor={'#FA8C00'}
               data={bannerImages}
+              paginationStyleItem={{
+                height: 10,
+                width: 10,
+                alignItems: 'baseline',
+                marginTop: 10,
+              }}
               renderItem={({item}) => {
                 return (
                   <View style={{flex: 1}}>

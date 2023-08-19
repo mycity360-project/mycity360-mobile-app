@@ -139,7 +139,7 @@ export default function IncludeSomeDetails({navigation, route}) {
               </Text>
               <TextInput
                 allowFontScaling={false}
-                placeholder="Describe your product."
+                placeholder="Describe your Add."
                 multiline={true}
                 // maxLength={AD_DESC_MAX_LENGTH}
                 numberOfLines={5}

@@ -32,11 +32,11 @@
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>MyCity360 uses location</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>MyCity360 uses photo library</string>
+	<string>This app requires access to the photo library to upload your profile photo or Your Add.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>MyCity360 uses photo library</string>
+	<string>This app requires access to the photo library to upload your profile photo or Your Add.</string>
 	<key>NSCameraUsageDescription</key>
-	<string>MyCity360 uses camera</string>
+	<string>This app requires access to the click photo from camera to upload your profile photo or Your Add.</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIRequiredDeviceCapabilities</key>

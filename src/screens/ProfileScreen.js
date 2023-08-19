@@ -290,7 +290,7 @@ export default function ProfileScreen({navigation}) {
               size={styles.menuItemIcon.size}
             />
             <Text allowFontScaling={false} style={styles.menuItemText}>
-              Deactivate Account
+              Delete Account
             </Text>
           </View>
         </TouchableRipple>
