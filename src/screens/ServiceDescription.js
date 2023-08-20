@@ -10,17 +10,19 @@ import {
   SafeAreaView,
   Dimensions,
   FlatList,
+  Alert,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useState, useContext} from 'react';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import {ScrollView} from 'react-native-gesture-handler';
+import {AuthContext} from '../context/AuthContext';
 
 const {width, height} = Dimensions.get('window');
 
 export default function ServiceDescription({route, navigation}) {
   const {serviceDetails} = route.params;
   const [currentIndex, setCurrentIndex] = useState(0);
-
+  const {logout, userInfo} = useContext(AuthContext);
   const openDialer = phoneNumber => {
     Platform.OS === 'ios'
       ? Linking.openURL(`telprompt:${phoneNumber}`)
@@ -115,8 +117,22 @@ export default function ServiceDescription({route, navigation}) {
 
       <View style={styles.footer}>
         <TouchableOpacity
-          style={styles.button}
-          onPress={() => openDialer(serviceDetails.phone)}>
+          style={
+            userInfo.role === 'Guest'
+              ? {...styles.button, backgroundColor: '#808080'}
+              : styles.button
+          }
+          onPress={() => {
+            if (userInfo.role === 'Guest') {
+              Alert.alert(
+                'Warning',
+                'To Access these feature please signup and login in app',
+                [{text: 'Cancel'}, {text: 'Login', onPress: () => logout()}],
+              );
+            } else {
+              openDialer(serviceDetails.phone);
+            }
+          }}>
           <Text allowFontScaling={false} style={styles.buttonText}>
             Call Now
           </Text>

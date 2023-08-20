@@ -101,6 +101,33 @@ export default function Login({route}) {
     }
   };
 
+  const loginGuestHandler = async () => {
+    setIsLoading(true);
+
+    const url = 'user/guest-login/';
+    const config = {
+      headers: {
+        clientid: BACKEND_CLIENT_ID,
+      },
+    };
+
+    try {
+      let respData = await http.post(url, {}, config);
+      await onTokenAvailable(respData, respData.access_token, respData.user_id);
+    } catch (error) {
+      console.log(JSON.stringify(error));
+      if (error.response.status === 500) {
+        Alert.alert('ERROR', 'User not exist ', [{text: 'OK'}]);
+      } else if (error.response.status === 400) {
+        Alert.alert('ERROR', 'Check Your username OR password', [{text: 'OK'}]);
+      } else {
+        Alert.alert('ERROR', 'Something Went Wrong', [{text: 'OK'}]);
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <KeyboardAwareScrollView
@@ -223,6 +250,15 @@ export default function Login({route}) {
                 Forgot Password?
               </Text>
             </TouchableOpacity>
+
+            <CustomButton
+              btnTitle="Login As Guest"
+              onpress={() => {
+                loginGuestHandler();
+              }}
+              style={styles.loginBtn}
+              icon="arrow-forward"
+            />
           </View>
           <Loader visible={isLoading} text="Logging you in.." />
         </View>

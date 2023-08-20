@@ -32,7 +32,7 @@ export default function AdDescription({route, navigation}) {
   const [showImageViewer, setShowImageViewer] = useState(false);
   const [imageViewIndex, setImageViewIndex] = useState(0);
   const [imageViewData, setImageViewData] = useState([]);
-  const {logout} = useContext(AuthContext);
+  const {logout, userInfo} = useContext(AuthContext);
   const {adDetails} = route.params;
   const {location, area} = adDetails;
 
@@ -316,8 +316,22 @@ export default function AdDescription({route, navigation}) {
       <View style={styles.footer}>
         {adDetails.showCallNowBtn && (
           <TouchableOpacity
-            style={styles.button}
-            onPress={() => openDialer(adDetails.phone)}>
+            style={
+              userInfo.role === 'Guest'
+                ? {...styles.button, backgroundColor: '#808080'}
+                : styles.button
+            }
+            onPress={() => {
+              if (userInfo.role === 'Guest') {
+                Alert.alert(
+                  'Warning',
+                  'To Access these feature please signup and login in app',
+                  [{text: 'Cancel'}, {text: 'Login', onPress: () => logout()}],
+                );
+              } else {
+                openDialer(adDetails.phone);
+              }
+            }}>
             <Text allowFontScaling={false} style={styles.buttonText}>
               Call Now
             </Text>

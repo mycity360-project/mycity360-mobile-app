@@ -469,9 +469,17 @@ export default function Home({navigation}) {
           <TouchableOpacity
             style={styles.sellBtn}
             onPress={() => {
-              navigation.navigate('WhatAreYouOffering', {
-                categoriesData: categoriesData,
-              });
+              if (userInfo.role !== 'Guest') {
+                navigation.navigate('WhatAreYouOffering', {
+                  categoriesData: categoriesData,
+                });
+              } else {
+                Alert.alert(
+                  'Warning',
+                  'To Access these feature please signup and login in app',
+                  [{text: 'Cancel'}, {text: 'Login', onPress: () => logout()}],
+                );
+              }
             }}>
             <View
               style={{
@@ -481,7 +489,7 @@ export default function Home({navigation}) {
               }}>
               <MaterialIcon
                 name="add-circle-outline"
-                color={'#FF8C00'}
+                color={userInfo.role === 'Guest' ? '808080' : '#FF8C00'}
                 size={45}
               />
             </View>
