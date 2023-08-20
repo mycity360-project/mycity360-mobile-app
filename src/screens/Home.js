@@ -489,7 +489,7 @@ export default function Home({navigation}) {
               }}>
               <MaterialIcon
                 name="add-circle-outline"
-                color={userInfo.role === 'Guest' ? '808080' : '#FF8C00'}
+                color={userInfo.role === 'Guest' ? '#808080' : '#FF8C00'}
                 size={45}
               />
             </View>

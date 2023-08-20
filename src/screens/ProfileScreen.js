@@ -32,7 +32,7 @@ import {
 } from '../shared/constants/env';
 
 export default function ProfileScreen({navigation}) {
-  const {logout} = useContext(AuthContext);
+  const {logout, userInfo: userDetails} = useContext(AuthContext);
   const [userInfo, setUserInfo] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [showImagePicker, setShowImagePicker] = useState(false);
@@ -176,26 +176,28 @@ export default function ProfileScreen({navigation}) {
             imageStyle={{
               borderRadius: 50,
             }}>
-            <TouchableOpacity
-              style={{
-                flex: 1,
-                position: 'absolute',
-                bottom: 10,
-                right: 0,
-              }}
-              onPress={() => setShowImagePicker(true)}>
-              <MaterialIcon
-                name="photo-camera"
-                color={'#111'}
-                size={26}
+            {userDetails.role !== 'Guest' && (
+              <TouchableOpacity
                 style={{
-                  opacity: 0.5,
+                  flex: 1,
+                  position: 'absolute',
+                  bottom: 10,
+                  right: 0,
                 }}
-              />
-            </TouchableOpacity>
+                onPress={() => setShowImagePicker(true)}>
+                <MaterialIcon
+                  name="photo-camera"
+                  color={'#111'}
+                  size={26}
+                  style={{
+                    opacity: 0.5,
+                  }}
+                />
+              </TouchableOpacity>
+            )}
           </ImageBackground>
 
-          <View style={{marginLeft: '5%', flex: 1, marginVertical: '5%'}}>
+          <View style={{flex: 1, padding: 15}}>
             <Title style={styles.title}>
               {userInfo.first_name + ' ' + userInfo.last_name}
             </Title>
@@ -215,26 +217,30 @@ export default function ProfileScreen({navigation}) {
               {userInfo?.area?.name}
             </Text>
           </View>
-          <View style={styles.row}>
-            <MaterialIcon
-              name="phone"
-              size={styles.rowIcon.size}
-              color={styles.rowIcon.color}
-            />
-            <Text allowFontScaling={false} style={styles.rowText}>
-              {userInfo.phone}
-            </Text>
-          </View>
-          <View style={styles.row}>
-            <MaterialIcon
-              name="email"
-              size={styles.rowIcon.size}
-              color={styles.rowIcon.color}
-            />
-            <Text allowFontScaling={false} style={styles.rowText}>
-              {userInfo.email}
-            </Text>
-          </View>
+          {userDetails.role !== 'Guest' && (
+            <>
+              <View style={styles.row}>
+                <MaterialIcon
+                  name="phone"
+                  size={styles.rowIcon.size}
+                  color={styles.rowIcon.color}
+                />
+                <Text allowFontScaling={false} style={styles.rowText}>
+                  {userInfo.phone}
+                </Text>
+              </View>
+              <View style={styles.row}>
+                <MaterialIcon
+                  name="email"
+                  size={styles.rowIcon.size}
+                  color={styles.rowIcon.color}
+                />
+                <Text allowFontScaling={false} style={styles.rowText}>
+                  {userInfo.email}
+                </Text>
+              </View>
+            </>
+          )}
         </View>
       </View>
       <View style={styles.menuSection}>
@@ -277,23 +283,26 @@ export default function ProfileScreen({navigation}) {
             </Text>
           </View>
         </TouchableRipple>
-        <TouchableRipple
-          onPress={() => {
-            navigation.navigate('WebViewScreen', {
-              uri: DEACTIVATE_ACCOUNT,
-            });
-          }}>
-          <View style={styles.menuItems}>
-            <MaterialIcon
-              name="delete"
-              color={styles.menuItemIcon.color}
-              size={styles.menuItemIcon.size}
-            />
-            <Text allowFontScaling={false} style={styles.menuItemText}>
-              Delete Account
-            </Text>
-          </View>
-        </TouchableRipple>
+        {userDetails.role !== 'Guest' && (
+          <TouchableRipple
+            onPress={() => {
+              navigation.navigate('WebViewScreen', {
+                uri: DEACTIVATE_ACCOUNT,
+              });
+            }}>
+            <View style={styles.menuItems}>
+              <MaterialIcon
+                name="delete"
+                color={styles.menuItemIcon.color}
+                size={styles.menuItemIcon.size}
+              />
+              <Text allowFontScaling={false} style={styles.menuItemText}>
+                Delete Account
+              </Text>
+            </View>
+          </TouchableRipple>
+        )}
+
         <TouchableRipple
           onPress={() => {
             logout();
