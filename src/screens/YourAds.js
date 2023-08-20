@@ -102,7 +102,7 @@ export default function YourAds({navigation, route}) {
     if (flatlistLoading) {
       return (
         <View style={{marginTop: 10}}>
-          <ActivityIndicator size="small" color="#0000ff" />
+          <ActivityIndicator size="small" color={'#FA8C00'} />
         </View>
       );
     }

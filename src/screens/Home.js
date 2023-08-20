@@ -162,7 +162,7 @@ export default function Home({navigation}) {
     if (flatlistLoading) {
       return (
         <View style={{marginTop: 10}}>
-          <ActivityIndicator size="small" color="#0000ff" />
+          <ActivityIndicator size="small" color={'#FA8C00'} />
         </View>
       );
     }
@@ -511,7 +511,7 @@ export default function Home({navigation}) {
                 styles.categoryListSection,
                 {justifyContent: 'center', alignItems: 'center'},
               ]}>
-              <ActivityIndicator size="small" color="#0000ff" />
+              <ActivityIndicator size="small" color={'#FA8C00'} />
             </View>
           ) : (
             <View style={styles.categoryListSection}>

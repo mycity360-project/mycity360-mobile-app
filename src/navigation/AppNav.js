@@ -44,7 +44,7 @@ export default function AppNav() {
     return (
       // eslint-disable-next-line react-native/no-inline-styles
       <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-        <ActivityIndicator size={'large'} />
+        <ActivityIndicator size={'large'} color={'#FA8C00'} />
       </View>
     );
   }

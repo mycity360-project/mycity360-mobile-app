@@ -21,6 +21,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Moment from 'moment';
 import {AuthContext} from '../context/AuthContext';
 import ImageView from 'react-native-image-viewing';
+import {WHATSAPP_APP, WHATSAPP_WEB} from '../shared/constants/env';
 const {width, height} = Dimensions.get('window');
 
 export default function AdDescription({route, navigation}) {
@@ -54,12 +55,17 @@ export default function AdDescription({route, navigation}) {
       await http.delete(url, config);
       setIsLoading(false);
 
-      navigation.navigate('YourAds', {
-        showAlert: true,
-        alertHeading: 'SUCCESS',
-        alertMsg: 'Ad Deleted Successfully.',
-        btnText: 'OK',
-      });
+      Alert.alert('SUCCESS', 'Ad Deleted Successfully.', [
+        {
+          text: 'OK',
+          onPress: () =>
+            navigation.navigate('YourAds', {
+              alertHeading: 'SUCCESS',
+              alertMsg: 'Ad Deleted Successfully.',
+              btnText: 'OK',
+            }),
+        },
+      ]);
     } catch (error) {
       if (error.response.status === 401) {
         logout();
@@ -203,6 +209,23 @@ export default function AdDescription({route, navigation}) {
               navigation.goBack();
             }}>
             <MaterialIcon name="arrow-back" size={24} color={'#222'} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{
+              position: 'absolute',
+              top: 10,
+              right: 15,
+            }}
+            onPress={() => {
+              Linking.openURL(
+                `${WHATSAPP_APP}&text=I want to report this post with Ad Id ${adDetails.code}`,
+              ).catch(() => {
+                navigation.navigate('WebViewScreen', {
+                  uri: `${WHATSAPP_WEB}&text=I want to report this post with Ad Id ${adDetails.code}`,
+                });
+              });
+            }}>
+            <MaterialIcon name="flag" size={24} color={'#FF0000'} />
           </TouchableOpacity>
         </View>
         {showImageViewer && (
