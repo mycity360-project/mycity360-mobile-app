@@ -218,15 +218,37 @@ export default function AdDescription({route, navigation}) {
               right: 15,
             }}
             onPress={() => {
-              const subject = `I want to report this post with Ad Id ${adDetails.code}`;
-              const body = `Hi Support,\n I am ${
-                userInfo.first_name + userInfo.last_name
-              } and I want to report this add.\n Regards,\n ${
-                userInfo.first_name
-              }`;
-              Linking.openURL(
-                `mailto:${SUPPORT_EMAIL}?subject=${subject}&body=${body}`,
-              );
+              if (
+                userInfo.id !== adDetails.userID &&
+                userInfo.role !== 'Guest'
+              ) {
+                const subject = `I want to report this post with Ad Id ${adDetails.code}`;
+                const body = `Hi Support,\n I am ${
+                  userInfo.first_name + userInfo.last_name
+                } and I want to report this add.\n Regards,\n ${
+                  userInfo.first_name
+                }`;
+                Linking.openURL(
+                  `mailto:${SUPPORT_EMAIL}?subject=${subject}&body=${body}`,
+                );
+              } else {
+                if (userInfo.role === 'Guest') {
+                  Alert.alert(
+                    'Warning',
+                    'To Access these feature please signup and login in app',
+                    [
+                      {text: 'Cancel'},
+                      {text: 'Login', onPress: () => logout()},
+                    ],
+                  );
+                } else {
+                  Alert.alert(
+                    'Warning',
+                    "You're not allowed to report own add",
+                    [{text: 'OK'}],
+                  );
+                }
+              }
             }}>
             <MaterialIcon name="flag" size={24} color={'#FF0000'} />
           </TouchableOpacity>
