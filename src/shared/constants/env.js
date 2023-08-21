@@ -12,4 +12,5 @@ module.exports = {
   WHATSAPP_APP: 'whatsapp://send?phone=+918570077340',
   WHATSAPP_WEB: 'https://wa.me/+918570077340',
   DEACTIVATE_ACCOUNT: 'http://mycity360.in/account-delete/',
+  SUPPORT_EMAIL: 'mycity360.in@gmail.com',
 };

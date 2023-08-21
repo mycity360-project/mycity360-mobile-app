@@ -21,7 +21,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Moment from 'moment';
 import {AuthContext} from '../context/AuthContext';
 import ImageView from 'react-native-image-viewing';
-import {WHATSAPP_APP, WHATSAPP_WEB} from '../shared/constants/env';
+import {SUPPORT_EMAIL} from '../shared/constants/env';
 const {width, height} = Dimensions.get('window');
 
 export default function AdDescription({route, navigation}) {
@@ -35,6 +35,7 @@ export default function AdDescription({route, navigation}) {
   const {logout, userInfo} = useContext(AuthContext);
   const {adDetails} = route.params;
   const {location, area} = adDetails;
+  console.log(userInfo, 'dsdasadasdasdasdasdasdasd');
 
   const openDialer = contactNumber => {
     Platform.OS === 'ios'
@@ -217,13 +218,15 @@ export default function AdDescription({route, navigation}) {
               right: 15,
             }}
             onPress={() => {
+              const subject = `I want to report this post with Ad Id ${adDetails.code}`;
+              const body = `Hi Support,\n I am ${
+                userInfo.first_name + userInfo.last_name
+              } and I want to report this add.\n Regards,\n ${
+                userInfo.first_name
+              }`;
               Linking.openURL(
-                `${WHATSAPP_APP}&text=I want to report this post with Ad Id ${adDetails.code}`,
-              ).catch(() => {
-                navigation.navigate('WebViewScreen', {
-                  uri: `${WHATSAPP_WEB}&text=I want to report this post with Ad Id ${adDetails.code}`,
-                });
-              });
+                `mailto:${SUPPORT_EMAIL}?subject=${subject}&body=${body}`,
+              );
             }}>
             <MaterialIcon name="flag" size={24} color={'#FF0000'} />
           </TouchableOpacity>
