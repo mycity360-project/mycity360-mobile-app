@@ -197,7 +197,7 @@ export default function ProfileScreen({navigation}) {
             )}
           </ImageBackground>
 
-          <View style={{flex: 1, padding: 15}}>
+          <View style={{paddingLeft: 15, paddingTop: 15}}>
             <Title style={styles.title}>
               {userInfo.first_name + ' ' + userInfo.last_name}
             </Title>
@@ -245,6 +245,7 @@ export default function ProfileScreen({navigation}) {
       </View>
       <View style={styles.menuSection}>
         <TouchableRipple
+          style={{paddingTop: 30}}
           onPress={() => {
             Linking.openURL(INSTAGRAM_APP).catch(() => {
               navigation.navigate('WebViewScreen', {
@@ -450,7 +451,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   userInfoSection: {
-    flex: 0.7,
+    flex: 1,
     paddingHorizontal: 20,
   },
   userInfoHeader: {
@@ -459,21 +460,21 @@ const styles = StyleSheet.create({
     marginVertical: '5%',
   },
   title: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: 'bold',
   },
   caption: {
     fontSize: 14,
     fontWeight: '500',
   },
-  userInfoBody: {flex: 1, marginTop: '5%'},
+  userInfoBody: {flex: 1, paddingTop: '10%'},
   row: {
     flexDirection: 'row',
     padding: '1%',
   },
   rowIcon: {color: '#222', size: 20},
   rowText: {color: '#222', marginLeft: 10},
-  menuSection: {flex: 1, margin: '4%'},
+  menuSection: {flex: 1, marginLeft: '4%'},
   menuItems: {
     flexDirection: 'row',
     paddingVertical: 15,

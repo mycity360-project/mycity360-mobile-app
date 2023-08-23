@@ -222,45 +222,25 @@ export default function AdDescription({route, navigation}) {
                 right: 15,
               }}
               onPress={() => {
-                switch (userInfo.role) {
-                  case 'Guest':
-                    Alert.alert(
-                      'Warning',
-                      'To access these features, please sign up and log in to the app',
-                      [
-                        {text: 'Cancel'},
-                        {text: 'Login', onPress: () => logout()},
-                      ],
-                    );
-                    break;
-
-                  default:
-                    // <Modal
-                    //   visible={true}
-                    //   animationType="slide"
-                    //   transparent={true}>
-                    //   <View style={styles.modalContainer}>
-                    //     <View style={styles.popup}>
-                    //       <TouchableOpacity style={styles.option}>
-                    //         <Text>Option 1</Text>
-                    //       </TouchableOpacity>
-                    //       <TouchableOpacity style={styles.option}>
-                    //         <Text>Option 2</Text>
-                    //       </TouchableOpacity>
-                    //     </View>
-                    //   </View>
-                    // </Modal>;
-
-                    const subject = `I want to report this post with Ad Id ${adDetails.code}`;
-                    const body = `Hi Support,\n I am ${
-                      userInfo.first_name + ' ' + userInfo.last_name
-                    } and I want to report this Ad.\n\n Regards,\n ${
-                      userInfo.first_name
-                    }`;
-                    Linking.openURL(
-                      `mailto:${SUPPORT_EMAIL}?subject=${subject}&body=${body}`,
-                    );
-                    break;
+                if (userInfo.role === 'Guest') {
+                  Alert.alert(
+                    'Warning',
+                    'To access these features, please sign up and log in to the app',
+                    [
+                      {text: 'Cancel'},
+                      {text: 'Login', onPress: () => logout()},
+                    ],
+                  );
+                } else {
+                  const subject = `I want to report this post with Ad Id ${adDetails.code}`;
+                  const body = `Hi Support,\n I am ${
+                    userInfo.first_name + ' ' + userInfo.last_name
+                  } and I want to report this Ad.\n\n Regards,\n ${
+                    userInfo.first_name
+                  }`;
+                  Linking.openURL(
+                    `mailto:${SUPPORT_EMAIL}?subject=${subject}&body=${body}`,
+                  );
                 }
               }}>
               <MaterialIcon name="flag" size={24} color={'#FF0000'} />
