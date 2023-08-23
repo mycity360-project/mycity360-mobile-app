@@ -13,6 +13,7 @@ import {
   ActivityIndicator,
   SafeAreaView,
   Pressable,
+  Modal,
 } from 'react-native';
 import React, {useState, useEffect, useContext} from 'react';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
@@ -22,6 +23,7 @@ import Moment from 'moment';
 import {AuthContext} from '../context/AuthContext';
 import ImageView from 'react-native-image-viewing';
 import {SUPPORT_EMAIL} from '../shared/constants/env';
+import {TouchableWithoutFeedback} from 'react-native';
 const {width, height} = Dimensions.get('window');
 
 export default function AdDescription({route, navigation}) {
@@ -184,7 +186,6 @@ export default function AdDescription({route, navigation}) {
               );
             }}
           />
-
           <View style={styles.dotWrapper}>
             {adDetails.images.map((e, index) => {
               return (
@@ -211,47 +212,60 @@ export default function AdDescription({route, navigation}) {
             }}>
             <MaterialIcon name="arrow-back" size={24} color={'#222'} />
           </TouchableOpacity>
-          <TouchableOpacity
-            style={{
-              position: 'absolute',
-              top: 10,
-              right: 15,
-            }}
-            onPress={() => {
-              if (
-                userInfo.id !== adDetails.userID &&
-                userInfo.role !== 'Guest'
-              ) {
-                const subject = `I want to report this post with Ad Id ${adDetails.code}`;
-                const body = `Hi Support,\n I am ${
-                  userInfo.first_name + userInfo.last_name
-                } and I want to report this add.\n Regards,\n ${
-                  userInfo.first_name
-                }`;
-                Linking.openURL(
-                  `mailto:${SUPPORT_EMAIL}?subject=${subject}&body=${body}`,
-                );
-              } else {
-                if (userInfo.role === 'Guest') {
-                  Alert.alert(
-                    'Warning',
-                    'To Access these feature please signup and login in app',
-                    [
-                      {text: 'Cancel'},
-                      {text: 'Login', onPress: () => logout()},
-                    ],
-                  );
-                } else {
-                  Alert.alert(
-                    'Warning',
-                    "You're not allowed to report own add",
-                    [{text: 'OK'}],
-                  );
+
+          {userInfo.id !== adDetails.userID && (
+            <TouchableOpacity
+              hitSlop={10}
+              style={{
+                position: 'absolute',
+                top: 10,
+                right: 15,
+              }}
+              onPress={() => {
+                switch (userInfo.role) {
+                  case 'Guest':
+                    Alert.alert(
+                      'Warning',
+                      'To access these features, please sign up and log in to the app',
+                      [
+                        {text: 'Cancel'},
+                        {text: 'Login', onPress: () => logout()},
+                      ],
+                    );
+                    break;
+
+                  default:
+                    // <Modal
+                    //   visible={true}
+                    //   animationType="slide"
+                    //   transparent={true}>
+                    //   <View style={styles.modalContainer}>
+                    //     <View style={styles.popup}>
+                    //       <TouchableOpacity style={styles.option}>
+                    //         <Text>Option 1</Text>
+                    //       </TouchableOpacity>
+                    //       <TouchableOpacity style={styles.option}>
+                    //         <Text>Option 2</Text>
+                    //       </TouchableOpacity>
+                    //     </View>
+                    //   </View>
+                    // </Modal>;
+
+                    const subject = `I want to report this post with Ad Id ${adDetails.code}`;
+                    const body = `Hi Support,\n I am ${
+                      userInfo.first_name + ' ' + userInfo.last_name
+                    } and I want to report this Ad.\n\n Regards,\n ${
+                      userInfo.first_name
+                    }`;
+                    Linking.openURL(
+                      `mailto:${SUPPORT_EMAIL}?subject=${subject}&body=${body}`,
+                    );
+                    break;
                 }
-              }
-            }}>
-            <MaterialIcon name="flag" size={24} color={'#FF0000'} />
-          </TouchableOpacity>
+              }}>
+              <MaterialIcon name="flag" size={24} color={'#FF0000'} />
+            </TouchableOpacity>
+          )}
         </View>
         {showImageViewer && (
           <ImageView
@@ -479,5 +493,18 @@ const styles = StyleSheet.create({
   },
   dotNotActive: {
     backgroundColor: '#fff',
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalView: {
+    padding: 10,
+    height: '35%',
+    backgroundColor: 'white',
+    borderRadius: 10,
+    width: '75%',
+    elevation: 5,
   },
 });
