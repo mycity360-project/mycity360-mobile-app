@@ -115,7 +115,6 @@ export default function Login({route}) {
       let respData = await http.post(url, {}, config);
       await onTokenAvailable(respData, respData.access_token, respData.user_id);
     } catch (error) {
-      console.log(JSON.stringify(error));
       if (error.response.status === 500) {
         Alert.alert('ERROR', 'User not exist ', [{text: 'OK'}]);
       } else if (error.response.status === 400) {

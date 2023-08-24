@@ -13,7 +13,6 @@ import {
   ActivityIndicator,
   SafeAreaView,
   Pressable,
-  Modal,
 } from 'react-native';
 import React, {useState, useEffect, useContext} from 'react';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
@@ -37,7 +36,6 @@ export default function AdDescription({route, navigation}) {
   const {logout, userInfo} = useContext(AuthContext);
   const {adDetails} = route.params;
   const {location, area} = adDetails;
-  console.log(userInfo, 'dsdasadasdasdasdasdasdasd');
 
   const openDialer = contactNumber => {
     Platform.OS === 'ios'
@@ -83,7 +81,7 @@ export default function AdDescription({route, navigation}) {
       setIsLoading(true);
       const token = await AsyncStorage.getItem('token');
       const answersRespData = await http.get(
-        `answer/?user_ad_id=${adDetails.id}`,
+        `answer/?user_ad_id=${adDetails.id}&page_size=20`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

@@ -66,7 +66,6 @@ export default function VerifyOtp({route}) {
         setLastOTPSentTime(new Date().getTime());
         Alert.alert('Resend OTP', 'OTP Sent Successfully');
       } catch (error) {
-        console.log(JSON.stringify(error), '66');
         const msg =
           error?.response?.data?.detail ||
           'Something Went Wrong, We are working on it. Please try after Some time';

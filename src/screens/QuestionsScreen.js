@@ -97,7 +97,6 @@ export default function QuestionsScreen({navigation, route}) {
   }, []);
 
   const handleAnswer = (id, answer) => {
-    console.log(id, answer);
     setAnswerData(prev => ({
       ...prev,
       [id]: answer,

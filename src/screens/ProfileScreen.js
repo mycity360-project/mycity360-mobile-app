@@ -185,14 +185,7 @@ export default function ProfileScreen({navigation}) {
                   right: 0,
                 }}
                 onPress={() => setShowImagePicker(true)}>
-                <MaterialIcon
-                  name="photo-camera"
-                  color={'#111'}
-                  size={26}
-                  style={{
-                    opacity: 0.5,
-                  }}
-                />
+                <MaterialIcon name="photo-camera" color={'#FA8C00'} size={26} />
               </TouchableOpacity>
             )}
           </ImageBackground>

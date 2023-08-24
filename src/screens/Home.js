@@ -105,6 +105,7 @@ export default function Home({navigation}) {
   }, [navigation]);
 
   useEffect(() => {
+    getCategories();
     setSearchText('');
     if (isFocused && !wasFocused.current) {
       getUserAds();
@@ -153,10 +154,10 @@ export default function Home({navigation}) {
     }
   };
 
-  useEffect(() => {
-    getCategories();
-    getBannerImages();
-  }, []);
+  // useEffect(() => {
+  //   
+  //   getBannerImages();
+  // }, []);
 
   const renderFooter = () => {
     if (flatlistLoading) {
@@ -223,7 +224,6 @@ export default function Home({navigation}) {
           key: `${userAdsData.length + index}`,
         };
       });
-      console.log(userAdsRespData);
       setUserAdsData(prevData => [...prevData, ...ads]);
     } catch (error) {
       if (error.response?.status === 401) {

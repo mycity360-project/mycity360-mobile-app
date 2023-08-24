@@ -137,8 +137,6 @@ export default function SignUp() {
         config,
       );
 
-      console.log(is_phone_verified, is_email_verified);
-
       if (id) {
         is_phone_verified && is_email_verified
           ? await login(email, password)

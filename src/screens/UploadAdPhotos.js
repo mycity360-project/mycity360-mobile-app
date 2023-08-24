@@ -371,7 +371,6 @@ export default function UploadAdPhotos({navigation, route}) {
               } else {
                 resp = await askForPermission(PERMISSIONS.ANDROID.CAMERA);
               }
-              console.log(resp);
 
               if (resp === 'granted') {
                 openCamera();
