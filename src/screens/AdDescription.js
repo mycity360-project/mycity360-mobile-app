@@ -236,9 +236,10 @@ export default function AdDescription({route, navigation}) {
                   } and I want to report this Ad.\n\n Regards,\n ${
                     userInfo.first_name
                   }`;
-                  Linking.openURL(
+                  let mailto = encodeURI(
                     `mailto:${SUPPORT_EMAIL}?subject=${subject}&body=${body}`,
                   );
+                  Linking.openURL(mailto);
                 }
               }}>
               <MaterialIcon name="flag" size={24} color={'#FF0000'} />
