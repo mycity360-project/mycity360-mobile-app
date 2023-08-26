@@ -1,4 +1,5 @@
 {
   "name": "mycity360",
-  "displayName": "MyCity360"
+  "displayName": "MyCity360",
+  "plugins": ["react-native-compressor"]
 }

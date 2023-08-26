@@ -30,6 +30,7 @@ import {
   WHATSAPP_APP,
   WHATSAPP_WEB,
 } from '../shared/constants/env';
+import {Image as ImageCompressor} from 'react-native-compressor';
 
 export default function ProfileScreen({navigation}) {
   const {logout, userInfo: userDetails} = useContext(AuthContext);
@@ -73,7 +74,7 @@ export default function ProfileScreen({navigation}) {
       saveToPhotos: true,
     };
 
-    launchCamera(options, response => {
+    launchCamera(options, async response => {
       if (response.didCancel) {
         console.log('User cancelled image picker');
       } else if (response.error) {
@@ -85,6 +86,11 @@ export default function ProfileScreen({navigation}) {
           uri: response?.assets?.[0]?.uri,
           type: response?.assets?.[0].type,
         };
+        let url = await ImageCompressor.compress(source.uri, {
+          compressionMethod: 'auto',
+          returnableOutputType: 'uri',
+        });
+        source.uri = url;
         setShowImagePicker(false);
         uploadImage(source);
       }
@@ -97,7 +103,7 @@ export default function ProfileScreen({navigation}) {
       selectionLimit: 1,
     };
 
-    launchImageLibrary(options, response => {
+    launchImageLibrary(options, async response => {
       if (response.didCancel) {
         console.log('User cancelled image picker');
       } else if (response.error) {
@@ -109,6 +115,11 @@ export default function ProfileScreen({navigation}) {
           uri: response.assets[0].uri,
           type: response.assets[0].type,
         };
+        let url = await ImageCompressor.compress(source.uri, {
+          compressionMethod: 'auto',
+          returnableOutputType: 'uri',
+        });
+        source.uri = url;
         uploadImage(source);
         setShowImagePicker(false);
       }

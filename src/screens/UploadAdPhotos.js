@@ -21,6 +21,7 @@ import {http} from '../shared/lib';
 import {request, PERMISSIONS} from 'react-native-permissions';
 import Loader from '../shared/components/Loader';
 const {width, height} = Dimensions.get('window');
+import {Image as ImageCompressor} from 'react-native-compressor';
 
 export default function UploadAdPhotos({navigation, route}) {
   let [images, setImages] = useState([]);
@@ -58,7 +59,7 @@ export default function UploadAdPhotos({navigation, route}) {
       mediaType: 'photo',
     };
 
-    launchCamera(options, response => {
+    launchCamera(options, async response => {
       if (response.didCancel) {
         console.log('User cancelled image picker');
       } else if (response.error) {
@@ -67,10 +68,13 @@ export default function UploadAdPhotos({navigation, route}) {
         console.log('User tapped custom button: ', response.customButton);
       } else {
         const resp = response?.assets?.[0];
-
+        let url = await ImageCompressor.compress(resp.uri, {
+          compressionMethod: 'auto',
+          returnableOutputType: 'uri',
+        });
         const source = {
           id: id,
-          uri: resp?.uri,
+          uri: url,
           type: resp?.type,
         };
 
@@ -98,7 +102,7 @@ export default function UploadAdPhotos({navigation, route}) {
       mediaType: 'photo',
     };
 
-    launchImageLibrary(options, response => {
+    launchImageLibrary(options, async response => {
       if (response.didCancel) {
         console.log('User cancelled image picker');
       } else if (response.error) {
@@ -110,12 +114,16 @@ export default function UploadAdPhotos({navigation, route}) {
         if (responseLength === 1) {
           setMaxImageExceed(false);
           const resp = response.assets[0];
-
+          let url = await ImageCompressor.compress(resp.uri, {
+            compressionMethod: 'auto',
+            returnableOutputType: 'uri',
+          });
           const source = {
             id: id,
-            uri: resp.uri,
+            uri: url,
             type: resp.type,
           };
+
           const updatedImages = [];
           updatedImages.push(source);
           setImages(updatedImages);
