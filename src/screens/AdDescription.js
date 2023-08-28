@@ -22,7 +22,6 @@ import Moment from 'moment';
 import {AuthContext} from '../context/AuthContext';
 import ImageView from 'react-native-image-viewing';
 import {SUPPORT_EMAIL} from '../shared/constants/env';
-import {TouchableWithoutFeedback} from 'react-native';
 const {width, height} = Dimensions.get('window');
 
 export default function AdDescription({route, navigation}) {
@@ -34,6 +33,7 @@ export default function AdDescription({route, navigation}) {
   const [imageViewIndex, setImageViewIndex] = useState(0);
   const [imageViewData, setImageViewData] = useState([]);
   const {logout, userInfo} = useContext(AuthContext);
+
   const {adDetails} = route.params;
   const {location, area} = adDetails;
 
@@ -217,6 +217,49 @@ export default function AdDescription({route, navigation}) {
               style={{
                 position: 'absolute',
                 top: 10,
+                right: 60,
+              }}
+              onPress={() => {
+                if (userInfo.role === 'Guest') {
+                  Alert.alert(
+                    'Warning',
+                    'To access these features, please sign up and log in to the app',
+                    [
+                      {text: 'Cancel'},
+                      {text: 'Login', onPress: () => logout()},
+                    ],
+                  );
+                } else {
+                  Alert.alert('Warning', 'Do you want to report this add', [
+                    {text: 'Cancel'},
+                    {
+                      text: 'Yes',
+                      onPress: () => {
+                        const subject = `I want to report this post with Ad Id ${adDetails.code}`;
+                        const body = `Hi Support Team,\n I am ${
+                          userInfo.first_name + ' ' + userInfo.last_name
+                        } and I want to report this Ad.\n\n Regards,\n ${
+                          userInfo.first_name
+                        }`;
+                        let mailto = encodeURI(
+                          `mailto:${SUPPORT_EMAIL}?subject=${subject}&body=${body}`,
+                        );
+                        Linking.openURL(mailto);
+                      },
+                    },
+                  ]);
+                }
+              }}>
+              <MaterialIcon name="flag" size={24} color={'#FF0000'} />
+            </TouchableOpacity>
+          )}
+
+          {userInfo.id !== adDetails.userID && (
+            <TouchableOpacity
+              hitSlop={10}
+              style={{
+                position: 'absolute',
+                top: 10,
                 right: 15,
               }}
               onPress={() => {
@@ -230,19 +273,54 @@ export default function AdDescription({route, navigation}) {
                     ],
                   );
                 } else {
-                  const subject = `I want to report this post with Ad Id ${adDetails.code}`;
-                  const body = `Hi Support,\n I am ${
-                    userInfo.first_name + ' ' + userInfo.last_name
-                  } and I want to report this Ad.\n\n Regards,\n ${
-                    userInfo.first_name
-                  }`;
-                  let mailto = encodeURI(
-                    `mailto:${SUPPORT_EMAIL}?subject=${subject}&body=${body}`,
+                  Alert.alert(
+                    'Warning',
+                    "Do you want to block this user\n After blocking you're not able to see ads posted by this user.",
+                    [
+                      {text: 'Cancel'},
+                      {
+                        text: 'Yes',
+                        onPress: async () => {
+                          try {
+                            const data = {
+                              user_id: adDetails.userID,
+                            };
+                            const token = await AsyncStorage.getItem('token');
+                            const config = {
+                              headers: {
+                                Authorization: `Bearer ${token}`,
+                              },
+                            };
+                            await http.post('user/block-user/', data, config);
+                            Alert.alert(
+                              'Success',
+                              'User Blocked Successfully',
+                              [
+                                {
+                                  text: 'Ok',
+                                  onPress: () => navigation.popToTop(),
+                                },
+                              ],
+                            );
+                          } catch (error) {
+                            console.log(JSON.stringify(error));
+                            Alert.alert(
+                              'Failure',
+                              'Something Went Wrong while blocking a user',
+                              [
+                                {
+                                  text: 'Ok',
+                                },
+                              ],
+                            );
+                          }
+                        },
+                      },
+                    ],
                   );
-                  Linking.openURL(mailto);
                 }
               }}>
-              <MaterialIcon name="flag" size={24} color={'#FF0000'} />
+              <MaterialIcon name="block" size={24} color={'#FF0000'} />
             </TouchableOpacity>
           )}
         </View>
@@ -271,9 +349,9 @@ export default function AdDescription({route, navigation}) {
             </Text>
           </View>
 
-          <Text allowFontScaling={false} style={styles.infoSectionMiddle}>
-            {adDetails.title}
-          </Text>
+          <View allowFontScaling={false} style={styles.infoSectionMiddle}>
+            <Text>{adDetails.title}</Text>
+          </View>
           <View style={styles.infoSectionBottom}>
             <View style={styles.locationSection}>
               <MaterialIcon name="location-pin" size={18} color={'#444'} />

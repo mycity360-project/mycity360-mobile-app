@@ -9,8 +9,8 @@ module.exports = {
   INSTAGRAM_WEB: 'https://www.instagram.com/my_city_360/',
   FACEBOOK_APP: 'fb://profile/100090405783729',
   FACEBOOK_WEB: 'https://www.facebook.com/profile.php?id=100090405783729',
-  WHATSAPP_APP: 'whatsapp://send?phone=+918570077340',
-  WHATSAPP_WEB: 'https://wa.me/+918570077340',
+  WHATSAPP_APP: 'whatsapp://send?phone=+919817600360',
+  WHATSAPP_WEB: 'https://wa.me/+919817600360',
   DEACTIVATE_ACCOUNT: 'http://mycity360.in/account-delete/',
   SUPPORT_EMAIL: 'mycity360.in@gmail.com',
 };
