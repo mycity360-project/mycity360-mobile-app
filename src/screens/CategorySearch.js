@@ -111,6 +111,7 @@ export default function CategorySearch({navigation, route}) {
           locationName: ad.area?.location?.name,
           areaName: ad.area?.name,
           isPrice: ad.category?.is_price,
+          phone: ad.phone,
           key: `${adsData.length + index}`,
         };
       });

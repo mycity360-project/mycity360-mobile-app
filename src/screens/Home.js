@@ -154,11 +154,6 @@ export default function Home({navigation}) {
     }
   };
 
-  // useEffect(() => {
-  //   
-  //   getBannerImages();
-  // }, []);
-
   const renderFooter = () => {
     if (flatlistLoading) {
       return (
@@ -220,7 +215,7 @@ export default function Home({navigation}) {
           locationName: ad.area?.location?.name,
           areaName: ad.area?.name,
           isPrice: ad.category?.is_price,
-
+          phone: ad.phone,
           key: `${userAdsData.length + index}`,
         };
       });

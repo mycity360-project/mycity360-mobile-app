@@ -69,6 +69,7 @@ export default function YourAds({navigation, route}) {
         subCategoryID: ad.category.id,
         locationName: ad.area?.location?.name,
         areaName: ad.area?.name,
+        phone: ad.phone,
         isPrice: ad.category?.is_price,
         key: `${yourAdsData.length + index}`,
       }));
