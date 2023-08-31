@@ -366,7 +366,7 @@ export default function UploadAdPhotos({navigation, route}) {
           Alert.alert(
             'ERROR',
             `* Please Select upto ${MAX_IMAGE_ALLOWED} images only.`,
-            [{text: 'OK'}],
+            [{text: 'OK', onPress: () => setMaxImageExceed(false)}],
           )}
 
         <View style={{flex: 1, flexDirection: 'row', marginTop: '3%'}}>
