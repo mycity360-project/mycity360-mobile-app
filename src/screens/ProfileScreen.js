@@ -71,7 +71,10 @@ export default function ProfileScreen({navigation}) {
   const openCamera = () => {
     const options = {
       storageOptions: {path: 'images', mediaType: 'photo'},
-      saveToPhotos: true,
+      maxWidth: 1024,
+      maxHeight: 1024,
+      quality: 1,
+      mediaType: 'photo',
     };
 
     launchCamera(options, async response => {
@@ -89,6 +92,9 @@ export default function ProfileScreen({navigation}) {
         let url = await ImageCompressor.compress(source.uri, {
           compressionMethod: 'auto',
           returnableOutputType: 'uri',
+          maxWidth: 1024,
+          maxHeight: 1024,
+          quality: 0.8,
         });
         source.uri = url;
         setShowImagePicker(false);
@@ -101,6 +107,10 @@ export default function ProfileScreen({navigation}) {
     const options = {
       storageOptions: {path: 'images', mediaType: 'photo'},
       selectionLimit: 1,
+      maxWidth: 1024,
+      maxHeight: 1024,
+      quality: 1,
+      mediaType: 'photo',
     };
 
     launchImageLibrary(options, async response => {
@@ -118,6 +128,9 @@ export default function ProfileScreen({navigation}) {
         let url = await ImageCompressor.compress(source.uri, {
           compressionMethod: 'auto',
           returnableOutputType: 'uri',
+          maxWidth: 1024,
+          maxHeight: 1024,
+          quality: 0.8,
         });
         source.uri = url;
         uploadImage(source);

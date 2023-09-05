@@ -53,8 +53,8 @@ export default function UploadAdPhotos({navigation, route}) {
   const openCamera = () => {
     const options = {
       storageOptions: {path: 'images', mediaType: 'photo'},
-      maxWidth: 3840,
-      maxHeight: 2160,
+      maxWidth: 1024,
+      maxHeight: 1024,
       quality: 1,
       mediaType: 'photo',
     };
@@ -71,6 +71,9 @@ export default function UploadAdPhotos({navigation, route}) {
         let url = await ImageCompressor.compress(resp.uri, {
           compressionMethod: 'auto',
           returnableOutputType: 'uri',
+          maxWidth: 1024,
+          maxHeight: 1024,
+          quality: 0.8,
         });
         const source = {
           id: id,
@@ -96,8 +99,8 @@ export default function UploadAdPhotos({navigation, route}) {
     const options = {
       storageOptions: {path: 'images', mediaType: 'photo'},
       selectionLimit: 0,
-      maxWidth: 3840,
-      maxHeight: 2160,
+      maxWidth: 1024,
+      maxHeight: 1024,
       quality: 1,
       mediaType: 'photo',
     };
@@ -117,6 +120,9 @@ export default function UploadAdPhotos({navigation, route}) {
           let url = await ImageCompressor.compress(resp.uri, {
             compressionMethod: 'auto',
             returnableOutputType: 'uri',
+            maxWidth: 1024,
+            maxHeight: 1024,
+            quality: 0.8,
           });
           const source = {
             id: id,
@@ -166,9 +172,7 @@ export default function UploadAdPhotos({navigation, route}) {
         },
       };
 
-      const resp = await http.post(url, imageData, config);
-
-      return resp;
+      return http.post(url, imageData, config);
     } catch (error) {
       throw new Error(error);
     }
@@ -207,8 +211,7 @@ export default function UploadAdPhotos({navigation, route}) {
         },
       };
 
-      const resp = await http.post(url, data, config);
-      return resp;
+      return await http.post(url, data, config);
     } catch (error) {
       throw error;
     }
@@ -236,8 +239,7 @@ export default function UploadAdPhotos({navigation, route}) {
         },
       };
 
-      const resp = await http.post(url, data, config);
-      return resp;
+      return http.post(url, data, config);
     } catch (error) {
       throw new Error(error);
     }
@@ -255,9 +257,10 @@ export default function UploadAdPhotos({navigation, route}) {
 
       let uploadedImgArr = [];
       for (const image of images) {
-        let resp = await uploadImage(image);
-        uploadedImgArr.push(resp);
+        uploadedImgArr.push(uploadImage(image));
       }
+
+      uploadedImgArr = await Promise.all(uploadedImgArr);
 
       const adCreatedData = await createAdHandler(uploadedImgArr);
 
@@ -265,24 +268,32 @@ export default function UploadAdPhotos({navigation, route}) {
       let respArr = [];
       const userid = await AsyncStorage.getItem('userID');
       for (const answer of answerArr) {
-        let resp = await uploadAnswer(answer, userid, adCreatedData.id);
-        respArr.push(resp);
+        respArr.push(uploadAnswer(answer, userid, adCreatedData.id));
       }
+      respArr = await Promise.all(respArr);
       setIsLoading(false);
       navigation.popToTop();
     } catch (error) {
-      setIsLoading(false);
-
-      Alert.alert(
-        'ERROR',
-        'Something went wrong, Ad not created. We are working on it, Please try after some time.',
-        [
+      console.log(JSON.stringify(error), 'Upload Add error');
+      if (error?.code === 'ERR_NETWORK') {
+        Alert.alert('ERROR', 'Your Internet is not working. Please try again', [
           {
             text: 'OK',
-            onPress: () => navigation.popToTop(),
           },
-        ],
-      );
+        ]);
+      } else {
+        Alert.alert(
+          'ERROR',
+          'Something went wrong, Ad not created. We are working on it, Please try after some time.',
+          [
+            {
+              text: 'OK',
+              onPress: () => navigation.popToTop(),
+            },
+          ],
+        );
+      }
+      setIsLoading(false);
     }
   };
 
