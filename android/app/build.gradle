@@ -98,8 +98,8 @@ android {
         applicationId "com.mycity360"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 26
-        versionName "1.2.0"
+        versionCode 27
+        versionName "1.2.1"
     }
 
     splits {

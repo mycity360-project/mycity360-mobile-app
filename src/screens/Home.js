@@ -532,7 +532,10 @@ export default function Home({navigation}) {
         </View>
         {showBanner && (
           <View
-            style={[styles.bannerSection, {height: 250, width: screenWidth}]}>
+            style={[
+              styles.bannerSection,
+              {height: screenWidth * (9 / 16), width: screenWidth},
+            ]}>
             <SwiperFlatList
               autoplay
               autoplayDelay={5}
@@ -552,7 +555,7 @@ export default function Home({navigation}) {
                     <Pressable onPress={() => handleWebLink(item.redirectUrl)}>
                       <Image
                         source={{uri: item?.image}}
-                        resizeMode="cover"
+                        resizeMode="contain"
                         style={styles.wrapper}
                       />
                     </Pressable>
