@@ -11,9 +11,9 @@
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		2AF1C719A35EC61F426E549D /* libPods-mycity360-mycity360Tests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2248BE02AEC9943C8102F197 /* libPods-mycity360-mycity360Tests.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
-		96E5AB4D089F5316916889BD /* libPods-mycity360-mycity360Tests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 03BE6ED34BB4968BD5C92B94 /* libPods-mycity360-mycity360Tests.a */; };
-		C5D5AAE1B3176B5D290DA81E /* libPods-mycity360.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1FAE3110822DFF87354822CA /* libPods-mycity360.a */; };
+		9768CA216A4E2F18B94FCD15 /* libPods-mycity360.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CBCA8A74660611EFDB864252 /* libPods-mycity360.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -30,20 +30,20 @@
 		00E356EE1AD99517003FC87E /* mycity360Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = mycity360Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* mycity360Tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = mycity360Tests.m; sourceTree = "<group>"; };
-		03A80A0135DC5DCC1562ACFA /* Pods-mycity360.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-mycity360.release.xcconfig"; path = "Target Support Files/Pods-mycity360/Pods-mycity360.release.xcconfig"; sourceTree = "<group>"; };
-		03BE6ED34BB4968BD5C92B94 /* libPods-mycity360-mycity360Tests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-mycity360-mycity360Tests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		08C0D69B2442457D84581C08 /* Pods-mycity360.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-mycity360.debug.xcconfig"; path = "Target Support Files/Pods-mycity360/Pods-mycity360.debug.xcconfig"; sourceTree = "<group>"; };
+		047F2C14724C8395B951F54A /* Pods-mycity360-mycity360Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-mycity360-mycity360Tests.debug.xcconfig"; path = "Target Support Files/Pods-mycity360-mycity360Tests/Pods-mycity360-mycity360Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* mycity360.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = mycity360.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = mycity360/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegate.mm; path = mycity360/AppDelegate.mm; sourceTree = "<group>"; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = mycity360/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = mycity360/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = mycity360/main.m; sourceTree = "<group>"; };
-		1FAE3110822DFF87354822CA /* libPods-mycity360.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-mycity360.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		2248BE02AEC9943C8102F197 /* libPods-mycity360-mycity360Tests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-mycity360-mycity360Tests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4C9701FFE9DE40E17B9BB0E9 /* Pods-mycity360.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-mycity360.release.xcconfig"; path = "Target Support Files/Pods-mycity360/Pods-mycity360.release.xcconfig"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = mycity360/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		AA0A641BD5FBEA35CA3C5EBA /* Pods-mycity360-mycity360Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-mycity360-mycity360Tests.release.xcconfig"; path = "Target Support Files/Pods-mycity360-mycity360Tests/Pods-mycity360-mycity360Tests.release.xcconfig"; sourceTree = "<group>"; };
+		A2CDF6C7F486F18586BCA86A /* Pods-mycity360.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-mycity360.debug.xcconfig"; path = "Target Support Files/Pods-mycity360/Pods-mycity360.debug.xcconfig"; sourceTree = "<group>"; };
+		CBCA8A74660611EFDB864252 /* libPods-mycity360.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-mycity360.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
-		F61ACA274F28F62BFF0CCF31 /* Pods-mycity360-mycity360Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-mycity360-mycity360Tests.debug.xcconfig"; path = "Target Support Files/Pods-mycity360-mycity360Tests/Pods-mycity360-mycity360Tests.debug.xcconfig"; sourceTree = "<group>"; };
+		FA735E49555B26972FE8C10F /* Pods-mycity360-mycity360Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-mycity360-mycity360Tests.release.xcconfig"; path = "Target Support Files/Pods-mycity360-mycity360Tests/Pods-mycity360-mycity360Tests.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -51,7 +51,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				96E5AB4D089F5316916889BD /* libPods-mycity360-mycity360Tests.a in Frameworks */,
+				2AF1C719A35EC61F426E549D /* libPods-mycity360-mycity360Tests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -59,7 +59,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C5D5AAE1B3176B5D290DA81E /* libPods-mycity360.a in Frameworks */,
+				9768CA216A4E2F18B94FCD15 /* libPods-mycity360.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -100,8 +100,8 @@
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				1FAE3110822DFF87354822CA /* libPods-mycity360.a */,
-				03BE6ED34BB4968BD5C92B94 /* libPods-mycity360-mycity360Tests.a */,
+				CBCA8A74660611EFDB864252 /* libPods-mycity360.a */,
+				2248BE02AEC9943C8102F197 /* libPods-mycity360-mycity360Tests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -140,10 +140,10 @@
 		BBD78D7AC51CEA395F1C20DB /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				08C0D69B2442457D84581C08 /* Pods-mycity360.debug.xcconfig */,
-				03A80A0135DC5DCC1562ACFA /* Pods-mycity360.release.xcconfig */,
-				F61ACA274F28F62BFF0CCF31 /* Pods-mycity360-mycity360Tests.debug.xcconfig */,
-				AA0A641BD5FBEA35CA3C5EBA /* Pods-mycity360-mycity360Tests.release.xcconfig */,
+				A2CDF6C7F486F18586BCA86A /* Pods-mycity360.debug.xcconfig */,
+				4C9701FFE9DE40E17B9BB0E9 /* Pods-mycity360.release.xcconfig */,
+				047F2C14724C8395B951F54A /* Pods-mycity360-mycity360Tests.debug.xcconfig */,
+				FA735E49555B26972FE8C10F /* Pods-mycity360-mycity360Tests.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -155,12 +155,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "mycity360Tests" */;
 			buildPhases = (
-				FA577C55CBDA40937A02F94C /* [CP] Check Pods Manifest.lock */,
+				41E91A33A322C98F01BC91D0 /* [CP] Check Pods Manifest.lock */,
 				00E356EA1AD99517003FC87E /* Sources */,
 				00E356EB1AD99517003FC87E /* Frameworks */,
 				00E356EC1AD99517003FC87E /* Resources */,
-				884115B56C555446E893B75B /* [CP] Embed Pods Frameworks */,
-				4A144581E1C2684D57D95271 /* [CP] Copy Pods Resources */,
+				783470947B2C34F5D12DC38D /* [CP] Embed Pods Frameworks */,
+				676C9A590CAD1517D119C2B7 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -176,14 +176,14 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "mycity360" */;
 			buildPhases = (
-				D937BBF196978A3D7523BF08 /* [CP] Check Pods Manifest.lock */,
+				626DEACB3A8B55F056ED1A11 /* [CP] Check Pods Manifest.lock */,
 				FD10A7F022414F080027D42C /* Start Packager */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
-				A7C3F5DFA7F3E04ECBFEDE37 /* [CP] Embed Pods Frameworks */,
-				014F748652D54B3E2A58ECAC /* [CP] Copy Pods Resources */,
+				59DA5DA4E17BE9638C760C50 /* [CP] Embed Pods Frameworks */,
+				E4C42AD5577C232A96CEAC2D /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -266,58 +266,29 @@
 			shellPath = /bin/sh;
 			shellScript = "set -e\n\nWITH_ENVIRONMENT=\"../node_modules/react-native/scripts/xcode/with-environment.sh\"\nREACT_NATIVE_XCODE=\"../node_modules/react-native/scripts/react-native-xcode.sh\"\n\n/bin/sh -c \"$WITH_ENVIRONMENT $REACT_NATIVE_XCODE\"\n";
 		};
-		014F748652D54B3E2A58ECAC /* [CP] Copy Pods Resources */ = {
+		41E91A33A322C98F01BC91D0 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-mycity360/Pods-mycity360-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			name = "[CP] Copy Pods Resources";
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-mycity360/Pods-mycity360-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-mycity360-mycity360Tests-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-mycity360/Pods-mycity360-resources.sh\"\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		4A144581E1C2684D57D95271 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-mycity360-mycity360Tests/Pods-mycity360-mycity360Tests-resources-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-mycity360-mycity360Tests/Pods-mycity360-mycity360Tests-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-mycity360-mycity360Tests/Pods-mycity360-mycity360Tests-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		884115B56C555446E893B75B /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-mycity360-mycity360Tests/Pods-mycity360-mycity360Tests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-mycity360-mycity360Tests/Pods-mycity360-mycity360Tests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-mycity360-mycity360Tests/Pods-mycity360-mycity360Tests-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		A7C3F5DFA7F3E04ECBFEDE37 /* [CP] Embed Pods Frameworks */ = {
+		59DA5DA4E17BE9638C760C50 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -334,7 +305,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-mycity360/Pods-mycity360-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		D937BBF196978A3D7523BF08 /* [CP] Check Pods Manifest.lock */ = {
+		626DEACB3A8B55F056ED1A11 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -356,26 +327,55 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		FA577C55CBDA40937A02F94C /* [CP] Check Pods Manifest.lock */ = {
+		676C9A590CAD1517D119C2B7 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-mycity360-mycity360Tests/Pods-mycity360-mycity360Tests-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
+			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-mycity360-mycity360Tests-checkManifestLockResult.txt",
+				"${PODS_ROOT}/Target Support Files/Pods-mycity360-mycity360Tests/Pods-mycity360-mycity360Tests-resources-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-mycity360-mycity360Tests/Pods-mycity360-mycity360Tests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		783470947B2C34F5D12DC38D /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-mycity360-mycity360Tests/Pods-mycity360-mycity360Tests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-mycity360-mycity360Tests/Pods-mycity360-mycity360Tests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-mycity360-mycity360Tests/Pods-mycity360-mycity360Tests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		E4C42AD5577C232A96CEAC2D /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-mycity360/Pods-mycity360-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-mycity360/Pods-mycity360-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-mycity360/Pods-mycity360-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		FD10A7F022414F080027D42C /* Start Packager */ = {
@@ -430,7 +430,7 @@
 /* Begin XCBuildConfiguration section */
 		00E356F61AD99517003FC87E /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F61ACA274F28F62BFF0CCF31 /* Pods-mycity360-mycity360Tests.debug.xcconfig */;
+			baseConfigurationReference = 047F2C14724C8395B951F54A /* Pods-mycity360-mycity360Tests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -457,7 +457,7 @@
 		};
 		00E356F71AD99517003FC87E /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = AA0A641BD5FBEA35CA3C5EBA /* Pods-mycity360-mycity360Tests.release.xcconfig */;
+			baseConfigurationReference = FA735E49555B26972FE8C10F /* Pods-mycity360-mycity360Tests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
@@ -481,7 +481,7 @@
 		};
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 08C0D69B2442457D84581C08 /* Pods-mycity360.debug.xcconfig */;
+			baseConfigurationReference = A2CDF6C7F486F18586BCA86A /* Pods-mycity360.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -515,7 +515,7 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 03A80A0135DC5DCC1562ACFA /* Pods-mycity360.release.xcconfig */;
+			baseConfigurationReference = 4C9701FFE9DE40E17B9BB0E9 /* Pods-mycity360.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
