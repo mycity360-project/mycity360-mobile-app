@@ -65,16 +65,6 @@ export default function Home({navigation}) {
     } catch (error) {
       if (error.response?.status === 401) {
         logout();
-      } else {
-        // Alert.alert(
-        //   'ERROR',
-        //   'Something went wrong, Unable to Fetch banner images',
-        //   [
-        //     {
-        //       text: 'OK',
-        //     },
-        //   ],
-        // );
       }
     }
   };
@@ -138,16 +128,6 @@ export default function Home({navigation}) {
     } catch (error) {
       if (error.response?.status === 401) {
         logout();
-      } else {
-        // Alert.alert(
-        //   'ERROR',
-        //   'Something went wrong, Unable to Fetch Categories',
-        //   [
-        //     {
-        //       text: 'OK',
-        //     },
-        //   ],
-        // );
       }
     } finally {
       setIsCategoryLoding(false);
@@ -223,12 +203,6 @@ export default function Home({navigation}) {
     } catch (error) {
       if (error.response?.status === 401) {
         logout();
-      } else {
-        // Alert.alert('ERROR', 'Something went wrong, Unable to Fetch Ads Home', [
-        //   {
-        //     text: 'OK',
-        //   },
-        // ]);
       }
     } finally {
       setFlatlistLoading(false);
