@@ -129,12 +129,12 @@ export default function Location({navigation}) {
         </TouchableOpacity>
 
         <Text allowFontScaling={false} style={styles.headingText}>
-          Set Location
+          Set District
         </Text>
       </View>
       <View style={{flex: 9}}>
         <DropDown
-          placeholder="Select Location"
+          placeholder="Select District"
           dataArray={locationData}
           selectedDataHandler={location => setLocation(location)}
           isDisabled={false}
@@ -142,7 +142,7 @@ export default function Location({navigation}) {
         />
         {showLocationError && (
           <Text allowFontScaling={false} style={styles.error}>
-            Please Select Location
+            Please Select District
           </Text>
         )}
         <DropDown

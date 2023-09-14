@@ -383,7 +383,7 @@ export default function SignUp() {
                   </Text>
                 )}
                 <DropDown
-                  placeholder="Select Location"
+                  placeholder="Select District"
                   placeholderTextColor="grey"
                   dataArray={locationData}
                   selectedDataHandler={location => setLocation(location)}
@@ -392,7 +392,7 @@ export default function SignUp() {
                 />
                 {showLocationError && (
                   <Text allowFontScaling={false} style={styles.error}>
-                    Please Select Location
+                    Please Select District
                   </Text>
                 )}
                 <DropDown
